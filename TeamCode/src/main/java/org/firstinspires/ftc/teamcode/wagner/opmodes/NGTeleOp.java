@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
 
 @TeleOp(name = "New Gen TeleOp", group = "estoy")
 public class NGTeleOp extends LinearOpMode {
@@ -16,7 +17,9 @@ public class NGTeleOp extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, GlobalStorage.pose);
 
         Claw claw = new Claw();
+        Hanger hanger = new Hanger();
         claw.init(hardwareMap);
+        hanger.init(hardwareMap);
         waitForStart();
 
         while(!isStopRequested() && opModeIsActive()) {
@@ -28,7 +31,8 @@ public class NGTeleOp extends LinearOpMode {
                     gamepad1.right_stick_x
             );
 
-            claw.run(gamepad1, gamepad2, drive);
+            claw.run(gamepad1, gamepad2, drive, telemetry);
+            hanger.run(gamepad1, gamepad2, drive, telemetry);
             drive.setDrivePowers(input);
         }
     }
