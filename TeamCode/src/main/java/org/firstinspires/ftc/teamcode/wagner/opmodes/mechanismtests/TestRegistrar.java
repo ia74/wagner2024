@@ -26,7 +26,7 @@ public final class TestRegistrar {
             OpModeMeta meta = new OpModeMeta.Builder()
                     .setName(set.getKey())
                     .setFlavor(OpModeMeta.Flavor.TELEOP)
-                    .setGroup("Tests")
+                    .setGroup("Mechanism Tests")
                     .setSource(OpModeMeta.Source.BLOCKLY)
                     .build();
             manager.register(meta, set.getValue());
