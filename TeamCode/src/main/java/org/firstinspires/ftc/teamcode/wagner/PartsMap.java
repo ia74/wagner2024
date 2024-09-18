@@ -8,6 +8,9 @@ public enum PartsMap {
 
     ARM_LEFT("armLeft"),
     ARM_RIGHT("armRight"),
+    ARM_ELBOW("elbow"),
+    ARM_SHOULDER("shoulder"),
+    ARM_WRIST("wrist"),
 
     DRIVE_FL("leftFront"),
     DRIVE_FR("rightFront"),
