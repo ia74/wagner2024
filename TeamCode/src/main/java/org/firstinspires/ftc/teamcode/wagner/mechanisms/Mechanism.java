@@ -8,5 +8,4 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public interface Mechanism {
     void init(HardwareMap hardwareMap);
-    void run(Gamepad gamepad1, Gamepad gamepad2, MecanumDrive drive, Telemetry telemetry);
 }

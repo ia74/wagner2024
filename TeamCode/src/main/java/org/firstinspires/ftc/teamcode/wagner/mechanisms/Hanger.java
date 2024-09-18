@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 
 @Config
 public class Hanger implements Mechanism {
-    DcMotor motor;
+    public DcMotor motor;
     public static int OPEN_POSITION = 1000;
     public static int CLOSED_POSITION = 0;
     public static double power = 1.0;
@@ -29,7 +29,7 @@ public class Hanger implements Mechanism {
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void internalGoTo(int position) {
+    public void internalGoTo(int position) {
         motor.setTargetPosition(position);
         reset();
         motor.setPower(power);
@@ -55,22 +55,5 @@ public class Hanger implements Mechanism {
         }
         state = MechanismState.EXTENDED;
         return state;
-    }
-
-    @Override
-    public void run(Gamepad gamepad1, Gamepad gamepad2, MecanumDrive drive, Telemetry telemetry) {
-        if(gamepad1.b && state.not(MechanismState.IN_USE) || state.not(MechanismState.REQUESTED)) {
-            state = MechanismState.REQUESTED;
-        } else {
-            telemetry.addData("Hanger", "Please wait, the motor is currently running.");
-        }
-        if(state == MechanismState.REQUESTED) {
-            internalGoTo(activation ? OPEN_POSITION : CLOSED_POSITION);
-            while(motor.isBusy()) {
-                state = MechanismState.IN_USE;
-            }
-            state = activation ? MechanismState.EXTENDED : MechanismState.UNEXTENDED;
-            activation = !activation;
-        }
     }
 }
