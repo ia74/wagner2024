@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
-import org.firstinspires.ftc.teamcode.wagner.NGGamepad;
+import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepad;
+import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepadPressables.Trigger;
+import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepadPressables.Button;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
@@ -26,6 +28,7 @@ public class NGTeleOp extends LinearOpMode {
         Claw claw = new Claw();
         Hanger hanger = new Hanger();
         Arm arm = new Arm();
+
         arm.init(hardwareMap);
         claw.init(hardwareMap);
         hanger.init(hardwareMap);
@@ -44,12 +47,14 @@ public class NGTeleOp extends LinearOpMode {
                     ng_gamepad1.right_stick_x()
             );
 
-            if(ng_gamepad1.isTrigger(ng_gamepad1.gamepad.right_trigger))
+            if(ng_gamepad1.is(Trigger.RIGHT_TRIGGER))
                 claw.openClaw(clawOpenPosition);
             else
                 claw.openClaw(0);
 
-            if(ng_gamepad1.gamepad.b && Hanger.state.not(MechanismState.IN_USE) || Hanger.state.not(MechanismState.REQUESTED)) {
+            if(ng_gamepad1.is(Button.B) &&
+                    Hanger.state.not(MechanismState.IN_USE) ||
+                    Hanger.state.not(MechanismState.REQUESTED)) {
                 Hanger.state = MechanismState.REQUESTED;
             } else {
                 telemetry.addData("Hanger", "Please wait, the motor is currently running.");
