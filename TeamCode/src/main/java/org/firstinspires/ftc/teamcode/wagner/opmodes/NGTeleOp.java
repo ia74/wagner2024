@@ -35,7 +35,7 @@ public class NGTeleOp extends LinearOpMode {
                     gamepad1.right_stick_x
             );
 
-            if(gamepad1.a) claw.openClaw(0.4);
+            if(gamepad1.right_trigger >= 0.5) claw.openClaw(0.4);
             else claw.openClaw(0);
 
             if(gamepad1.b && Hanger.state.not(MechanismState.IN_USE) || Hanger.state.not(MechanismState.REQUESTED)) {
