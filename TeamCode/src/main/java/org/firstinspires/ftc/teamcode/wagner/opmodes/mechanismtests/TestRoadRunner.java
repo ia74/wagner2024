@@ -28,9 +28,13 @@ public class TestRoadRunner extends LinearOpMode {
         test("1a (NOT STRICT)", inRange(drive.pose.heading.toDouble(), 85, 93), telemetry);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
-                        .turn(Math.toRadians(90))
+                        .lineToX(14)
                         .build()
         );
+        test("2", inRange(drive.pose.position.x, 13, 15), telemetry);
+        test("2a (NOT STRICT)", inRange(drive.pose.position.x, 11, 17), telemetry);
+        telemetry.addData("Please wait", "Tests completed.");
+        telemetry.update();
     }
 
     public void test(String c, boolean f, Telemetry t) {
@@ -39,6 +43,6 @@ public class TestRoadRunner extends LinearOpMode {
     }
 
     public boolean inRange (double num, double low, double up) {
-        return num > low && num < up;
+        return num >= low && num <= up;
     }
 }
