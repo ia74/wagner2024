@@ -19,6 +19,7 @@ The latest entry will always be on the top.
 - Claw is now a positional servo
 - Gamepads now create their own pose (on-demand) for TeleOp driving
 - TestClaw has been implemented
+- TestArm has been implemented + added
 
 # 18 September, 2024
 
