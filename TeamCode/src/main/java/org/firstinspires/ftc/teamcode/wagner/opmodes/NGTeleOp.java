@@ -47,6 +47,9 @@ public class NGTeleOp extends LinearOpMode {
                     ng_gamepad1.right_stick_x()
             );
 
+            arm.slidePowerThreshold(ng_gamepad2.left_stick_y(), 0.2);
+            arm.setElbow(ng_gamepad2.right_stick_y());
+
             if(ng_gamepad1.is(Trigger.RIGHT_TRIGGER))
                 claw.openClaw(clawOpenPosition);
             else

@@ -3,14 +3,12 @@ package org.firstinspires.ftc.teamcode.wagner;
 import androidx.annotation.NonNull;
 
 public enum PartsMap {
-    CLAW_LEFT("clawLeft"),
-    CLAW_RIGHT("clawRight"),
+    CLAW("claw"),
 
     ARM_LEFT("armLeft"),
     ARM_RIGHT("armRight"),
     ARM_ELBOW("elbow"),
     ARM_SHOULDER("shoulder"),
-    ARM_WRIST("wrist"),
 
     DRIVE_FL("leftFront"),
     DRIVE_FR("rightFront"),

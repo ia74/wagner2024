@@ -11,6 +11,11 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 23 September, 2024
+
+- Changed claw to use the new design (1 servo)
+- Arm now included in TeleOp
+
 # 18 September, 2024
 
 - Created Journal (Filled it with existing commits)
@@ -20,7 +25,7 @@ The latest entry will always be on the top.
 - Created Arm Mechanism
 - Moved arm functionality from Hanger to Arm.
 - Added some servos - elbow, wrist, shoulder
-- Removed run() method from the Mechanism interface
+- Removed run() method from the [NGTeleOp.java](wagner%2Fopmodes%2FNGTeleOp.java)Mechanism interface
 - Moved all previously existing run() code into the TeleOp
 
 # 16 September, 2024

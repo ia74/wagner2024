@@ -18,7 +18,9 @@ public class Arm implements Mechanism {
     public DcMotor right;
     public Servo elbow;
     public Servo shoulder;
-    public Servo wrist;
+
+    public static double elbowPos = 0;
+    public static double shoulderPos = 0;
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -27,10 +29,13 @@ public class Arm implements Mechanism {
 
         elbow = hardwareMap.get(Servo.class, PartsMap.ARM_ELBOW.toString());
         shoulder = hardwareMap.get(Servo.class, PartsMap.ARM_SHOULDER.toString());
-        wrist = hardwareMap.get(Servo.class, PartsMap.ARM_WRIST.toString());
 
         //TODO: REVERSE
         right.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public void slidePowerThreshold(double pwr, double threshold) {
+        if(pwr > threshold) slidePower(pwr);
     }
 
     public void slidePower(double pwr) {
@@ -38,8 +43,7 @@ public class Arm implements Mechanism {
         right.setPower(pwr);
     }
 
-    public void setShoulder(double pos) {this.shoulder.setPosition(pos);}
-    public void setElbow(double pos) {this.elbow.setPosition(pos);}
-    public void setWrist(double pos) {this.wrist.setPosition(pos);}
+    public void setShoulder(double pos) {this.shoulder.setPosition(pos);Arm.shoulderPos=pos;}
+    public void setElbow(double pos) {this.elbow.setPosition(pos);Arm.elbowPos=pos;}
 
 }
