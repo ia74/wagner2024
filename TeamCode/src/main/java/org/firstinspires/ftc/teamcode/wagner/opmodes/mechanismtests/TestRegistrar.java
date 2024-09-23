@@ -21,6 +21,8 @@ public final class TestRegistrar {
     public static void register(OpModeManager manager) {
         if(!enabled) return;
         tests.put("Claw", new TestClaw());
+        tests.put("Arm", new TestArm());
+        tests.put("RoadRunner", new TestRoadRunner());
 
         for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
             OpModeMeta meta = new OpModeMeta.Builder()

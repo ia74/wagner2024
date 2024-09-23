@@ -20,6 +20,9 @@ The latest entry will always be on the top.
 - Gamepads now create their own pose (on-demand) for TeleOp driving
 - TestClaw has been implemented
 - TestArm has been implemented + added
+- TestRoadRunner has been implemented + added
+- Added tests to TestRegistrar
+- Tests now use their own pose
 
 # 18 September, 2024
 
