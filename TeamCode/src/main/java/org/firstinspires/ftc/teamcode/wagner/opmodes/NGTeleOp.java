@@ -37,14 +37,6 @@ public class NGTeleOp extends LinearOpMode {
         waitForStart();
 
         while(!isStopRequested() && opModeIsActive()) {
-            PoseVelocity2d input = new PoseVelocity2d(
-                    new Vector2d(
-                            ng_gamepad1.left_stick_x(),
-                            ng_gamepad1.left_stick_y()
-                    ),
-                    ng_gamepad1.right_stick_x()
-            );
-
             arm.slidePowerThreshold(ng_gamepad2.left_stick_y(), 0.2);
             arm.setElbow(ng_gamepad2.right_stick_y());
 
@@ -69,6 +61,7 @@ public class NGTeleOp extends LinearOpMode {
                 Hanger.activation = !Hanger.activation;
             }
 
+            PoseVelocity2d input = ng_gamepad1.driveWithThis();
             drive.setDrivePowers(input);
         }
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.wagner.nggamepad;
 
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepadPressables.Button;
 
@@ -7,6 +9,16 @@ public class NGGamepad {
     public Gamepad gamepad;
     public NGGamepad(Gamepad gamepad) {
         this.gamepad = gamepad;
+    }
+
+    public PoseVelocity2d driveWithThis() {
+        return new PoseVelocity2d(
+                new Vector2d(
+                        this.left_stick_x(),
+                        this.left_stick_y()
+                ),
+                this.right_stick_x()
+        );
     }
 
     public boolean is(Button btn) {return isPressed(btn);}

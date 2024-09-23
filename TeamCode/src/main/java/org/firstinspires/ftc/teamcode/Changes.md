@@ -16,6 +16,9 @@ The latest entry will always be on the top.
 - Changed claw to use the new design (1 servo)
 - Arm now included in TeleOp
 - Claw now holds its open position
+- Claw is now a positional servo
+- Gamepads now create their own pose (on-demand) for TeleOp driving
+- TestClaw has been implemented
 
 # 18 September, 2024
 
