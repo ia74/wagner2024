@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 @Config
 public class Claw implements Mechanism {
     public CRServo claw;
+    public static double clawOpenPosition = 0.5;
 
     @Override
     public void init(HardwareMap hardwareMap) {

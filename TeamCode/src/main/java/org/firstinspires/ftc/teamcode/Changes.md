@@ -15,6 +15,7 @@ The latest entry will always be on the top.
 
 - Changed claw to use the new design (1 servo)
 - Arm now included in TeleOp
+- Claw now holds its open position
 
 # 18 September, 2024
 

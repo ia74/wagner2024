@@ -19,8 +19,6 @@ import org.firstinspires.ftc.teamcode.wagner.mechanisms.MechanismState;
 @Config
 @TeleOp(name = "New Gen TeleOp", group = "estoy")
 public class NGTeleOp extends LinearOpMode {
-    public static double clawOpenPosition = 0.4;
-
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive drive = new MecanumDrive(hardwareMap, GlobalStorage.pose);
@@ -51,7 +49,7 @@ public class NGTeleOp extends LinearOpMode {
             arm.setElbow(ng_gamepad2.right_stick_y());
 
             if(ng_gamepad1.is(Trigger.RIGHT_TRIGGER))
-                claw.openClaw(clawOpenPosition);
+                claw.openClaw(Claw.clawOpenPosition);
             else
                 claw.openClaw(0);
 
