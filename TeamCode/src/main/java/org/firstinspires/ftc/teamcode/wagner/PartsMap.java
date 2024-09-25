@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 public enum PartsMap {
     CLAW("claw"),
+    WRIST("wrist"),
 
     ARM_LEFT("armLeft"),
     ARM_RIGHT("armRight"),
@@ -15,8 +16,7 @@ public enum PartsMap {
     DRIVE_BL("leftBack"),
     DRIVE_BR("leftRight"),
 
-    ODO_PARALLEL_LEFT("par0"),
-    ODO_PARALLEL_RIGHT("par1"),
+    ODO_PARALLEL("par"),
     ODO_PERPENDICULAR("perp"),
 
     IMU("imu"),

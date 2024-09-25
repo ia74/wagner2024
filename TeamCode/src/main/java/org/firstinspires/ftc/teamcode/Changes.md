@@ -11,8 +11,14 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 25 September, 2024
+
+- Removed a dead wheel
+- Set the two wheel localizer to actually work
+
 # 23 September, 2024
 
+- Add claw.wrist
 - Changed claw to use the new design (1 servo)
 - Arm now included in TeleOp
 - Claw now holds its open position
