@@ -14,9 +14,6 @@ import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepad;
 public class TestArm extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
-
-        NGGamepad ng_gamepad1 = new NGGamepad(gamepad1);
         Arm arm = new Arm();
         arm.init(hardwareMap);
 
@@ -27,31 +24,40 @@ public class TestArm extends LinearOpMode {
         telemetry.update();
 
         arm.setElbow(0.5);
+        sleep(500);
         test(1, arm.elbow.getPosition() == 0.5, telemetry);
 
         arm.setElbow(0);
+        sleep(500);
         test(2, arm.elbow.getPosition() == 0, telemetry);
 
         arm.setElbow(1);
+        sleep(500);
         test(2, arm.elbow.getPosition() == 1, telemetry);
 
         telemetry.addData("Arm: Shoulder", "Testing shoulder");
         telemetry.update();
 
         arm.setShoulder(0.5);
+        sleep(500);
         test(1, arm.shoulder.getPosition() == 0.5, telemetry);
 
         arm.setShoulder(0);
+        sleep(500);
         test(2, arm.shoulder.getPosition() == 0, telemetry);
 
         arm.setShoulder(1);
+        sleep(500);
         test(2, arm.shoulder.getPosition() == 1, telemetry);
 
         telemetry.addData("Tests", "Finished");
         telemetry.update();
+        sleep(1500);
+
         while(opModeIsActive() && !isStopRequested()) {
-            PoseVelocity2d driveInput = ng_gamepad1.driveWithThis();
-            drive.setDrivePowers(driveInput);
+            telemetry.addData("Shoulder", arm.shoulder.getPosition());
+            telemetry.addData("Elbow", arm.elbow.getPosition());
+            telemetry.update();
         }
     }
     public void test(int c, boolean f, Telemetry t) {

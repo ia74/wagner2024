@@ -15,9 +15,6 @@ import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepad;
 public class TestClaw extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
-
-        NGGamepad ng_gamepad1 = new NGGamepad(gamepad1);
         Claw claw = new Claw();
         claw.init(hardwareMap);
 
@@ -29,20 +26,62 @@ public class TestClaw extends LinearOpMode {
         claw.openClaw(0);
         test(1, claw.claw.getPosition() == 0, telemetry);
 
+        sleep(500);
+
         claw.openClaw(1);
         test(2, claw.claw.getPosition() == 1, telemetry);
+
+        sleep(500);
 
         claw.openClaw(0.5);
         test(3, claw.claw.getPosition() == 0.5, telemetry);
 
+        claw.openClaw(-1);
+        test(1, claw.claw.getPosition() == 0, telemetry);
+
+        sleep(500);
+
+        claw.openClaw(-0.5);
+        test(2, claw.claw.getPosition() == 1, telemetry);
+
+        sleep(500);
+
+        claw.openClaw(0);
+        test(3, claw.claw.getPosition() == 0.5, telemetry);
+
+        sleep(500);
+
         claw.openClaw(Claw.clawOpenPosition);
         test(4, claw.claw.getPosition() == Claw.clawOpenPosition, telemetry);
 
+        sleep(500);
+
+        claw.setWrist(0);
+        test(5, claw.wrist.getPosition() == 0, telemetry);
+
+        sleep(500);
+
+        claw.setWrist(0.5);
+        test(5, claw.wrist.getPosition() == 0.5, telemetry);
+
+        sleep(500);
+
+        claw.setWrist(-1);
+        test(5, claw.wrist.getPosition() == -1, telemetry);
+
+        sleep(500);
+
+        claw.setWrist(1);
+        test(5, claw.wrist.getPosition() == 1, telemetry);
+
         telemetry.addData("Tests", "Finished");
         telemetry.update();
-        while(opModeIsActive() && !isStopRequested()) {
-            PoseVelocity2d driveInput = ng_gamepad1.driveWithThis();
-            drive.setDrivePowers(driveInput);
+
+        while(!isStopRequested() && opModeIsActive()) {
+            telemetry.addData("Wrist", claw.wrist.getPosition());
+            telemetry.addData("Claw", claw.claw.getPosition());
+
+            telemetry.update();
         }
     }
     public void test(int c, boolean f, Telemetry t) {

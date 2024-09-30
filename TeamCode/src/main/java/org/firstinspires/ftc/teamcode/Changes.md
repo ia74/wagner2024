@@ -11,6 +11,12 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 30 September, 2024
+
+- Claw has some helper methods now to make moving a little more verbose & readable
+- Remove all dead wheels & their references
+- Add sleeps to all tests [Claw, Arm] so we can watch the test happening in realtime
+
 # 25 September, 2024
 
 - Removed a dead wheel
