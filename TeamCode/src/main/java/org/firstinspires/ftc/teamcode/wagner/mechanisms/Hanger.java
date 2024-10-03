@@ -22,16 +22,14 @@ public class Hanger implements Mechanism {
     @Override
     public void init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotor.class, PartsMap.HANGER.toString());
-        reset();
-    }
-
-    public void reset() {
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void internalGoTo(int position) {
         motor.setTargetPosition(position);
-        reset();
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(power);
     }
 
@@ -42,6 +40,7 @@ public class Hanger implements Mechanism {
         while(motor.isBusy()) {
             state = MechanismState.IN_USE;
         }
+        motor.setPower(0);
         state = MechanismState.UNEXTENDED;
         return state;
     }
@@ -53,6 +52,7 @@ public class Hanger implements Mechanism {
         while(motor.isBusy()) {
             state = MechanismState.IN_USE;
         }
+        motor.setPower(0);
         state = MechanismState.EXTENDED;
         return state;
     }

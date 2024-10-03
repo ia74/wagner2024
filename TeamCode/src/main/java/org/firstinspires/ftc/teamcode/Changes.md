@@ -14,6 +14,7 @@ The latest entry will always be on the top.
 # 02 October, 2024
 
 - Added descriptions to the tests & fixed Arm's sleep not properly running
+- Created a test for motors
 
 # 30 September, 2024
 
