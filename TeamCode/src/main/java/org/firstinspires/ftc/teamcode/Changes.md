@@ -11,6 +11,11 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 16 October, 2024
+
+- Minimal fixes to some things
+- Add MeepMeep visualizer
+
 # 02 October, 2024
 
 - Added descriptions to the tests & fixed Arm's sleep not properly running

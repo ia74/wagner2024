@@ -22,8 +22,8 @@ public final class TestRegistrar {
         if(!enabled) return;
         tests.put("Claw", new TestClaw());
         tests.put("Arm", new TestArm());
+        tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());
-        tests.put("Motor Direction", new TestMotors());
 
         for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
             OpModeMeta meta = new OpModeMeta.Builder()

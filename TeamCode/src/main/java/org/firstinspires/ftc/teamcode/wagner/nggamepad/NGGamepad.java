@@ -14,10 +14,10 @@ public class NGGamepad {
     public PoseVelocity2d driveWithThis() {
         return new PoseVelocity2d(
                 new Vector2d(
-                        this.left_stick_x(),
-                        this.left_stick_y()
+                        -this.left_stick_y(),
+                        -this.left_stick_x()
                 ),
-                this.right_stick_x()
+                -this.right_stick_x()
         );
     }
 
@@ -95,7 +95,7 @@ public class NGGamepad {
     }
 
     public float left_stick_x() {return this.gamepad.left_stick_x;}
-    public float left_stick_y() {return -this.gamepad.left_stick_y;}
+    public float left_stick_y() {return this.gamepad.left_stick_y;}
     public float right_stick_x() {return this.gamepad.right_stick_x;}
-    public float right_stick_y() {return -this.gamepad.right_stick_y;}
+    public float right_stick_y() {return this.gamepad.right_stick_y;}
 }
