@@ -15,6 +15,7 @@ The latest entry will always be on the top.
 
 - Minimal fixes to some things
 - Add MeepMeep visualizer
+- Change some tuning values
 
 # 02 October, 2024
 
