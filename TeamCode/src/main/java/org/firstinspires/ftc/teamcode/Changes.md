@@ -14,6 +14,7 @@ The latest entry will always be on the top.
 # 23 October, 2024
 - Change some servos to CRServo
 - Hanger Mechanism updated for better handling and less thread blocking
+- Custom TeleOp registrar made for custom names on our main teleop mode
 
 # 21 October, 2024
 - Start tuning Road Runner
