@@ -11,6 +11,15 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 23 October, 2024
+- Change some servos to CRServo
+- Hanger Mechanism updated for better handling and less thread blocking
+
+# 21 October, 2024
+- Start tuning Road Runner
+- Reverse motors properly
+- Update Mechanism tests to be more efficient
+
 # 16 October, 2024
 
 - Minimal fixes to some things

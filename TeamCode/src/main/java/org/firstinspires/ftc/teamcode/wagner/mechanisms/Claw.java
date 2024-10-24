@@ -11,18 +11,21 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 public class Claw implements Mechanism {
     public Servo claw;
     public Servo wrist;
-    public static double clawOpenPosition = 0.2;
+    public static double clawOpenPosition = -1;
     public static double clawClosedPosition = 1;
-    public static double maxWrist = 0.9;
+    public static double wristUpPosition = 0.9;
+    public static double wristDownPosition = 0.9;
 
     @Override
     public void init(HardwareMap hardwareMap) {
         claw = hardwareMap.get(Servo.class, PartsMap.CLAW.toString());
         wrist = hardwareMap.get(Servo.class, PartsMap.WRIST.toString());
+        claw.setDirection(Servo.Direction.REVERSE);
+        wrist.setDirection(Servo.Direction.REVERSE);
     }
 
-    public void up() {wrist.setPosition(maxWrist);}
-    public void down() {wrist.setPosition(-maxWrist);}
+    public void up() {wrist.setPosition(wristUpPosition);}
+    public void down() {wrist.setPosition(wristDownPosition);}
     public void middle() {wrist.setPosition(0);}
     public void fullDown() {wrist.setPosition(-1);}
     public void fullUp() {wrist.setPosition(1);}
@@ -30,8 +33,8 @@ public class Claw implements Mechanism {
     public void clawZero() {claw.setPosition(0);}
     public void close() {claw.setPosition(clawClosedPosition);}
     public void open() {claw.setPosition(clawOpenPosition);}
-    public void fullOpen() {claw.setPosition(1);}
-    public void fullClose() {claw.setPosition(-1);}
+    public void fullOpen() {claw.setPosition(-1);}
+    public void fullClose() {claw.setPosition(1);}
 
     public void setWrist(double pos) {
         wrist.setPosition(pos);

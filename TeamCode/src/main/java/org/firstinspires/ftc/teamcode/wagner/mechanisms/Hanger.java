@@ -24,7 +24,6 @@ public class Hanger implements Mechanism {
         motor = hardwareMap.get(DcMotor.class, PartsMap.HANGER.toString());
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void internalGoTo(int position) {
@@ -35,11 +34,9 @@ public class Hanger implements Mechanism {
 
     public MechanismState unextend() {
         if(state == MechanismState.IN_USE) return state;
+        if(motor.isBusy()) return MechanismState.IN_USE;
         activation = false;
         internalGoTo(CLOSED_POSITION);
-        while(motor.isBusy()) {
-            state = MechanismState.IN_USE;
-        }
         motor.setPower(0);
         state = MechanismState.UNEXTENDED;
         return state;
@@ -47,13 +44,17 @@ public class Hanger implements Mechanism {
 
     public MechanismState extend() {
         if(state == MechanismState.IN_USE) return state;
+        if(motor.isBusy()) return MechanismState.IN_USE;
         activation = true;
         internalGoTo(OPEN_POSITION);
-        while(motor.isBusy()) {
-            state = MechanismState.IN_USE;
-        }
         motor.setPower(0);
         state = MechanismState.EXTENDED;
         return state;
+    }
+
+    public MechanismState forceStop() {
+        activation = false;
+        motor.setPower(0);
+        return MechanismState.UNKNOWN;
     }
 }

@@ -25,10 +25,11 @@ public final class TestRegistrar {
         tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());
 
+
         for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
             OpModeMeta meta = new OpModeMeta.Builder()
-                    .setName(set.getKey())
-                    .setFlavor(OpModeMeta.Flavor.TELEOP)
+                    .setName("Test " + set.getKey())
+                    .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
                     .setGroup("Mechanism Tests")
                     .setSource(OpModeMeta.Source.BLOCKLY)
                     .build();
@@ -36,7 +37,10 @@ public final class TestRegistrar {
         }
         FtcDashboard.getInstance().withConfigRoot(configRoot -> {
             for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
-                configRoot.putVariable(set.getKey(), ReflectionConfig.createVariableFromClass(set.getValue().getClass()));
+                configRoot.putVariable(
+                        set.getValue().getClass().getSimpleName(),
+                        ReflectionConfig.createVariableFromClass(set.getValue().getClass())
+                );
             }
         });
     }

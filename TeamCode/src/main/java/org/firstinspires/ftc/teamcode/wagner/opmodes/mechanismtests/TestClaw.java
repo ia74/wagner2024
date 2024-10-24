@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -14,106 +15,83 @@ import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepad;
 
 public class TestClaw extends LinearOpMode {
+    public int sleepTime = 1000;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         Claw claw = new Claw();
-        Arm arm = new Arm();
         claw.init(hardwareMap);
-        arm.init(hardwareMap);
 
         waitForStart();
 
-        telemetry.addData("Please wait", "Testing claw");
-        telemetry.update();
+        claw.clawZero();
+        print("Claw was set to 0", claw.claw, telemetry);
+        sleep(sleepTime);
 
-        claw.openClaw(0);
-        test(1, claw.claw.getPosition() == 0, telemetry);
-        telemetry.addData("Claw should be at", 0);
-        telemetry.update();
-        sleep(1000);
-
-        claw.openClaw(1);
-        test(2, claw.claw.getPosition() == 1, telemetry);
-
-        telemetry.addData("Claw should be at", 1);
-        telemetry.update();
-        sleep(1000);
+        claw.fullOpen();
+        print("Claw was set 1", claw.claw, telemetry);
+        sleep(sleepTime);
 
         claw.openClaw(0.5);
-        test(3, claw.claw.getPosition() == 0.5, telemetry);
-        telemetry.addData("Claw should be at", 0.5);
-        telemetry.update();
-        sleep(1000);
+        print("Claw was set to 0.5", claw.claw, telemetry);
+        sleep(sleepTime);
 
-        claw.openClaw(-1);
-        test(1, claw.claw.getPosition() == 0, telemetry);
-        telemetry.addData("Claw should be at", -1);
-        telemetry.update();
+        claw.fullClose();
+        print("Claw was full closed to -1", claw.claw, telemetry);
+        sleep(sleepTime);
 
-        sleep(1000);
-        claw.openClaw(-0.5);
-        telemetry.addData("Claw should be at", -1);
-        test(2, claw.claw.getPosition() == 1, telemetry);
-        telemetry.update();
+        claw.close();
+        print("Claw was closed to " + Claw.clawClosedPosition, claw.claw, telemetry);
+        sleep(sleepTime);
 
-        sleep(1000);
+        claw.open();
+        print("Claw was opened to " + Claw.clawOpenPosition, claw.claw, telemetry);
+        sleep(sleepTime);
 
-        claw.openClaw(0);
-        telemetry.addData("Claw should be at", 0.5);
-        telemetry.update();
-        test(3, claw.claw.getPosition() == 0.5, telemetry);
-
-        sleep(1000);
-        telemetry.addData("Claw should be at", Claw.clawOpenPosition);
-        telemetry.update();
-
-        claw.openClaw(Claw.clawOpenPosition);
-        test(4, claw.claw.getPosition() == Claw.clawOpenPosition, telemetry);
-
-        sleep(1000);
-
-        claw.setWrist(0);
-        test(5, claw.wrist.getPosition() == 0, telemetry);
-
-        telemetry.addData("Wrist should be at", 0);
-        telemetry.update();
-
-        sleep(1000);
+        claw.middle();
+        print("Wrist was middled to 0", claw.wrist, telemetry);
+        sleep(sleepTime);
 
         claw.setWrist(0.5);
-        test(5, claw.wrist.getPosition() == 0.5, telemetry);
-        telemetry.addData("Wrist should be at", 0.5);
-        telemetry.update();
+        print("Wrist was set to 0.5", claw.wrist, telemetry);
+        sleep(sleepTime);
 
+        claw.up();
+        print("Wrist was upped to " + Claw.wristUpPosition, claw.wrist, telemetry);
+        sleep(sleepTime);
 
-        sleep(1000);
+        claw.down();
+        print("Wrist was downed to " + Claw.wristDownPosition, claw.wrist, telemetry);
+        sleep(sleepTime);
 
-        claw.setWrist(-1);
-        test(5, claw.wrist.getPosition() == -1, telemetry);
+        claw.fullDown();
+        print("Wrist was full downed to -1", claw.wrist, telemetry);
+        sleep(sleepTime);
 
-        telemetry.addData("Wrist should be at", -1);
-        telemetry.update();
-
-
-        sleep(1000);
-
-        claw.setWrist(1);
-        test(5, claw.wrist.getPosition() == 1, telemetry);
-        telemetry.addData("Wrist should be at", 1);
-        telemetry.addData("Tests", "Finished");
-        telemetry.update();
+        claw.fullUp();
+        print("Wrist was full upped to 1", claw.wrist, telemetry);
+        sleep(sleepTime);
 
         while(!isStopRequested() && opModeIsActive()) {
             telemetry.addData("Wrist", claw.wrist.getPosition());
             telemetry.addData("Claw", claw.claw.getPosition());
+            telemetry.addLine("Gamepad1 Right stick Y: Wrist control");
+            telemetry.addLine("Gamepad1 A: Fully Open Claw (1)");
+            telemetry.addLine("Gamepad1 B: Fully Close Claw (-1)");
+            telemetry.addLine("Gamepad1 X: Close Claw (" + Claw.clawClosedPosition + ")");
+            telemetry.addLine("Gamepad1 Y: Open Claw (" + Claw.clawOpenPosition + ")");
+            telemetry.addLine("Not holding: Set position to 0");
+            if(gamepad1.a) claw.fullOpen();
+            else if(gamepad1.b) claw.fullClose();
+            else if(gamepad1.x) claw.open();
+            else if(gamepad1.y) claw.close();
+            else claw.openClaw(0);
+
             claw.setWrist(gamepad1.right_stick_y);
-            claw.openClaw(gamepad1.left_stick_x);
-            arm.setShoulder(gamepad2.right_stick_y);
             telemetry.update();
         }
     }
-    public void test(int c, boolean f, Telemetry t) {
-        t.addData("Test " + c, f ? "Pass" : "Fail");
+    public void print(String a, Servo b, Telemetry t) {
+        t.addLine(a + " / Current: " + b.getPosition());
         t.update();
     }
 }
