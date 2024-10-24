@@ -11,6 +11,10 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 24 October, 2024
+- Added some build flags & refactor build files with Android Studio to make build times quicker
+- - (Build times from 1.2min -> 48s)
+
 # 23 October, 2024
 - Change some servos to CRServo
 - Hanger Mechanism updated for better handling and less thread blocking
@@ -66,7 +70,7 @@ The latest entry will always be on the top.
 - Created Arm Mechanism
 - Moved arm functionality from Hanger to Arm.
 - Added some servos - elbow, wrist, shoulder
-- Removed run() method from the [NGTeleOp.java](wagner%2Fopmodes%2FNGTeleOp.java)Mechanism interface
+- Removed run() method from the [NGTeleOp.java](wagner/opmodes/NGTeleOp.java)Mechanism interface
 - Moved all previously existing run() code into the TeleOp
 
 # 16 September, 2024
