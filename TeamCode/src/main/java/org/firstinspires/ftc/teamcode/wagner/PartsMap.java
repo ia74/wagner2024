@@ -21,7 +21,8 @@ public enum PartsMap {
 
     IMU("imu"),
 
-    HANGER("hanger");
+    HANGER("hanger"),
+    HANGER_HOOK("hanger");
 
     public final String mapped;
     private PartsMap(String mapped) {

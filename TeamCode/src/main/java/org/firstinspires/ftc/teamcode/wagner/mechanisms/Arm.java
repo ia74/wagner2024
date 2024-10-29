@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.wagner.mechanisms;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -60,4 +62,14 @@ public class Arm implements Mechanism {
         rawElbowPower(0);
     }
 
+    @NonNull
+    public String toString() {
+        return "-- [Mechanism: Arm] --\n" +
+                "_timer: " + _timer.milliseconds() + "\n" +
+                "Arm.shoulderPos: " + Arm.shoulderPos + "\n" +
+                Mechanism.motorIfo(left, "Motor Left") + "\n" +
+                Mechanism.motorIfo(right, "Motor Right") + "\n" +
+                Mechanism.servoIfo(elbow, "Elbow") + "\n" +
+                Mechanism.servoIfo(shoulder, "Shoulder") + "\n";
+    }
 }

@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.List;
 public final class TuningOpModes {
     public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
-    public static final String GROUP = "tuners";
+    public static final String GROUP = GlobalStorage.testOpModeGroup;
     public static final boolean DISABLED = false;
 
     private TuningOpModes() {}
@@ -40,8 +41,8 @@ public final class TuningOpModes {
         return new OpModeMeta.Builder()
                 .setName(cls.getSimpleName())
                 .setGroup(GROUP)
-                .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
-                .setSource(OpModeMeta.Source.BLOCKLY)
+                .setFlavor(GlobalStorage.testOpModeFlavor)
+                .setSource(GlobalStorage.testOpModeSource)
                 .build();
     }
 

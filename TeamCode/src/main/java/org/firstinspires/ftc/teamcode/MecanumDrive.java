@@ -61,14 +61,14 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.08;
-        public double lateralInPerTick = 0.09;
-        public double trackWidthTicks = 352.8787052933965;
+        public double inPerTick = 0.0459594025277671;
+        public double lateralInPerTick = 0.0518582541054451;
+        public double trackWidthTicks = 673.9575538786542;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.685190303188242;
-        public double kV = 0.003944105466286258;
-        public double kA = 0;
+        public double kS = 1.556;
+        public double kV = 0.00454945814623792;
+        public double kA = 0.001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -135,7 +135,8 @@ public final class MecanumDrive {
             rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
-            // NO REVERSING!
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         @Override

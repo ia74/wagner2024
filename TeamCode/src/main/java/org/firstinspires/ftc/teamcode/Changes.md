@@ -11,9 +11,30 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 28 October, 2024
+- Fix MecanumDrive DriveEncoder directions (REVERSE, FORWARD)
+- Tune the robot a little more (still not complete!)
+- Tune some claw positions
+- Update Dashboard to 0.4.16 from 0.4.14
+
+# 26 October, 2024
+- Update Mechanism to have better telemetry
+- - This includes updating Claw, Arm, and Hanger to have the same toString() format.
+- NGTeleOp updated to work with FTC Dashboard Telemetry
+- Update NGTeleOp claw maneuvering, as well as have a better format so drivers can tell what controls what.
+- Replace Hanger with our new hanging system (a servo with a hook on the end)
+- Add all our test/tuning to autonomous menu, as well as one global boolean for disable or enable.
+
+# 25 October, 2024
+- Improve tests
+- Remove LegacyHanger class
+- Improve telemetry for drivers during TeleOp
+- Create a simple auto *base* with FSM principle
+
 # 24 October, 2024
 - Added some build flags & refactor build files with Android Studio to make build times quicker
 - - (Build times from 1.2min -> 48s)
+- Improve FTC Dashboard reflection (dont show empty classes)
 
 # 23 October, 2024
 - Change some servos to CRServo
