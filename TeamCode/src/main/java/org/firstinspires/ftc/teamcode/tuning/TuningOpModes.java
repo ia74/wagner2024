@@ -32,15 +32,14 @@ import java.util.List;
 public final class TuningOpModes {
     public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
-    public static final String GROUP = GlobalStorage.testOpModeGroup;
-    public static final boolean DISABLED = false;
+    public static final boolean enabled = GlobalStorage.testsEnabled;
 
     private TuningOpModes() {}
 
     private static OpModeMeta metaForClass(Class<? extends OpMode> cls) {
         return new OpModeMeta.Builder()
                 .setName(cls.getSimpleName())
-                .setGroup(GROUP)
+                .setGroup(GlobalStorage.testOpModeGroup)
                 .setFlavor(GlobalStorage.testOpModeFlavor)
                 .setSource(GlobalStorage.testOpModeSource)
                 .build();
@@ -48,7 +47,7 @@ public final class TuningOpModes {
 
     @OpModeRegistrar
     public static void register(OpModeManager manager) {
-        if (DISABLED) return;
+        if (!enabled) return;
 
         DriveViewFactory dvf = hardwareMap -> {
             MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class TestRegistrar {
-    public static boolean enabled = true;
+    public static final boolean enabled = GlobalStorage.testsEnabled;
 
     public static HashMap<String, LinearOpMode> tests = new HashMap<>();
     public TestRegistrar() {}

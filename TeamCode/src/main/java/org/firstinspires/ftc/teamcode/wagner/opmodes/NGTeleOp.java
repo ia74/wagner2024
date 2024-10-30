@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
 
-@Config
 public class NGTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
