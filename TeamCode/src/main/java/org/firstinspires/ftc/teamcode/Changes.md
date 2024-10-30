@@ -11,6 +11,10 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 30 October, 2024
+- Add BasketRed visualizer (made by Hayden)
+- Create Mechanism for light controller
+
 # 28 October, 2024
 - Fix MecanumDrive DriveEncoder directions (REVERSE, FORWARD)
 - Tune the robot a little more (still not complete!)

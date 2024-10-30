@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 public enum PartsMap {
     CLAW("claw"),
     WRIST("wrist"),
+    LIGHT_BLINKIN("blinkin"),
 
     ARM_LEFT("armLeft"),
     ARM_RIGHT("armRight"),
