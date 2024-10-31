@@ -27,6 +27,7 @@ public final class TestRegistrar {
         tests.put("Arm", new TestArm());
         tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());
+        tests.put("Motor Direction", new TestMotors());
 
 
         for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
