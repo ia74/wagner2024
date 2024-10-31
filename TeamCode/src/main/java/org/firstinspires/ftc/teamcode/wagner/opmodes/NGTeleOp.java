@@ -49,7 +49,7 @@ public class NGTeleOp extends LinearOpMode {
             arm.setShoulder(gamepad2.left_stick_y);
 
             /* SECTION: Wrist */
-            if (gamepad2.right_trigger > 0.5)
+            if (gamepad2.right_trigger > 0.2)
                 claw.openClaw(Claw.clawClosedPosition);
             else
                 claw.openClaw(Claw.clawOpenPosition);
