@@ -1,52 +1,61 @@
 package org.firstinspires.ftc.teamcode.wagner.opmodes.autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 
-@Autonomous(name = "Basket Blue", group="Autonomous")
+@Autonomous(name = "Basket Blue", group="!!Autonomous")
 public class BasketBlue extends LinearOpMode {
-    enum State {
-        STEP_ONE,
-        STEP_TWO
-    };
-    State state = State.STEP_ONE;
+    Claw claw = new Claw();
+    Arm arm = new Arm();
     @Override
     public void runOpMode() throws InterruptedException {
-        GlobalStorage.pose = new Pose2d(0,0,0);
+        GlobalStorage.pose = new Pose2d(36, 60, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, GlobalStorage.pose);
+        arm.init(hardwareMap);
+        claw.init(hardwareMap);
 
         waitForStart();
+        claw.close();
+        claw.up();
+        Actions.runBlocking(
+            drive.actionBuilder(GlobalStorage.pose)
+                 .lineToY(55)
+                 .splineToLinearHeading( new Pose2d(54, 56, Math.toRadians(45)), 0.0 )
+                 .stopAndAdd(this::score)
+                 .strafeToLinearHeading(new Vector2d(-48, 38), Math.toRadians(270))
+                 .stopAndAdd(() -> {
+                     claw.down();
+                     claw.open();
+                     sleep(150);
+                     claw.close();
+                     claw.up();
+                 })
+                 .strafeToLinearHeading( new Vector2d(54, 56), Math.toRadians(45))
+                 .stopAndAdd(this::score)
+                 .build()
+        );
 
-        while(opModeIsActive()) {
-            switch(state) {
-                case STEP_ONE:
-                    Actions.runBlocking(drive.actionBuilder(drive.pose)
-                            .turnTo(Math.toRadians(90))
-                            .build());
-                    state = State.STEP_TWO;
-                    break;
-                case STEP_TWO:
-                    Actions.runBlocking(drive.actionBuilder(drive.pose)
-                            .turn(Math.toRadians(360))
-                            .build());
-            }
+    }
 
-            TelemetryPacket packet = new TelemetryPacket();
-            packet.fieldOverlay().setStroke("#3F51B5");
-            Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-            telemetry.addData("Current State", state);
-            telemetry.update();
-        }
-
+    void score() {
+        arm.slidePower(1);
+        sleep(2000);
+        arm.slidePower(0);
+        claw.down();
+        claw.open();
+        sleep(250);
+        claw.close();
+        claw.up();
+        arm.slidePower(-1);
+        sleep(2000);
+        arm.slidePower(0);
     }
 }

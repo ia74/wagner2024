@@ -15,18 +15,12 @@ public class BasketRed {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(36, 60, Math.toRadians(-90)))
-                .turnTo(Math.toRadians(0))
-                .strafeTo(new Vector2d(55, 60))
+                .lineToY(55)
+                .splineToLinearHeading( new Pose2d(54, 56, Math.toRadians(45)), 0.0 )
                 .waitSeconds(4) //open claw to drop element
-                .lineToX(-48)
-                .turnTo(Math.toRadians(270))
-                .lineToY(22)
+                .strafeToLinearHeading(new Vector2d(-48, 38), Math.toRadians(270))
                 .waitSeconds(4) // close claw
-                .lineToY(60)
-                .turnTo(Math.toRadians(0))
-                .lineToX(55)
-                .waitSeconds(4) //open claw to drop element
-                .lineToX(-55)
+                .strafeToLinearHeading( new Vector2d(54, 56), Math.toRadians(45))
 
 //                .waitSeconds(4) // Make the claw open, then down
                 .build());
