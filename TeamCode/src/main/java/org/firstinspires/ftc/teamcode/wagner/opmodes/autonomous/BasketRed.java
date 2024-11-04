@@ -12,7 +12,7 @@ public class BasketRed extends BasketAutonomous {
     Pose2d basketPosition = new Pose2d(54, 53, Math.toRadians(45));
     @Override
     public Pose2d startPosition() {
-        return new Pose2d(13, -60, Math.toRadians(90);
+        return new Pose2d(13, -60, Math.toRadians(90));
     }
     @Override
     public void onStart() {
