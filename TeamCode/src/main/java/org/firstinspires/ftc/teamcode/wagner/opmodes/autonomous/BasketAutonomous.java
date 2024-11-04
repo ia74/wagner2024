@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.wagner.opmodes.autonomous;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -13,6 +14,9 @@ public class BasketAutonomous extends LinearOpMode {
     Arm arm = new Arm();
     MecanumDrive drive;
     public Pose2d startPosition() {
+        return new Pose2d(0, 0, Math.toRadians(0));
+    }
+    public Pose2d parkPosition() {
         return new Pose2d(0, 0, Math.toRadians(0));
     }
     @Override
