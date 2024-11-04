@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 
-@Autonomous(name = "Basket Blue", group="!!Autonomous")
-public class BasketBlue extends BasketAutonomous {
+@Autonomous(name = "Basket Red", group="!!Autonomous")
+public class BasketRed extends BasketAutonomous {
     Pose2d basketPosition = new Pose2d(54, 53, Math.toRadians(45));
     @Override
     public Pose2d startPosition() {
