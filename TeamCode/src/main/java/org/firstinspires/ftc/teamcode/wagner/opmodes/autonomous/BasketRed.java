@@ -20,7 +20,6 @@ public class BasketRed extends BasketAutonomous {
         claw.up();
         Actions.runBlocking(
             drive.actionBuilder(GlobalStorage.pose)
-                .lineToY(55)
                 .strafeToLinearHeading(basketPosition.position, basketPosition.heading)
                 .stopAndAdd(this::score)
                 .strafeToLinearHeading(new Vector2d(48, -37), Math.toRadians(-270))

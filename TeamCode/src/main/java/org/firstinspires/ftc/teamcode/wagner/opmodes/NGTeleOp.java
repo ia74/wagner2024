@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Mechanism;
 
 public class NGTeleOp extends LinearOpMode {
     @Override
@@ -46,7 +47,8 @@ public class NGTeleOp extends LinearOpMode {
             arm.slidePower(-gamepad2.right_stick_y);
 
             arm.rawElbowPower(gamepad2.left_stick_x);
-            arm.setShoulder(gamepad2.left_stick_y);
+
+            arm.setShoulder(gamepad2.left_stick_y, 0.1);
 
             /* SECTION: Wrist */
             if (gamepad2.right_trigger > 0.2)
@@ -63,6 +65,13 @@ public class NGTeleOp extends LinearOpMode {
 
             if (gamepad2.y) hanger.extend();
             else hanger.unextend();
+
+            telemetry.addLine();
+            telemetry.addLine(Mechanism.motorIfo(drive.leftFront, "FrontLeftMotor"));
+            telemetry.addLine(Mechanism.motorIfo(drive.rightFront, "FrontRightMotor"));
+            telemetry.addLine(Mechanism.motorIfo(drive.leftBack, "BackLeftMotor"));
+            telemetry.addLine(Mechanism.motorIfo(drive.rightBack, "BackRightMotor"));
+            telemetry.addLine();
 
             telemetry.addLine("Gamepad 1");
             telemetry.addLine("\tLeft & Right Stick: Drive");
