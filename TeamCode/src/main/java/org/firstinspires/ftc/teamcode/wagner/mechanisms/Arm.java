@@ -17,17 +17,19 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 
 @Config
 public class Arm implements Mechanism {
-    public ElapsedTime _timer;
     public DcMotor left;
     public DcMotor right;
     public CRServo elbow;
     public CRServo shoulder;
-
-    public static double shoulderPos = 0;
+    public MechanismPID pidController;
+    public static double targetPosition = 0.0;
+    public static double kP = 0.1;
+    public static double kI = 0.01;
+    public static double kD = 0.01;
+    public static double gravityCompensation = 0.2;
 
     @Override
     public void init(HardwareMap hardwareMap) {
-        _timer = new ElapsedTime();
         left = hardwareMap.get(DcMotor.class, PartsMap.ARM_LEFT.toString());
         right = hardwareMap.get(DcMotor.class, PartsMap.ARM_RIGHT.toString());
 
@@ -37,37 +39,61 @@ public class Arm implements Mechanism {
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        pidController = new MechanismPID(kP, kI, kD, gravityCompensation);
+    }
+
+    // ARM: Arm Controls
+
+    public void setTargetPosition(double position) {
+        targetPosition = position;
+        pidController.reset();
+    }
+
+    public void holdPosition() {
+        double currentPosition = getArmPosition();
+        double power = pidController.calculate(targetPosition, currentPosition);
+        slidePower(power);
+    }
+
+    public void holdPositionWithJoystick(double joystickInput) {
+        double currentPosition = getArmPosition();
+
+        double gravityCompensationPower = pidController.calculate(targetPosition, currentPosition);
+
+        double power = joystickInput + gravityCompensationPower;
+
+        slidePower(power);
+    }
+
+    public double getArmPosition() {
+        return (left.getCurrentPosition() + right.getCurrentPosition()) / 2.0;
     }
 
     public void slidePower(double pwr, double threshold) {
         if(Math.abs(pwr) > threshold) slidePower(pwr);
     }
-
     public void slidePower(double pwr) {
         left.setPower(pwr);
         right.setPower(pwr);
     }
 
-    public void setShoulder(double pos) {
-        this.shoulder.setPower(pos);
-        Arm.shoulderPos=pos;
-    }
+    // ARM: Shoulder Controls
+    public void setShoulder(double power) {this.shoulder.setPower(power);}
     public void setShoulder(double power, double threshold) {
-        if(Math.abs(power) > threshold) shoulder.setPower(power);
-    }
-    public void rawElbowPower(double power) {
-        this.elbow.setPower(power);
+        if(Math.abs(power) > threshold) setShoulder(power);
     }
 
+    // ARM: Elbow Controls
+    public void elbowPower(double power) {
+        this.elbow.setPower(power);
+    }
     public void elbowPower(double power, double threshold) {
-        if(Math.abs(power) > threshold) elbow.setPower(power);
+        if(Math.abs(power) > threshold) elbowPower(power);
     }
 
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
-                "_timer: " + _timer.milliseconds() + "\n" +
-                "Arm.shoulderPos: " + Arm.shoulderPos + "\n" +
                 Mechanism.motorIfo(left, "Motor Left") + "\n" +
                 Mechanism.motorIfo(right, "Motor Right") + "\n" +
                 Mechanism.servoIfo(elbow, "Elbow") + "\n" +

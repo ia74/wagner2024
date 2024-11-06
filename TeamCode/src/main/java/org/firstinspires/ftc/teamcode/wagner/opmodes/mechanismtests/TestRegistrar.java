@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.opmodes.NGTeleOp;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public final class TestRegistrar {
     @OpModeRegistrar
     public static void register(OpModeManager manager) {
         if(!enabled) return;
+        tests.put("TUNER: ARM", new ArmTuner());
         tests.put("Claw", new TestClaw());
         tests.put("Arm", new TestArm());
         tests.put("Hanger", new TestHanger());

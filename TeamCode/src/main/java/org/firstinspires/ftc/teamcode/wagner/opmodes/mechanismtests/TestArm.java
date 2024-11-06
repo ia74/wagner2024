@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.wagner.nggamepad.NGGamepad;
 public class TestArm extends LinearOpMode {
     @Override
     public void runOpMode() {
-        ElapsedTime time = new ElapsedTime();
+        ElapsedTime time;
         Arm arm = new Arm();
         arm.init(hardwareMap);
 
@@ -38,14 +38,14 @@ public class TestArm extends LinearOpMode {
 
         time = new ElapsedTime();
         while(time.milliseconds() < 500)
-            arm.rawElbowPower(1);
-        print("Ran elbow at 1 power for 500ms, real: " + arm._timer.milliseconds(), telemetry);
+            arm.elbowPower(1);
+        print("Ran elbow at 1 power for 500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         time = new ElapsedTime();
         while(time.milliseconds() < 500)
-            arm.rawElbowPower(-1);
-        print("Ran elbow at 1 power for 500ms, real: " + arm._timer.milliseconds(), telemetry);
+            arm.elbowPower(-1);
+        print("Ran elbow at 1 power for 500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         print("Main test complete, longer elbow will start", telemetry);
@@ -53,14 +53,14 @@ public class TestArm extends LinearOpMode {
 
         time = new ElapsedTime();
         while(time.milliseconds() < 1500)
-            arm.rawElbowPower(1);
-        print("Ran elbow at 1 power for 1500ms, real: " + arm._timer.milliseconds(), telemetry);
+            arm.elbowPower(1);
+        print("Ran elbow at 1 power for 1500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         time = new ElapsedTime();
         while(time.milliseconds() < 1500)
-            arm.rawElbowPower(-1);
-        print("Ran elbow at 1 power for 1500ms, real: " + arm._timer.milliseconds(), telemetry);
+            arm.elbowPower(-1);
+        print("Ran elbow at 1 power for 1500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         print("shoulder time", telemetry);
@@ -84,7 +84,7 @@ public class TestArm extends LinearOpMode {
             telemetry.addLine("Elbow: Gamepad1 Left Stick Y");
             telemetry.addLine("Elbow: Gamepad1 Right Stick Y");
 
-            arm.rawElbowPower(gamepad1.left_stick_x);
+            arm.elbowPower(gamepad1.left_stick_x);
             arm.setShoulder(gamepad1.right_stick_y);
             telemetry.update();
         }

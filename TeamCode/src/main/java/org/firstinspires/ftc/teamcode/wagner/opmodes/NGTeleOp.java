@@ -44,9 +44,9 @@ public class NGTeleOp extends LinearOpMode {
             drive.updatePoseEstimate();
 
             /* SECTION: Arm */
-            arm.slidePower(-gamepad2.right_stick_y);
+            arm.holdPositionWithJoystick(-gamepad2.right_stick_y);
 
-            arm.rawElbowPower(gamepad2.left_stick_x);
+            arm.elbowPower(gamepad2.left_stick_x);
 
             arm.setShoulder(gamepad2.left_stick_y, 0.1);
 

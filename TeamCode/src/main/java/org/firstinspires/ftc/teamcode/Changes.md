@@ -11,6 +11,9 @@ The latest entry will always be on the top.
 
 ## Entries
 
+# 05 November, 2024
+- Introduce a PID control system for our arm's slides, to stop gravity from pulling it down
+
 # 04 November, 2024
 - Fix & make autonomous that will access the basket derive from one class (BasketAutonomous)
 - Make BasketBlue & BasketRed work
