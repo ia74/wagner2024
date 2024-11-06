@@ -39,8 +39,8 @@ public class Arm implements Mechanism {
 
     }
 
-    public void slidePowerThreshold(double pwr, double threshold) {
-        if(pwr > threshold) slidePower(pwr);
+    public void slidePower(double pwr, double threshold) {
+        if(Math.abs(pwr) > threshold) slidePower(pwr);
     }
 
     public void slidePower(double pwr) {
@@ -52,14 +52,15 @@ public class Arm implements Mechanism {
         this.shoulder.setPower(pos);
         Arm.shoulderPos=pos;
     }
+    public void setShoulder(double power, double threshold) {
+        if(Math.abs(power) > threshold) shoulder.setPower(power);
+    }
     public void rawElbowPower(double power) {
         this.elbow.setPower(power);
     }
 
-    public void setElbowPowerFor(double power, double ms) {
-        _timer.reset();
-        while(_timer.milliseconds() < ms) rawElbowPower(power);
-        rawElbowPower(0);
+    public void elbowPower(double power, double threshold) {
+        if(Math.abs(power) > threshold) elbow.setPower(power);
     }
 
     @NonNull

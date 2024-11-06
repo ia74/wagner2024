@@ -16,6 +16,9 @@ The latest entry will always be on the top.
 - Make BasketBlue & BasketRed work
 - Create Blue & Red auto (no basket)
 - More tuning
+- Remove most of the timing from Arm
+- Build in the threshold for Arm
+- Log out motors for drive
 
 # 30 October, 2024
 - Add BasketRed visualizer (made by Hayden)
