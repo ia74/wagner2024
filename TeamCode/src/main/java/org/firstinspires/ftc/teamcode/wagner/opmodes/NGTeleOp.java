@@ -44,7 +44,7 @@ public class NGTeleOp extends LinearOpMode {
             drive.updatePoseEstimate();
 
             /* SECTION: Arm */
-            arm.holdPositionWithJoystick(-gamepad2.right_stick_y);
+            arm.slidePower(-gamepad2.right_stick_y);
 
             arm.elbowPower(gamepad2.left_stick_x);
 
@@ -63,7 +63,7 @@ public class NGTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_right)
                 claw.middle();
 
-            if (gamepad2.y) hanger.extend();
+            if (gamepad1.y) hanger.extend();
             else hanger.unextend();
 
             telemetry.addLine();

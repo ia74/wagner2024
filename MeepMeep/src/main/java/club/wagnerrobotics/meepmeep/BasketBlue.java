@@ -18,9 +18,10 @@ public class BasketBlue {
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(36, 60, Math.toRadians(-90)))
                 .lineToY(55)
-                .splineToLinearHeading(new Pose2d(54, 53, Math.toRadians(45)), 0.0)
+                .splineToLinearHeading(new Pose2d(56, 52, Math.toRadians(45)), 0.0)
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(-60, 30), Math.toRadians(270))
+                        .turnTo(Math.toRadians(270))
+                        .strafeTo(new Vector2d(-48, 35))
                 .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(54, 53), Math.toRadians(45))
                 .waitSeconds(1)

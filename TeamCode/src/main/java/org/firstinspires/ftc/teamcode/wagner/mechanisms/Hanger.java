@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 @Config
 public class Hanger implements Mechanism {
     public Servo hook;
-    public static double EXTENDED = 0.2;
+    public static double EXTENDED = 0.325;
     public static double UNEXTENDED = 0;
 
     @Override

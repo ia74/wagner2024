@@ -21,12 +21,6 @@ public class Arm implements Mechanism {
     public DcMotor right;
     public CRServo elbow;
     public CRServo shoulder;
-    public MechanismPID pidController;
-    public static double targetPosition = 0.0;
-    public static double kP = 0.1;
-    public static double kI = 0.01;
-    public static double kD = 0.01;
-    public static double gravityCompensation = 0.2;
 
     @Override
     public void init(HardwareMap hardwareMap) {
@@ -39,32 +33,7 @@ public class Arm implements Mechanism {
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        pidController = new MechanismPID(kP, kI, kD, gravityCompensation);
     }
-
-    // ARM: Arm Controls
-
-    public void setTargetPosition(double position) {
-        targetPosition = position;
-        pidController.reset();
-    }
-
-    public void holdPosition() {
-        double currentPosition = getArmPosition();
-        double power = pidController.calculate(targetPosition, currentPosition);
-        slidePower(power);
-    }
-
-    public void holdPositionWithJoystick(double joystickInput) {
-        double currentPosition = getArmPosition();
-
-        double gravityCompensationPower = pidController.calculate(targetPosition, currentPosition);
-
-        double power = joystickInput + gravityCompensationPower;
-
-        slidePower(power);
-    }
-
     public double getArmPosition() {
         return (left.getCurrentPosition() + right.getCurrentPosition()) / 2.0;
     }

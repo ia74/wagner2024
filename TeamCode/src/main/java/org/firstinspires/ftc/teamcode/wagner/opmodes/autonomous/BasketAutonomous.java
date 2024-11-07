@@ -45,10 +45,14 @@ public class BasketAutonomous extends LinearOpMode {
 
     void grabFromBelow() {
         claw.down();
+        claw.fullDown();
         claw.open();
         sleep(700);
         claw.close();
+        claw.fullClose();
+        sleep(200);
         claw.up();
+        claw.close();
     }
 
     void score() {
@@ -60,6 +64,7 @@ public class BasketAutonomous extends LinearOpMode {
         sleep(600);
         claw.close();
         claw.up();
+        sleep(150);
         arm.slidePower(-1);
         sleep(2000);
         arm.slidePower(0);
