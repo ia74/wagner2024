@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 
 @Autonomous(name = "Basket Blue", group="!!Autonomous")
 public class BasketBlue extends BasketAutonomous {
-    Pose2d basketPosition = new Pose2d(54, 49, Math.toRadians(45));
+    Pose2d basketPosition = new Pose2d(53, 48, Math.toRadians(45));
     @Override
     public Pose2d startPosition() {
         return new Pose2d(36, 60, Math.toRadians(-90));
@@ -27,14 +27,16 @@ public class BasketBlue extends BasketAutonomous {
         drive.updatePoseEstimate();
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(new Vector2d(-55, 16), Math.toRadians(270))
+                .strafeToLinearHeading(new Vector2d(-57.5, 36), Math.toRadians(270))
                         .build());
         drive.updatePoseEstimate();
         this.grabFromBelow();
         sleep(700);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
-                        .strafeToLinearHeading(basketPosition.position, basketPosition.heading)
+                        .lineToY(basketPosition.position.y - 10)
+                        .strafeTo(basketPosition.position)
+                        .turnTo(basketPosition.heading)
                         .build()
         );
         this.score();

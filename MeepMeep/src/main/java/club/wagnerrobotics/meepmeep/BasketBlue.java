@@ -20,10 +20,12 @@ public class BasketBlue {
                 .lineToY(55)
                 .splineToLinearHeading(new Pose2d(56, 52, Math.toRadians(45)), 0.0)
                 .waitSeconds(1)
-                        .turnTo(Math.toRadians(270))
-                        .strafeTo(new Vector2d(-48, 35))
+                .strafeToLinearHeading(new Vector2d(-57.5, 12), Math.toRadians(270))
+
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(54, 53), Math.toRadians(45))
+                .turnTo(Math.toRadians(45))
+                        .lineToY(53)
+                .strafeTo(new Vector2d(54, 53))
                 .waitSeconds(1)
                 .build());
 
