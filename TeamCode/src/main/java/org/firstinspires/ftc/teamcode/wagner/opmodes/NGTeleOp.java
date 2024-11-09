@@ -16,12 +16,16 @@ import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Mechanism;
 
+@Config
 public class NGTeleOp extends LinearOpMode {
+    public static double slowModeMultiplier = 0.7;
+    public static double extraSlowModeMultiplier = 0.4;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, GlobalStorage.pose);
 
+        double power = 1;
         Claw claw = new Claw();
         Hanger hanger = new Hanger();
         Arm arm = new Arm();
@@ -36,12 +40,16 @@ public class NGTeleOp extends LinearOpMode {
             /* SECTION: Drive */
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
+                            -gamepad1.left_stick_y * power,
+                            -gamepad1.left_stick_x * power
                     ),
-                    -gamepad1.right_stick_x
+                    -gamepad1.right_stick_x * power
             ));
             drive.updatePoseEstimate();
+
+            if(gamepad1.left_bumper) power = slowModeMultiplier;
+            else if(gamepad1.right_bumper) power = extraSlowModeMultiplier;
+            else power = 1;
 
             /* SECTION: Arm */
             arm.slidePower(-gamepad2.right_stick_y);

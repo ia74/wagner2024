@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 
 @Autonomous(name = "Basket Blue", group="!!Autonomous")
 public class BasketBlue extends BasketAutonomous {
-    Pose2d basketPosition = new Pose2d(53, 48, Math.toRadians(45));
+    Pose2d basketPosition = new Pose2d(52, 53, Math.toRadians(45));
     @Override
     public Pose2d startPosition() {
-        return new Pose2d(36, 60, Math.toRadians(-90));
+        return new Pose2d(35.5, 61.5, Math.toRadians(-90));
     }
     @Override
     public void onStart() {
@@ -20,23 +20,10 @@ public class BasketBlue extends BasketAutonomous {
         claw.up();
         Actions.runBlocking(
             drive.actionBuilder(startPosition())
-                .lineToY(55)
-                .splineToLinearHeading(basketPosition, 0.0)
-                    .build());
-        this.score();
-        drive.updatePoseEstimate();
-        Actions.runBlocking(
-                drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(new Vector2d(-57.5, 36), Math.toRadians(270))
-                        .build());
-        drive.updatePoseEstimate();
-        this.grabFromBelow();
-        sleep(700);
-        Actions.runBlocking(
-                drive.actionBuilder(drive.pose)
-                        .lineToY(basketPosition.position.y - 10)
-                        .strafeTo(basketPosition.position)
-                        .turnTo(basketPosition.heading)
+                    .lineToY(55)
+                    .splineToLinearHeading(basketPosition, 0.0)
+                    .stopAndAdd(this::score)
+                    .strafeToLinearHeading(new Vector2d( -60, 58), Math.toRadians(0))
                         .build()
         );
         this.score();

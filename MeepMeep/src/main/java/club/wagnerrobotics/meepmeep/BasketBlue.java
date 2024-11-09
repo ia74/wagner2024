@@ -10,23 +10,28 @@ import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class BasketBlue {
+    public Pose2d startPosition() {
+        return new Pose2d(35.5, 61.5, Math.toRadians(-90));
+    }
+    public static void score() {
+    }
+    public static void grabFromBelow() {
+
+    }
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(650);
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(80, 80, Math.toRadians(180), Math.toRadians(180), 30)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(36, 60, Math.toRadians(-90)))
-                .lineToY(55)
-                .splineToLinearHeading(new Pose2d(56, 52, Math.toRadians(45)), 0.0)
-                .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(-57.5, 12), Math.toRadians(270))
 
+
+        Pose2d basketPosition = new Pose2d(52, 53, Math.toRadians(45));
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(35.5, 61.5, Math.toRadians(-90)))
+                .lineToY(55)
+                .splineToLinearHeading(basketPosition, 0.0)
                 .waitSeconds(1)
-                .turnTo(Math.toRadians(45))
-                        .lineToY(53)
-                .strafeTo(new Vector2d(54, 53))
-                .waitSeconds(1)
+                        .strafeToLinearHeading(new Vector2d( -60, 58), Math.toRadians(0))
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)

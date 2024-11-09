@@ -4,12 +4,12 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
-
-@Autonomous(name = "Basket Red", group="!!Autonomous")
-public class BasketRed extends BasketAutonomous {
-    Pose2d basketPosition = new Pose2d(-53, -54, Math.toRadians(225));
+@Disabled
+@Autonomous(name = "Clip Red", group="!!Autonomous")
+public class ClipRed extends BasketAutonomous {
+    Pose2d barPosition = new Pose2d(-3, -33.0, Math.toRadians(90));
     @Override
     public Pose2d startPosition() {
         return new Pose2d(-35.5, -61.5, Math.toRadians(90));
@@ -20,10 +20,15 @@ public class BasketRed extends BasketAutonomous {
         claw.up();
         Actions.runBlocking(
                 drive.actionBuilder(startPosition())
-                        .strafeToLinearHeading(basketPosition.position, basketPosition.heading)
-                        .stopAndAdd(this::score)
-                        .turnTo(Math.toRadians(90))
-
+                        .strafeToLinearHeading(barPosition.position, barPosition.heading)
+                        .stopAndAdd(() -> {
+                            arm.slidePower(1);
+                            sleep(1000);
+                            arm.slidePower(0);
+                            claw.down();
+                            sleep(850);
+                            claw.open();
+                        })
                         .strafeTo(new Vector2d( 58, -60))
                         .build()
         );
