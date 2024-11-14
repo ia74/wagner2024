@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
+import org.firstinspires.ftc.teamcode.wagner.Toggleable;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
@@ -26,6 +27,10 @@ public class NGTeleOp extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, GlobalStorage.pose);
 
         double power = 1;
+        Toggleable pullDrive = new Toggleable();
+        Toggleable clawClosed = new Toggleable();
+        Toggleable hookOut = new Toggleable();
+
         Claw claw = new Claw();
         Hanger hanger = new Hanger();
         Arm arm = new Arm();
@@ -54,12 +59,15 @@ public class NGTeleOp extends LinearOpMode {
             /* SECTION: Arm */
             arm.slidePower(-gamepad2.right_stick_y);
 
-            arm.elbowPower(gamepad2.left_stick_x);
+            float lsx = gamepad2.left_stick_x;
+            if(lsx > 0.1) arm.elbowPower(1);
+            else if(lsx < -0.1) arm.elbowPower(-1);
+            else arm.elbowPower(0);
 
-            arm.setShoulder(gamepad2.left_stick_y, 0.1);
+            arm.setShoulder(gamepad2.left_stick_y);
 
             /* SECTION: Wrist */
-            if (gamepad2.right_trigger > 0.2)
+            if (clawClosed.state)
                 claw.openClaw(Claw.clawClosedPosition);
             else
                 claw.openClaw(Claw.clawOpenPosition);
@@ -71,33 +79,42 @@ public class NGTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_right)
                 claw.middle();
 
-            if (gamepad1.y) hanger.extend();
+            if(hookOut.state)  hanger.extend();
             else hanger.unextend();
 
-            telemetry.addLine();
-            telemetry.addLine(Mechanism.motorIfo(drive.leftFront, "FrontLeftMotor"));
-            telemetry.addLine(Mechanism.motorIfo(drive.rightFront, "FrontRightMotor"));
-            telemetry.addLine(Mechanism.motorIfo(drive.leftBack, "BackLeftMotor"));
-            telemetry.addLine(Mechanism.motorIfo(drive.rightBack, "BackRightMotor"));
-            telemetry.addLine();
+            clawClosed.update(gamepad2.right_trigger > 0.2);
+            hookOut.update(gamepad1.y);
+            pullDrive.update(gamepad2.options);
+
+            if(pullDrive.state) {
+                telemetry.addLine();
+                telemetry.addLine(Mechanism.motorIfo(drive.leftFront, "FrontLeftMotor"));
+                telemetry.addLine(Mechanism.motorIfo(drive.rightFront, "FrontRightMotor"));
+                telemetry.addLine(Mechanism.motorIfo(drive.leftBack, "BackLeftMotor"));
+                telemetry.addLine(Mechanism.motorIfo(drive.rightBack, "BackRightMotor"));
+                telemetry.addLine();
+            }
 
             telemetry.addLine("Gamepad 1");
             telemetry.addLine("\tLeft & Right Stick: Drive");
+            telemetry.addLine("\tY: Hanger Hook Extend (TOGGLE)");
             telemetry.addLine();
             telemetry.addLine("Gamepad 2");
+            telemetry.addLine("\tOptions: Pull extra info (TOGGLE)");
             telemetry.addLine("\tLeft Stick X: Elbow");
             telemetry.addLine("\tLeft Stick Y: Shoulder");
             telemetry.addLine("\tRight Stick Y: Arm Slides");
-            telemetry.addLine("\tY: Hanger Hook Extend (HOLD)");
-            telemetry.addLine("\tRight Trigger: Claw Close (HOLD)");
+            telemetry.addLine("\tRight Trigger: Claw Close (TOGGLE)");
             telemetry.addLine("\tD-Pad:");
             telemetry.addLine("\t\tUp: Claw UP");
             telemetry.addLine("\t\tDown: Claw DOWN");
             telemetry.addLine("\t\tRight: Claw Middle");
             telemetry.addLine();
-            telemetry.addLine(arm.toString());
-            telemetry.addLine(claw.toString());
-            telemetry.addLine(hanger.toString());
+            if(pullDrive.state) {
+                telemetry.addLine(arm.toString());
+                telemetry.addLine(claw.toString());
+                telemetry.addLine(hanger.toString());
+            }
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
