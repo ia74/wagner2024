@@ -14,7 +14,7 @@ public class Claw implements Mechanism {
     public Servo claw;
     public Servo wrist;
     public static double clawZero = 0;
-    public static double clawOpenPosition = 0.4;
+    public static double clawOpenPosition = -1;
     public static double clawClosedPosition = 1;
     public static double clawFullOpen = -1;
     public static double clawFullClose = 1;
