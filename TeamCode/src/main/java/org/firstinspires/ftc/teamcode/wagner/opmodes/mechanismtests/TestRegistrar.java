@@ -26,6 +26,7 @@ public final class TestRegistrar {
         if(!enabled) return;
         tests.put("TUNER: ARM", new ArmTuner());
         tests.put("Claw", new TestClaw());
+        tests.put("Lights", new TestLights());
         tests.put("Arm", new TestArm());
         tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());

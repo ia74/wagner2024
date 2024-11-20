@@ -19,7 +19,11 @@ public class Lights implements Mechanism {
     }
 
     public void green() {
+        revBlinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+    }
 
+    public void off() {
+        revBlinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
     }
 
     @NonNull
