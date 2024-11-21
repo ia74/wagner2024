@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -17,6 +18,16 @@ import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Mechanism;
 
+/*
+public static String[] names = {
+        "808 Essentially Means Crashout",
+        "Estoy Gay: The Return",
+        "New Gen TeleOp",
+        "Spicy Bucket lives on",
+        "When the knee surgery is tomorrow"
+};
+ */
+@TeleOp(name = "Knee Surgery")
 @Config
 public class NGTeleOp extends LinearOpMode {
     public static double slowModeMultiplier = 0.7;

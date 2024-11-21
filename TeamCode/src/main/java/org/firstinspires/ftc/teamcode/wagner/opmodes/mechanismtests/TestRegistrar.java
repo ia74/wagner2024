@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMetaAndClass;
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.opmodes.NGTeleOp;
@@ -25,14 +26,12 @@ public final class TestRegistrar {
     public static void register(OpModeManager manager) {
         if(!enabled) return;
         tests.put("TUNER: ARM", new ArmTuner());
-        tests.put("Claw", new TestClaw());
+        tests.put("ClaSDFsdflkjsdw", new TestClaw());
         tests.put("Lights", new TestLights());
         tests.put("Arm", new TestArm());
         tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());
         tests.put("Motor Direction", new TestMotors());
-
-
         for(Map.Entry<String, LinearOpMode> set : tests.entrySet()) {
             OpModeMeta meta = new OpModeMeta.Builder()
                     .setName("Test " + set.getKey())
