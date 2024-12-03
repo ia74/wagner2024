@@ -56,6 +56,8 @@ public class NGTeleOp extends LinearOpMode {
 
         lights.breathRed();
 
+        boolean isDoingAction = false;
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -79,19 +81,29 @@ public class NGTeleOp extends LinearOpMode {
             float lsx = gamepad2.left_stick_x;
             if(lsx > 0.1) {
                 arm.elbowPower(1);
+                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                isDoingAction = true;
             } else if(lsx < -0.1) {
                 arm.elbowPower(-1);
+                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+                isDoingAction = true;
             }
-            else arm.elbowPower(0);
+            else {
+                arm.elbowPower(0);
+                isDoingAction = false;
+            }
 
             arm.setShoulder(gamepad2.left_stick_y);
 
             /* SECTION: Wrist */
             if (gamepad2.right_trigger > 0.2) {
                 claw.openClaw(Claw.clawClosedPosition);
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE);
+                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE);
+                isDoingAction = true;
             } else {
                 claw.openClaw(Claw.clawOpenPosition);
+                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+                isDoingAction = false;
             }
 
             if (gamepad2.dpad_up)
