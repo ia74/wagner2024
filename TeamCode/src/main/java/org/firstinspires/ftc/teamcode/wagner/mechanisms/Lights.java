@@ -18,6 +18,14 @@ public class Lights implements Mechanism {
         revBlinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, PartsMap.LIGHT_BLINKIN.toString());
     }
 
+    public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+        revBlinkinLedDriver.setPattern(pattern);
+    }
+
+    public void breathRed() {
+        revBlinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+    }
+
     public void green() {
         revBlinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }

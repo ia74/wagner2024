@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.wagner.Toggleable;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
+import org.firstinspires.ftc.teamcode.wagner.mechanisms.Lights;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Mechanism;
 
 /*
@@ -45,10 +47,14 @@ public class NGTeleOp extends LinearOpMode {
         Claw claw = new Claw();
         Hanger hanger = new Hanger();
         Arm arm = new Arm();
+        Lights lights = new Lights();
 
         arm.init(hardwareMap);
         claw.init(hardwareMap);
         hanger.init(hardwareMap);
+        lights.init(hardwareMap);
+
+        lights.breathRed();
 
         waitForStart();
 
@@ -71,17 +77,22 @@ public class NGTeleOp extends LinearOpMode {
             arm.slidePower(-gamepad2.right_stick_y);
 
             float lsx = gamepad2.left_stick_x;
-            if(lsx > 0.1) arm.elbowPower(1);
-            else if(lsx < -0.1) arm.elbowPower(-1);
+            if(lsx > 0.1) {
+                arm.elbowPower(1);
+            } else if(lsx < -0.1) {
+                arm.elbowPower(-1);
+            }
             else arm.elbowPower(0);
 
             arm.setShoulder(gamepad2.left_stick_y);
 
             /* SECTION: Wrist */
-            if (gamepad2.right_trigger > 0.2) // clawClosed.state
+            if (gamepad2.right_trigger > 0.2) {
                 claw.openClaw(Claw.clawClosedPosition);
-            else
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE);
+            } else {
                 claw.openClaw(Claw.clawOpenPosition);
+            }
 
             if (gamepad2.dpad_up)
                 claw.up();
