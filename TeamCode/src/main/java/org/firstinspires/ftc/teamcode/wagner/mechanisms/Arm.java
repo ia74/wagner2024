@@ -29,12 +29,16 @@ public class Arm implements Mechanism {
 
 //        elbow = hardwareMap.get(CRServo.class, PartsMap.ARM_ELBOW.toString());
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
+        shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
 
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public double getArmPosition() {
         return (left.getCurrentPosition() + right.getCurrentPosition()) / 2.0;
+    }
+    public double getShoulderPosition() {
+        return shoulder.getCurrentPosition();
     }
     public void slidePower(double pwr) {
         left.setPower(pwr);

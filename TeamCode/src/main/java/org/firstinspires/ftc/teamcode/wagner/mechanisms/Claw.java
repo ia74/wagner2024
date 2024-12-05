@@ -30,7 +30,6 @@ public class Claw implements Mechanism {
         claw = hardwareMap.get(Servo.class, PartsMap.CLAW.toString());
         wrist = hardwareMap.get(Servo.class, PartsMap.WRIST.toString());
         claw.setDirection(Servo.Direction.REVERSE);
-        wrist.setDirection(Servo.Direction.REVERSE);
     }
 
     public void up() {wrist.setPosition(wristUpPosition);}

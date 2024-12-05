@@ -34,6 +34,7 @@ public static String[] names = {
 public class NGTeleOp extends LinearOpMode {
     public static double slowModeMultiplier = 0.7;
     public static double extraSlowModeMultiplier = 0.4;
+    public static double shoulderLimit = 2442;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
@@ -42,16 +43,13 @@ public class NGTeleOp extends LinearOpMode {
         double power = 1;
         Toggleable pullDrive = new Toggleable();
         Toggleable clawClosed = new Toggleable();
-        Toggleable hookOut = new Toggleable();
 
         Claw claw = new Claw();
-        Hanger hanger = new Hanger();
         Arm arm = new Arm();
         Lights lights = new Lights();
 
         arm.init(hardwareMap);
         claw.init(hardwareMap);
-        hanger.init(hardwareMap);
         lights.init(hardwareMap);
 
         lights.breathRed();
@@ -75,9 +73,14 @@ public class NGTeleOp extends LinearOpMode {
             else if(gamepad1.right_bumper) power = extraSlowModeMultiplier;
             else power = 1;
 
+            double shoulderPos = arm.getShoulderPosition();
             /* SECTION: Arm */
             arm.slidePower(-gamepad2.right_stick_y);
-            arm.setShoulder(gamepad2.left_stick_y);
+
+            if(shoulderPos < shoulderLimit) arm.setShoulder(-gamepad2.left_stick_y);
+            else if(-gamepad2.left_stick_y < 0.2) arm.setShoulder(-gamepad2.left_stick_y);
+
+            if(shoulderPos >= shoulderLimit) arm.setShoulder(0);
 
             /* SECTION: Wrist */
             if (gamepad2.right_trigger > 0.2) {
@@ -97,12 +100,8 @@ public class NGTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_right)
                 claw.middle();
 
-            if(hookOut.state)  hanger.extend();
-            else hanger.unextend();
-
             clawClosed.update(gamepad2.right_trigger > 0.2);
-            hookOut.update(gamepad1.y);
-            pullDrive.update(gamepad2.options);
+            pullDrive.update(gamepad2.share);
 
             if(pullDrive.state) {
                 telemetry.addLine();
@@ -131,7 +130,6 @@ public class NGTeleOp extends LinearOpMode {
             if(pullDrive.state) {
                 telemetry.addLine(arm.toString());
                 telemetry.addLine(claw.toString());
-                telemetry.addLine(hanger.toString());
             }
             telemetry.update();
 
