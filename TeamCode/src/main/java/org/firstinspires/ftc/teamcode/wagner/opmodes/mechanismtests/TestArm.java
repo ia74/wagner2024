@@ -38,13 +38,13 @@ public class TestArm extends LinearOpMode {
 
         time = new ElapsedTime();
         while(time.milliseconds() < 500)
-            arm.elbowPower(1);
+            arm.setShoulder(1);
         print("Ran elbow at 1 power for 500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         time = new ElapsedTime();
         while(time.milliseconds() < 500)
-            arm.elbowPower(-1);
+            arm.setShoulder(-1);
         print("Ran elbow at 1 power for 500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
@@ -53,13 +53,13 @@ public class TestArm extends LinearOpMode {
 
         time = new ElapsedTime();
         while(time.milliseconds() < 1500)
-            arm.elbowPower(1);
+            arm.setShoulder(1);
         print("Ran elbow at 1 power for 1500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
         time = new ElapsedTime();
         while(time.milliseconds() < 1500)
-            arm.elbowPower(-1);
+            arm.setShoulder(-1);
         print("Ran elbow at 1 power for 1500ms, real: " + time.milliseconds(), telemetry);
         sleep(1000);
 
@@ -80,12 +80,9 @@ public class TestArm extends LinearOpMode {
 
         while(opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Shoulder", arm.shoulder.getPower());
-            telemetry.addData("Elbow", arm.elbow.getPower());
-            telemetry.addLine("Elbow: Gamepad1 Left Stick Y");
-            telemetry.addLine("Elbow: Gamepad1 Right Stick Y");
+            telemetry.addLine("Shoulder: Gamepad1 Left Stick Y");
 
-            arm.elbowPower(gamepad1.left_stick_x);
-            arm.setShoulder(gamepad1.right_stick_y);
+            arm.setShoulder(gamepad1.left_stick_y);
             telemetry.update();
         }
     }

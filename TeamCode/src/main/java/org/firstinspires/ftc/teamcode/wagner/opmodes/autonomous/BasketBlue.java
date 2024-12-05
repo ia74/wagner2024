@@ -23,9 +23,23 @@ public class BasketBlue extends BasketAutonomous {
                     .lineToY(55)
                     .splineToLinearHeading(basketPosition, 0.0)
                     .stopAndAdd(this::score)
-                    .strafeToLinearHeading(new Vector2d( -60, 58), Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(47, 41, Math.toRadians(-90)),0)
+                    .stopAndAdd(this::grab)
+                    .splineToLinearHeading(basketPosition, 0.0)
+                    .stopAndAdd(this::score)
                         .build()
         );
         this.score();
+    }
+    int timeForShoulder = 250;
+    void grab() {
+        arm.setShoulder(1);
+        sleep(timeForShoulder);
+        arm.setShoulder(0);
+        claw.close();
+        sleep(15);
+        arm.setShoulder(-1);
+        sleep(timeForShoulder);
+        arm.setShoulder(0);
     }
 }

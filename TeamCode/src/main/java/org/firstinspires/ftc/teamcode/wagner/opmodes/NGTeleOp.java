@@ -77,22 +77,6 @@ public class NGTeleOp extends LinearOpMode {
 
             /* SECTION: Arm */
             arm.slidePower(-gamepad2.right_stick_y);
-
-            float lsx = gamepad2.left_stick_x;
-            if(lsx > 0.1) {
-                arm.elbowPower(1);
-                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                isDoingAction = true;
-            } else if(lsx < -0.1) {
-                arm.elbowPower(-1);
-                if(!isDoingAction) lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
-                isDoingAction = true;
-            }
-            else {
-                arm.elbowPower(0);
-                isDoingAction = false;
-            }
-
             arm.setShoulder(gamepad2.left_stick_y);
 
             /* SECTION: Wrist */

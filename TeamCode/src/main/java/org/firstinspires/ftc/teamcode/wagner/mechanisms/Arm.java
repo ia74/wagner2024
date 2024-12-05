@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.wagner.PartsMap;
 public class Arm implements Mechanism {
     public DcMotor left;
     public DcMotor right;
-    public CRServo elbow;
+//    public CRServo elbow;
     public DcMotor shoulder;
 
     @Override
@@ -27,7 +27,7 @@ public class Arm implements Mechanism {
         left = hardwareMap.get(DcMotor.class, PartsMap.ARM_LEFT.toString());
         right = hardwareMap.get(DcMotor.class, PartsMap.ARM_RIGHT.toString());
 
-        elbow = hardwareMap.get(CRServo.class, PartsMap.ARM_ELBOW.toString());
+//        elbow = hardwareMap.get(CRServo.class, PartsMap.ARM_ELBOW.toString());
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
 
         left.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -43,15 +43,15 @@ public class Arm implements Mechanism {
     // ARM: Shoulder Controls
     public void setShoulder(double power) {this.shoulder.setPower(power);}
     // ARM: Elbow Controls
-    public void elbowPower(double power) {
-        this.elbow.setPower(power);
-    }
+//    public void elbowPower(double power) {
+//        this.elbow.setPower(power);
+//    }
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
                 Mechanism.motorIfo(left, "Motor Left") + "\n" +
                 Mechanism.motorIfo(right, "Motor Right") + "\n" +
-                Mechanism.motorIfo(shoulder, "Shoulder") + "\n" +
-                Mechanism.servoIfo(elbow, "Elbow") + "\n";
+                Mechanism.motorIfo(shoulder, "Shoulder") + "\n";
+//                Mechanism.servoIfo(elbow, "Elbow") + "\n";
     }
 }

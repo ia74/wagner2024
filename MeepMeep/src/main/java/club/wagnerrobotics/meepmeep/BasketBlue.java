@@ -31,7 +31,9 @@ public class BasketBlue {
                 .lineToY(55)
                 .splineToLinearHeading(basketPosition, 0.0)
                 .waitSeconds(1)
-                        .strafeToLinearHeading(new Vector2d( -60, 58), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(47, 41, Math.toRadians(-90)),0)
+                .waitSeconds(1)
+                .splineToLinearHeading(basketPosition, 0.0)
                 .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
