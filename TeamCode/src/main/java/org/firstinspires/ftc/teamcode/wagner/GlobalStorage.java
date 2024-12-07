@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 
 public class GlobalStorage {
-    public static boolean testsEnabled = true;
+    public static boolean testsEnabled = false;
     public static String testOpModeGroup = "tuners";
     public static OpModeMeta.Flavor testOpModeFlavor = OpModeMeta.Flavor.AUTONOMOUS;
     public static OpModeMeta.Source testOpModeSource = OpModeMeta.Source.BLOCKLY;

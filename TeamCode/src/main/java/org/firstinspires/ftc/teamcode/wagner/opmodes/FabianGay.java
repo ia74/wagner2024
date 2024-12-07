@@ -7,8 +7,10 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -16,9 +18,13 @@ import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 import org.firstinspires.ftc.teamcode.wagner.Toggleable;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
-import org.firstinspires.ftc.teamcode.wagner.mechanisms.Hanger;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Lights;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Mechanism;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /*
 public static String[] names = {
@@ -29,11 +35,13 @@ public static String[] names = {
         "When the knee surgery is tomorrow"
 };
  */
-@TeleOp(name = "Knee Surgery")
+@TeleOp(name = "Fabian needs knee surgery Record")
 @Config
-public class NGTeleOp extends LinearOpMode {
-    public static double slowModeMultiplier = 0.6;
-    public static double extraSlowModeMultiplier = 0.3;
+@Disabled
+public class FabianGay extends LinearOpMode {
+    ArrayList<Frame> frames = new ArrayList<>();
+    public static double slowModeMultiplier = 0.7;
+    public static double extraSlowModeMultiplier = 0.4;
     public static double shoulderLimitMin = 100;
     public static double shoulderLimitMax = 2442;
     @Override
@@ -56,10 +64,12 @@ public class NGTeleOp extends LinearOpMode {
         lights.breathRed();
 
         boolean isDoingAction = false;
+        boolean shouldRecord = true;
 
         waitForStart();
-
-        while (opModeIsActive() && !isStopRequested()) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (shouldRecord) {
             /* SECTION: Drive */
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
@@ -105,40 +115,36 @@ public class NGTeleOp extends LinearOpMode {
             clawClosed.update(gamepad2.right_trigger > 0.2);
             pullDrive.update(gamepad2.share);
 
-            if(pullDrive.state) {
-                telemetry.addLine();
-                telemetry.addLine(Mechanism.motorIfo(drive.leftFront, "FrontLeftMotor"));
-                telemetry.addLine(Mechanism.motorIfo(drive.rightFront, "FrontRightMotor"));
-                telemetry.addLine(Mechanism.motorIfo(drive.leftBack, "BackLeftMotor"));
-                telemetry.addLine(Mechanism.motorIfo(drive.rightBack, "BackRightMotor"));
-                telemetry.addLine();
-            }
-
-            telemetry.addLine("Gamepad 1");
-            telemetry.addLine("\tLeft & Right Stick: Drive");
-            telemetry.addLine("\tY: Hanger Hook Extend (TOGGLE)");
-            telemetry.addLine();
-            telemetry.addLine("Gamepad 2");
-            telemetry.addLine("\tOptions: Pull extra info (TOGGLE)");
-            telemetry.addLine("\tLeft Stick X: Elbow");
-            telemetry.addLine("\tLeft Stick Y: Shoulder");
-            telemetry.addLine("\tRight Stick Y: Arm Slides");
-            telemetry.addLine("\tRight Trigger: Claw Close (TOGGLE)");
-            telemetry.addLine("\tD-Pad:");
-            telemetry.addLine("\t\tUp: Claw UP");
-            telemetry.addLine("\t\tDown: Claw DOWN");
-            telemetry.addLine("\t\tRight: Claw Middle");
-            telemetry.addLine();
-            if(pullDrive.state) {
-                telemetry.addLine(arm.toString());
-                telemetry.addLine(claw.toString());
-            }
-            telemetry.update();
-
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");
             Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+            if(gamepad2.options) shouldRecord = false;
+
+            frames.add(new Frame(
+                new double[] {
+                        drive.leftFront.getPower(), drive.rightFront.getPower(),
+                        drive.leftBack.getPower(), drive.rightBack.getPower()
+                },
+                    arm.left.getPower(),
+                    claw.claw.getPosition(), arm.getShoulderPosition(), timer.nanoseconds()
+            ));
+
+            telemetry.addLine("I think im recording");
+            telemetry.update();
+        }
+
+        try {
+        FileWriter fileWriter = new FileWriter("Test-Frame.txt");
+            String output = "";
+            for(Frame frame : frames) {
+                output += frame.toString() + "\n";
+            }
+            fileWriter.write(output);
+            fileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

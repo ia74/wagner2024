@@ -4,10 +4,12 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 
 @Autonomous(name = "Blue", group="!!Autonomous")
+@Disabled
 public class Blue extends BasketAutonomous {
     Pose2d basketPosition = new Pose2d(54, 53, Math.toRadians(45));
     @Override

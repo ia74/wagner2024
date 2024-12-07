@@ -28,6 +28,7 @@ public final class TestRegistrar {
         tests.put("TUNER: ARM", new ArmTuner());
         tests.put("ClaSDFsdflkjsdw", new TestClaw());
         tests.put("Lights", new TestLights());
+        tests.put("Finches", new TestMotorsInch());
         tests.put("Arm", new TestArm());
         tests.put("Hanger", new TestHanger());
         tests.put("RoadRunner", new TestRoadRunner());

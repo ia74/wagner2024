@@ -31,6 +31,10 @@ public class Arm implements Mechanism {
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
         shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
     }

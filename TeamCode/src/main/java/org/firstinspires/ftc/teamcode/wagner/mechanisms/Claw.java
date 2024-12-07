@@ -19,9 +19,9 @@ public class Claw implements Mechanism {
     public static double clawFullOpen = -1;
     public static double clawFullClose = 1;
 
-    public static double wristUpPosition = 0.9;
-    public static double wristMiddlePosition = 0.6;
-    public static double wristDownPosition = 0.5;
+    public static double wristUpPosition = 0.8;
+    public static double wristMiddlePosition = 0.4;
+    public static double wristDownPosition = 0.1;
     public static double wristFullUp = 1;
     public static double wristFullDown = -1;
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.wagner.opmodes.autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -11,10 +12,12 @@ import org.firstinspires.ftc.teamcode.wagner.GlobalStorage;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.wagner.mechanisms.Claw;
 
+@Config
 public class BasketAutonomous extends LinearOpMode {
     Claw claw = new Claw();
     Arm arm = new Arm();
     MecanumDrive drive;
+    int timeForSlideNew = 2500;
     public Pose2d startPosition() {
         return new Pose2d(0, 0, Math.toRadians(0));
     }
@@ -57,16 +60,17 @@ public class BasketAutonomous extends LinearOpMode {
 
     void score() {
         arm.slidePower(1);
-        sleep(2500);
+        sleep(timeForSlideNew);
         arm.slidePower(0);
         claw.down();
+        sleep(250);
         claw.open();
-        sleep(600);
+        sleep(700);
         claw.close();
         claw.up();
         sleep(150);
         arm.slidePower(-1);
-        sleep(2000);
+        sleep(timeForSlideNew);
         arm.slidePower(0);
     }
 }
