@@ -32,4 +32,7 @@ public enum PartsMap {
     }
     @NonNull
     public String toString() {return mapped;}
+
+    public static class PathingTunersRegistrar {
+    }
 }

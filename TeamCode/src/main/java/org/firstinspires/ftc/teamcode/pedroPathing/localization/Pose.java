@@ -31,6 +31,9 @@ public class Pose {
         setY(setY);
         setHeading(setHeading);
     }
+    public static Pose fromRoadRunner(double x, double y, double heading) {
+        return new Pose(x+72, y+72, heading);
+    }
 
     /**
      * This creates a new Pose from x and y inputs. The heading is set to 0.
