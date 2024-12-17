@@ -13,6 +13,12 @@ public class Subsystem {
     public Subsystem(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
+    static void resetMotor(DcMotor motor) {resetMotor(motor, DcMotor.RunMode.RUN_USING_ENCODER);}
+    static void resetMotor(DcMotor motor, DcMotor.RunMode mode) {
+        motor.setPower(0);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(mode);
+    }
     static String motorIfo(DcMotor motor, String title) {
         return title + ":\n" +
                 "\tName: " + motor.getDeviceName() + "\n" +

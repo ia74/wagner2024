@@ -14,17 +14,12 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 public class Claw extends Subsystem {
     public Servo claw;
     public Servo wrist;
-    public static double clawZero = 0;
     public static double clawOpenPosition = -1;
     public static double clawClosedPosition = 1;
-    public static double clawFullOpen = -1;
-    public static double clawFullClose = 1;
 
     public static double wristUpPosition = 0.8;
     public static double wristMiddlePosition = 0.4;
     public static double wristDownPosition = 0.1;
-    public static double wristFullUp = 1;
-    public static double wristFullDown = -1;
 
     public Claw(HardwareMap hardwareMap) {
         super(hardwareMap);
@@ -34,32 +29,19 @@ public class Claw extends Subsystem {
     }
 
     public void up() {wrist.setPosition(wristUpPosition);}
-    public void down() {wrist.setPosition(wristDownPosition);}
     public void middle() {wrist.setPosition(wristMiddlePosition);}
-    public void fullDown() {wrist.setPosition(wristFullDown);}
-    public void fullUp() {wrist.setPosition(wristFullUp);}
+    public void down() {wrist.setPosition(wristDownPosition);}
 
-    public void clawZero() {claw.setPosition(clawZero);}
     public void close() {claw.setPosition(clawClosedPosition);}
     public void open() {claw.setPosition(clawOpenPosition);}
-    public void fullOpen() {claw.setPosition(clawFullOpen);}
-    public void fullClose() {claw.setPosition(clawFullClose);}
-
-    public void setWrist(double pos) {
-        wrist.setPosition(pos);
-    }
-
-    public void openClaw(double pos) {
-        claw.setPosition(pos);
-    }
 
     @NonNull
     public String toString() {
         return "-- [Mechanism: Claw] --\n" +
-                "Claw.clawOpenPosition: " + Claw.clawOpenPosition + "\n" +
-                "Claw.clawClosedPosition: " + Claw.clawClosedPosition + "\n" +
-                "Claw.wristUpPosition: " + Claw.wristUpPosition + "\n" +
-                "Claw.wristDownPosition: " + Claw.wristDownPosition + "\n" +
+                "Open Position: " + Claw.clawOpenPosition + "\n" +
+                "Closed Position: " + Claw.clawClosedPosition + "\n" +
+                "Up Position: " + Claw.wristUpPosition + "\n" +
+                "Down Position: " + Claw.wristDownPosition + "\n" +
                 Subsystem.servoIfo(claw, "Claw") + "\n" +
                 Subsystem.servoIfo(wrist, "Wrist") + "\n";
     }

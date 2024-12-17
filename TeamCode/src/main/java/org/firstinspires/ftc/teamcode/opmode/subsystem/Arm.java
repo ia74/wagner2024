@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 @Config
 public class Arm extends Subsystem {
+    public static int num = 0;
     public DcMotor left;
     public DcMotor right;
     public DcMotor shoulder;
@@ -28,22 +29,29 @@ public class Arm extends Subsystem {
 
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        Subsystem.resetMotor(left);
+        Subsystem.resetMotor(right);
     }
+
     public double getArmPosition() {
         return (left.getCurrentPosition() + right.getCurrentPosition()) / 2.0;
     }
-    public double getShoulderPosition() {
-        return shoulder.getCurrentPosition();
-    }
-    public void slidePower(double pwr) {
+
+    public void setSlidePower(double pwr) {
         left.setPower(pwr);
         right.setPower(pwr);
     }
-    public void setShoulder(double power) {this.shoulder.setPower(power);}
+
+    public void setShoulderPower(double power) {this.shoulder.setPower(power);}
+    public double getShoulderPosition() {
+        return shoulder.getCurrentPosition();
+    }
 
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
+                "Position: " + getArmPosition() + "\n" +
                 Subsystem.motorIfo(left, "Motor Left") + "\n" +
                 Subsystem.motorIfo(right, "Motor Right") + "\n" +
                 Subsystem.motorIfo(shoulder, "Shoulder") + "\n";

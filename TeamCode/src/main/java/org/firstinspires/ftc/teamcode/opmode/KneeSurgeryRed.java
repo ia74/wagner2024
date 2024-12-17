@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
@@ -34,6 +35,7 @@ public class KneeSurgeryRed extends OpMode {
 
         lights.breathRed();
 
+        if(GlobalStorage.currentPose != null) follower.setPose(GlobalStorage.currentPose);
         follower.startTeleopDrive();
     }
     @Override
@@ -43,13 +45,13 @@ public class KneeSurgeryRed extends OpMode {
 
         double shoulderPos = arm.getShoulderPosition();
         /* SECTION: Arm */
-        arm.slidePower(-gamepad2.right_stick_y);
+        arm.setSlidePower(-gamepad2.right_stick_y);
         double shoulderPower = -gamepad2.left_stick_y;
 
-        if(shoulderPos < shoulderLimitMax) arm.setShoulder(shoulderPower);
-        else if(shoulderPower < 0.2) arm.setShoulder(shoulderPower);
+        if(shoulderPos < shoulderLimitMax) arm.setShoulderPower(shoulderPower);
+        else if(shoulderPower < 0.2) arm.setShoulderPower(shoulderPower);
 
-        if(shoulderPos >= shoulderLimitMax) arm.setShoulder(0);
+        if(shoulderPos >= shoulderLimitMax) arm.setShoulderPower(0);
 
         if (gamepad2.dpad_up)
             claw.up();
@@ -58,5 +60,7 @@ public class KneeSurgeryRed extends OpMode {
         else if (gamepad2.dpad_right)
             claw.middle();
 
+        telemetry.addLine(arm.toString());
+        telemetry.update();
     }
 }
