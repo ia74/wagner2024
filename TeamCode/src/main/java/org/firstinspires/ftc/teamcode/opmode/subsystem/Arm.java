@@ -10,10 +10,15 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 @Config
 public class Arm extends Subsystem {
-    public static int num = 0;
+    public static double kP = 0.0325;
+    public static double kI = 0;
+    public static double kD = 0.00001;
+    public static double targetPosition = 0;
+
     public DcMotor left;
     public DcMotor right;
     public DcMotor shoulder;
+    public SubsystemPIDController pidController;
 
     public Arm(HardwareMap hardwareMap) {
         super(hardwareMap);
@@ -32,6 +37,13 @@ public class Arm extends Subsystem {
 
         Subsystem.resetMotor(left);
         Subsystem.resetMotor(right);
+
+        pidController = new SubsystemPIDController(kP, kI, kD);
+
+        pidController.setKP(kP);
+        pidController.setKI(kI);
+        pidController.setKD(kD);
+        targetPosition = getArmPosition();
     }
 
     public double getArmPosition() {
@@ -46,6 +58,11 @@ public class Arm extends Subsystem {
     public void setShoulderPower(double power) {this.shoulder.setPower(power);}
     public double getShoulderPosition() {
         return shoulder.getCurrentPosition();
+    }
+
+    public void update() {
+        double power = pidController.calculate(targetPosition, getArmPosition());
+        setSlidePower(power);
     }
 
     @NonNull

@@ -188,6 +188,19 @@ public class Follower {
         breakFollowing();
     }
 
+    public DcMotorEx getLeftFront() {
+        return leftFront;
+    }
+    public DcMotorEx getRightFront() {
+        return rightFront;
+    }
+    public DcMotorEx getLeftRear() {
+        return leftRear;
+    }
+    public DcMotorEx getRightRear() {
+        return rightRear;
+    }
+
     /**
      * This sets the maximum power the motors are allowed to use.
      *

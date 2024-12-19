@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
@@ -33,6 +34,11 @@ public class KneeSurgeryBlue extends OpMode {
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
 
+        follower.getLeftFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        follower.getRightFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        follower.getLeftRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lights.breathBlue();
 
         if(GlobalStorage.currentPose != null) follower.setPose(GlobalStorage.currentPose);
@@ -60,7 +66,12 @@ public class KneeSurgeryBlue extends OpMode {
         else if (gamepad2.dpad_right)
             claw.middle();
 
+        if (gamepad2.right_trigger > 0.2) claw.close();
+        else claw.open();
+
         telemetry.addLine(arm.toString());
+        telemetry.addLine(claw.toString());
+        telemetry.addLine(lights.toString());
         telemetry.update();
     }
 }
