@@ -1,47 +1,38 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.pedropathing.follower.Follower;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.GlobalStorage;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.subsystem.Arm;
+import org.firstinspires.ftc.teamcode.subsystem.Claw;
+import org.firstinspires.ftc.teamcode.subsystem.Lights;
 
 /**
- * This is the TeleOpEnhancements OpMode. It is an example usage of the TeleOp enhancements that
- * Pedro Pathing is capable of.
- *
- * @author Anyi Lin - 10158 Scott's Bots
- * @author Aaron Yang - 10158 Scott's Bots
- * @author Harrison Womack - 10158 Scott's Bots
- * @version 1.0, 3/21/2024
+ * This is the real TeleOp code. This specific class is not registered as an OpMode as it's meant to have a custom light pattern, THEN registered.
  */
-@TeleOp(name = "Knee Surgery Red")
-public class KneeSurgeryRed extends OpMode {
+public class KneeSurgery extends OpMode {
     private Follower follower;
+    public Lights lights;
+    public RevBlinkinLedDriver.BlinkinPattern patternToUse = RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE;
+    // The idea is, we shouldn't see the FIRE_LARGE pattern, because it will be overridden by the selector. (blue, red)
     Arm arm;
-    Lights lights;
     Claw claw;
 
     public static double shoulderLimitMax = 2442;
     @Override
     public void init() {
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
 
-        follower.getLeftFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getRightFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getLeftRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lights.setPattern(patternToUse);
 
-        lights.breathRed();
-
-        if(GlobalStorage.currentPose != null) follower.setPose(GlobalStorage.currentPose);
+        if(FConstants.currentPose != null) follower.setPose(FConstants.currentPose); // This is used to carry over from Autonomous
         follower.startTeleopDrive();
     }
     @Override
@@ -70,6 +61,8 @@ public class KneeSurgeryRed extends OpMode {
         else claw.open();
 
         telemetry.addLine(arm.toString());
+        telemetry.addLine(claw.toString());
+        telemetry.addLine(lights.toString());
         telemetry.update();
     }
 }

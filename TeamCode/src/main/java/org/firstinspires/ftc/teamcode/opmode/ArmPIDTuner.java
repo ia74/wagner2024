@@ -4,8 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
+import org.firstinspires.ftc.teamcode.subsystem.Arm;
 
+/**
+ * this is a test and probably doesnt and wont worrk
+ * i wrote this in like 2 seconds
+ */
 @Config
 @Autonomous(name = "PID / Arm Tuner")
 public class ArmPIDTuner extends OpMode {

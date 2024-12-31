@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.subsystem;
+package org.firstinspires.ftc.teamcode.subsystem;
 
 public class SubsystemPIDController {
     private double kP, kI, kD;
