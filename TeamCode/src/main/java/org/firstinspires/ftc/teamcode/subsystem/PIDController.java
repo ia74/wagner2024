@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-public class SubsystemPIDController {
+public class PIDController {
     private double kP, kI, kD;
     private double integralSum = 0;
     private double lastError = 0;
 
-    public SubsystemPIDController(double kP, double kI, double kD) {
+    public PIDController(double kP, double kI, double kD) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;

@@ -18,7 +18,7 @@ public class Arm extends Subsystem {
     public DcMotor left;
     public DcMotor right;
     public DcMotor shoulder;
-    public SubsystemPIDController pidController;
+    public PIDController pidController;
 
     public Arm(HardwareMap hardwareMap) {
         super(hardwareMap);
@@ -38,7 +38,7 @@ public class Arm extends Subsystem {
         Subsystem.resetMotor(left);
         Subsystem.resetMotor(right);
 
-        pidController = new SubsystemPIDController(kP, kI, kD);
+        pidController = new PIDController(kP, kI, kD);
 
         pidController.setKP(kP);
         pidController.setKI(kI);
