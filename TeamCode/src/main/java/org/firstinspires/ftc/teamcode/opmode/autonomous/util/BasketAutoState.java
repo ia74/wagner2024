@@ -1,0 +1,21 @@
+package org.firstinspires.ftc.teamcode.opmode.autonomous.util;
+
+public enum BasketAutoState {
+    NOOP,
+    INIT,
+    START_TO_BASKET,
+    RAISE_TO_BASKET,
+    SCORE_BASKET,
+    PULLOUT_BASKET,
+    SCORE_OUT_BASKET,
+    LOWER_ARM_BASKET,
+    RUN_TO_FLOOR_PICKUP,
+    WAIT_SLIDE_DOWN_FLOOR_PICKUP,
+    FLOOR_PICKUP_WAIT_DOWN_AND_GOTO,
+    REAL_FLOOR_PICKUP,
+    RUN_TO_BASKET_FROM_FLOOR,
+    PUSH_PIXEL_INTO_ZONE_GOTO,
+    PUSH_PIXEL_INTO_ZONE,
+    PARK_GOTO,
+    PARK
+}

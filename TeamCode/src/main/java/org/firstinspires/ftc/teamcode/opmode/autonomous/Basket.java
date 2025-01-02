@@ -16,6 +16,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
+
+import org.firstinspires.ftc.teamcode.opmode.autonomous.util.BasketAutoState;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.util.FloorSampleState;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.util.FollowerEx;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.util.PathChainHelper;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.util.PathChainHelperType;
 import org.firstinspires.ftc.teamcode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.subsystem.Claw;
 
@@ -27,143 +33,85 @@ import org.firstinspires.ftc.teamcode.subsystem.Claw;
 public class Basket extends OpMode {
     public static int scoringBasketRaisePos = 3500;
 
-    // These states are used to track where we are during execution.
-    public enum State {
-        NOOP,
-        INIT,
-        START_TO_BASKET,
-        RAISE_TO_BASKET,
-        SCORE_BASKET,
-        PULLOUT_BASKET,
-        SCORE_OUT_BASKET,
-        LOWER_ARM_BASKET,
-        RUN_TO_FLOOR_PICKUP,
-        WAIT_SLIDE_DOWN_FLOOR_PICKUP,
-        FLOOR_PICKUP_WAIT_DOWN_AND_GOTO,
-        REAL_FLOOR_PICKUP,
-        RUN_TO_BASKET_FROM_FLOOR,
-        PUSH_PIXEL_INTO_ZONE_GOTO,
-        PUSH_PIXEL_INTO_ZONE,
-        PARK_GOTO,
-        PARK
-    }
-
-    // Relative to the robot facing the other side.
-    /*#****\ ( > is the robot direction)
-    |> #   |
-    |*#****|
-    |******|
-     */
-    public enum FloorPickupState {
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        NONE
-    }
-
     boolean ready = false; // This defines if the drivers should press Start and the autonomous shouldn't break (due to pathing failure)
     boolean closedClawToPickupFromFloor = false; // This is used in a stage where we pick the sample up from the floor.
+
+    FollowerEx follower;
+    Arm arm;
+    Claw claw;
+    PathChainHelper pathChainHelper;
+    BasketAutoState state = BasketAutoState.INIT;
 
     Timer pathTimer = new Timer();
     Timer opModeTimer = new Timer();
     Timer actionTimer = new Timer();
-
-    // Path build timer
-    Timer buildTimer = new Timer();
+    Timer pathBuildTimer = new Timer(); // Path build timer
     long buildTime = 0;
-
-    Follower follower;
-    Arm arm;
-    Claw claw;
-
-    State state = State.INIT;
 
     Pose startPose = new Pose(107.5, 133.5, Math.toRadians(-90));
     Pose basketPosition = new Pose(124, 125, Math.toRadians(45));
     Pose basketPullout = new Pose(128.12825651302606, 128.12825651302606, Math.toRadians(45));
 
     Pose grabFromFloorRight = new Pose(120, 110.5, Math.toRadians(-90));
-    Pose grabFromFloorMiddle = new Pose(128.5, 112, Math.toRadians(-90)); //TODO: test this
+    Pose grabFromFloorMiddle = new Pose(128.5, 112, Math.toRadians(-90));
     Pose grabFromFloorLeft = new Pose(133.7555110220441, 103.02204408817634, Math.toRadians(-180));
 
     Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-180));
     Pose end = new Pose(106.19639278557113, 74.74148296593185, Math.toRadians(180));
 
-    PathChain runStartToBasket;
-    PathChain runBasketToPullout;
-
-    PathChain runBasketToRight;
-    PathChain runRightToBasket;
-
-    PathChain runBasketToMiddle;
-    PathChain runMiddleToBasket;
-
-    PathChain runBasketToLeft;
-    PathChain runLeftToBasket;
-
-    PathChain runLeftToZone;
-    PathChain runZoneToPark;
+    PathChain runStartToBasket,
+            runBasketToPullout,
+            runBasketToRight,
+            runRightToBasket,
+            runBasketToMiddle,
+            runMiddleToBasket,
+            runBasketToLeft,
+            runLeftToBasket,
+            runLeftToZone,
+            runZoneToPark;
 
     Pose pickingUpCurrentlyPose;
     PathChain pickingUpCurrentlyPath;
-    FloorPickupState pickingUpCurrentlyState = FloorPickupState.RIGHT;
+    FloorSampleState pickingUpCurrentlyState = FloorSampleState.RIGHT;
 
     public void buildPaths() {
         ready = false;
-        buildTimer.resetTimer();
+        pathBuildTimer.resetTimer();
         FConstants.currentPose = startPose;
         follower.setPose(startPose);
 
-        runStartToBasket = createPathChainForTwoPoints(startPose, basketPosition);
-        runBasketToPullout = createConstantPathChainForTwoPoints(basketPosition, basketPullout);
+        runStartToBasket = pathChainHelper.fromTwoPoints(startPose, basketPosition, PathChainHelperType.LINEAR);
+        runBasketToPullout = pathChainHelper.fromTwoPoints(basketPosition, basketPullout, PathChainHelperType.CONSTANT);
 
         // RIGHT -> BASKET , BASKET -> RIGHT
-        runRightToBasket = createPathChainForTwoPoints(grabFromFloorRight, basketPosition);
-        runBasketToRight = createPathChainForTwoPoints(basketPullout, grabFromFloorRight);
+        runRightToBasket = pathChainHelper.fromTwoPoints(grabFromFloorRight, basketPosition, PathChainHelperType.LINEAR);
+        runBasketToRight = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorRight, PathChainHelperType.LINEAR);
 
         // MIDDLE -> BASKET, BASKET ->  MIDDLE
-        runMiddleToBasket = createPathChainForTwoPoints(grabFromFloorMiddle, basketPosition);
-        runBasketToMiddle = createPathChainForTwoPoints(basketPullout, grabFromFloorMiddle);
+        runMiddleToBasket = pathChainHelper.fromTwoPoints(grabFromFloorMiddle, basketPosition, PathChainHelperType.LINEAR);
+        runBasketToMiddle = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorMiddle, PathChainHelperType.LINEAR);
 
         // LEFT -> BASKET, BASKET -> LEFT
-        runLeftToBasket = createPathChainForTwoPoints(grabFromFloorLeft, basketPosition);
-        runBasketToLeft = createPathChainForTwoPoints(basketPullout, grabFromFloorLeft);
+        runLeftToBasket = pathChainHelper.fromTwoPoints(grabFromFloorLeft, basketPosition, PathChainHelperType.LINEAR);
+        runBasketToLeft = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorLeft, PathChainHelperType.LINEAR);
 
-        runLeftToZone = createConstantPathChainForTwoPoints(grabFromFloorLeft, pushIntoZone);
-        runZoneToPark = createPathChainForTwoPoints(pushIntoZone, end);
+        runLeftToZone = pathChainHelper.fromTwoPoints(grabFromFloorLeft, pushIntoZone, PathChainHelperType.CONSTANT);
+        runZoneToPark = pathChainHelper.fromTwoPoints(pushIntoZone, end, PathChainHelperType.LINEAR);
 
         pickingUpCurrentlyPose = grabFromFloorRight;
         pickingUpCurrentlyPath = runBasketToRight;
-        pickingUpCurrentlyState = FloorPickupState.RIGHT;
-        buildTime = buildTimer.getElapsedTime();
-        buildTimer = null;
+        pickingUpCurrentlyState = FloorSampleState.RIGHT;
+        buildTime = pathBuildTimer.getElapsedTime();
+        pathBuildTimer = null;
         ready = true;
     }
-
-    PathChain createPathChainForTwoPoints(Pose point1, Pose point2) {
-        return follower.pathBuilder()
-                .addPath(new Path(new BezierCurve(
-                        new Point(point1), new Point(point2)
-                )))
-                .setLinearHeadingInterpolation(point1.getHeading(), point2.getHeading())
-                .build();
-    }
-
-    PathChain createConstantPathChainForTwoPoints(Pose point1, Pose point2) {
-        return follower.pathBuilder()
-                .addPath(new Path(new BezierCurve(
-                        new Point(point1), new Point(point2)
-                )))
-                .setConstantHeadingInterpolation(point2.getHeading())
-                .build();
-    }
-
 
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new FollowerEx(hardwareMap); // FollowerEx returns a Pedro follower, but with extra methods to keep things clean in this file & for future autonomous creations.
+        pathChainHelper = new PathChainHelper(follower);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
 
@@ -181,7 +129,7 @@ public class Basket extends OpMode {
     public void start() {
         opModeTimer.resetTimer();
         actionTimer.resetTimer();
-        setState(State.INIT);
+        setState(BasketAutoState.INIT);
     }
 
     @Override
@@ -215,12 +163,12 @@ public class Basket extends OpMode {
                 // Our robot should be preloaded with a sample, closed and up. This just locks them in place so the robot knows it's closed.
                 claw.close();
                 claw.up();
-                setState(State.START_TO_BASKET);
+                setState(BasketAutoState.START_TO_BASKET);
                 break;
             case START_TO_BASKET:
                 follower.followPath(runStartToBasket); // We're going to go to the basket.
-                pickingUpCurrentlyState = FloorPickupState.RIGHT; // Mark the next sample to pick up as the right sample.
-                setState(State.RAISE_TO_BASKET); // Raise the arm as we go to the basket.
+                pickingUpCurrentlyState = FloorSampleState.RIGHT; // Mark the next sample to pick up as the right sample.
+                setState(BasketAutoState.RAISE_TO_BASKET); // Raise the arm as we go to the basket.
                 break;
             case RAISE_TO_BASKET:
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
@@ -229,15 +177,15 @@ public class Basket extends OpMode {
                     arm.setSlidePower(0); // The arm is all the way up, so we can now stop giving it power.
                     actionTimer.resetTimer();
                     claw.down(); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
-                    setState(State.SCORE_BASKET); // This means, after this iteration we will not go back through this.
+                    setState(BasketAutoState.SCORE_BASKET); // This means, after this iteration we will not go back through this.
                 }
                 break;
             case SCORE_BASKET:
-                if(isInRangeOf(basketPosition)) {
+                if(follower.isInRangeOf(basketPosition)) {
                     arm.setSlidePower(0); // Extra fallback, just in case we're still raising the arm
                     claw.open(); // Open the claw, as we're now raised high enough & lowered into the basket.
                     actionTimer.resetTimer(); // Start the action timer.
-                    setState(State.SCORE_OUT_BASKET);
+                    setState(BasketAutoState.SCORE_OUT_BASKET);
                 }
                 break;
             case SCORE_OUT_BASKET:
@@ -248,37 +196,37 @@ public class Basket extends OpMode {
                 if(actionTimer.getElapsedTime() > 1200) {
                     // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..
                     follower.followPath(runBasketToPullout);
-                    setState(State.PULLOUT_BASKET);
+                    setState(BasketAutoState.PULLOUT_BASKET);
                 }
                 break;
             case PULLOUT_BASKET:
-                if(isInRangeOf(basketPullout)) {
-                    setState(State.LOWER_ARM_BASKET);
+                if(follower.isInRangeOf(basketPullout)) {
+                    setState(BasketAutoState.LOWER_ARM_BASKET);
                 }
                 break;
             case LOWER_ARM_BASKET:
                 arm.setSlidePower(-1); // Lower the arm, we're fully out now.
-                // Let's pick where to go now. Initially, we're going to the RIGHT (pickingUpCurrentlyState = FloorPickupState.RIGHT)
-                if(pickingUpCurrentlyState == FloorPickupState.RIGHT) {
+                // Let's pick where to go now. Initially, we're going to the RIGHT (pickingUpCurrentlyState = FloorSampleState.RIGHT)
+                if(pickingUpCurrentlyState == FloorSampleState.RIGHT) {
                     // We're at the basket, and wanna grab the right yellow sample
                     pickingUpCurrentlyPath = runBasketToRight;
                     pickingUpCurrentlyPose = grabFromFloorRight;
-                } else if(pickingUpCurrentlyState == FloorPickupState.MIDDLE) {
+                } else if(pickingUpCurrentlyState == FloorSampleState.MIDDLE) {
                     // We're at the basket, scored the right sample, and wanna grab the middle sample.
                     pickingUpCurrentlyPath = runBasketToMiddle;
                     pickingUpCurrentlyPose = grabFromFloorMiddle;
-                } else if(pickingUpCurrentlyState == FloorPickupState.LEFT) {
+                } else if(pickingUpCurrentlyState == FloorSampleState.LEFT) {
                     // We're at the basket, we've just scored the left sample.
-                    setState(State.PUSH_PIXEL_INTO_ZONE_GOTO);
+                    setState(BasketAutoState.PUSH_PIXEL_INTO_ZONE_GOTO);
                     break;
                 }
                 // We use the BASKET -> X because we aren't at the sample yet
-                setState(State.RUN_TO_FLOOR_PICKUP);
+                setState(BasketAutoState.RUN_TO_FLOOR_PICKUP);
                 break;
             case RUN_TO_FLOOR_PICKUP:
                 // Now we've set where we wanna go, let's go there. Dynamically adjusted from the step LOWER_ARM_BASKET.
                 follower.followPath(pickingUpCurrentlyPath);
-                setState(State.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
+                setState(BasketAutoState.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
                 break;
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
                 // Now, just in case, we really need to wait for this specific part.
@@ -288,17 +236,17 @@ public class Basket extends OpMode {
                     arm.setSlidePower(0);
                     claw.down();
                     // The arm has fully lowered, so we can cut power, and lower it.
-                    setState(State.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
+                    setState(BasketAutoState.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
                 }
                 break;
             case FLOOR_PICKUP_WAIT_DOWN_AND_GOTO:
                 // Here we're waiting until we're within 3 x/y coordinates of range
                 // because this action needs to be precise.
                 // We're also gonna wait for the wrist to go all the way down.
-                if(isInRangeOf(pickingUpCurrentlyPose)) {
+                if(follower.isInRangeOf(pickingUpCurrentlyPose)) {
                     // We're here, and the wrist is down.
                     actionTimer.resetTimer();
-                    setState(State.REAL_FLOOR_PICKUP); // Now actually pick up.
+                    setState(BasketAutoState.REAL_FLOOR_PICKUP); // Now actually pick up.
                 }
                 break;
             case REAL_FLOOR_PICKUP:
@@ -309,23 +257,23 @@ public class Basket extends OpMode {
                 }
                 if(closedClawToPickupFromFloor && actionTimer.getElapsedTime() > 1300) { // The claw doesn't take this long to close, but we wait 1.3s (1300ms) before going up, so we're sure the sample is grabbed.
                     claw.up();
-                    setState(State.RUN_TO_BASKET_FROM_FLOOR); // Now we'll go to the basket.
+                    setState(BasketAutoState.RUN_TO_BASKET_FROM_FLOOR); // Now we'll go to the basket.
                 }
                 break;
             case RUN_TO_BASKET_FROM_FLOOR:
                 closedClawToPickupFromFloor = false; // Reset the variable for the next use
                 PathChain gotoFromFloor = runRightToBasket; // This is our default, because the OpMode starts with the right sample.
-                if(pickingUpCurrentlyState == FloorPickupState.RIGHT) {
-                    pickingUpCurrentlyState = FloorPickupState.MIDDLE; // For next time, we will go to the middle.
-                } else if(pickingUpCurrentlyState == FloorPickupState.MIDDLE) {
+                if(pickingUpCurrentlyState == FloorSampleState.RIGHT) {
+                    pickingUpCurrentlyState = FloorSampleState.MIDDLE; // For next time, we will go to the middle.
+                } else if(pickingUpCurrentlyState == FloorSampleState.MIDDLE) {
                     gotoFromFloor = runMiddleToBasket; // This run, go middle -> basket
-                    pickingUpCurrentlyState = FloorPickupState.LEFT; // For next time, pick up the Left sample
-                } else if(pickingUpCurrentlyState == FloorPickupState.LEFT) {
+                    pickingUpCurrentlyState = FloorSampleState.LEFT; // For next time, pick up the Left sample
+                } else if(pickingUpCurrentlyState == FloorSampleState.LEFT) {
                     gotoFromFloor = runLeftToBasket; // This run, go left -> basket
-                    pickingUpCurrentlyState = FloorPickupState.NONE; // For next time, start parking. This doesn't really matter as it's used for semantics & never checked anyways.
-                };
+                    pickingUpCurrentlyState = FloorSampleState.NONE; // For next time, start parking. This doesn't really matter as it's used for semantics & never checked anyways.
+                }
                 follower.followPath(gotoFromFloor);
-                setState(State.RAISE_TO_BASKET);
+                setState(BasketAutoState.RAISE_TO_BASKET);
                 break;
             case PUSH_PIXEL_INTO_ZONE_GOTO:
                 // Here, we deviate from the basket because we don't wanna score this one in the high basket, as we'll run out of time.
@@ -334,39 +282,34 @@ public class Basket extends OpMode {
                 // Because of the way the left sample's path is built, we will turn to face the Audience side.
                 // This is important because we need to strafe right (score the sample by carrying it with us on the wheels).
                 follower.followPath(runBasketToLeft);
-                setState(State.PUSH_PIXEL_INTO_ZONE);
+                setState(BasketAutoState.PUSH_PIXEL_INTO_ZONE);
                 break;
             case PUSH_PIXEL_INTO_ZONE:
-                if(isInRangeOf(grabFromFloorLeft)) {
+                if(follower.isInRangeOf(grabFromFloorLeft)) {
                     // We're at the sample, so just strafe right.
                     follower.followPath(runLeftToZone);
-                    setState(State.PARK_GOTO);
+                    setState(BasketAutoState.PARK_GOTO);
                 }
                 break;
             case PARK_GOTO:
-                if(isInRangeOf(pushIntoZone)) {
+                if(follower.isInRangeOf(pushIntoZone)) {
                     // Now we're below the basket, and the left sample has been scored.
                     // We will now start going to the submersible.
                     follower.followPath(runZoneToPark);
                     claw.open(); // Also, asynchronously run these actions so we get ready for the drivers to take over.
                     claw.middle();
-                    setState(State.PARK);
+                    setState(BasketAutoState.PARK);
                 }
                 break;
             case PARK:
-                if(isInRangeOf(end)) {
-                    // There could be more here, but there is not (yet).
-                }
+                // We don't need to do anything, so we'll just go to No-Op to finish execution.
+                // However, if we need to add anything this will get changed.
+                setState(BasketAutoState.NOOP);
                 break;
         }
     }
 
-    public boolean isInRangeOf(Pose pose) {
-        return follower.getPose().getX() > (pose.getX() - 3) &&
-                follower.getPose().getY() > (pose.getY() - 3);
-    }
-
-    public void setState(State state) {
+    public void setState(BasketAutoState state) {
         this.state = state;
         pathTimer.resetTimer();
     }
