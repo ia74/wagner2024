@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.constants;
+package pedroPathing.constants;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Localizers;
