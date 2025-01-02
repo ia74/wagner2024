@@ -59,16 +59,8 @@ public class Basket extends OpMode {
     Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-180));
     Pose end = new Pose(106.19639278557113, 74.74148296593185, Math.toRadians(180));
 
-    PathChain runStartToBasket,
-            runBasketToPullout,
-            runBasketToRight,
-            runRightToBasket,
-            runBasketToMiddle,
-            runMiddleToBasket,
-            runBasketToLeft,
-            runLeftToBasket,
-            runLeftToZone,
-            runZoneToPark;
+    PathChain runStartToBasket, runBasketToPullout, runBasketToRight, runRightToBasket, runBasketToMiddle, runMiddleToBasket,
+              runBasketToLeft, runLeftToBasket, runLeftToZone, runZoneToPark;
 
     Pose pickingUpCurrentlyPose;
     PathChain pickingUpCurrentlyPath;
