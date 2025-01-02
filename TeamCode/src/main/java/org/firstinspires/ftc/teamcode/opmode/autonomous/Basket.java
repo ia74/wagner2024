@@ -48,6 +48,9 @@ public class Basket extends OpMode {
     Timer pathBuildTimer = new Timer(); // Path build timer
     long buildTime = 0;
 
+    /**
+     * TODO: These coordinates are super incorrect (they're NOT aligned to the field properly, if you put it into a visualizer or the path generator). It works *now*, so I'm not changing it, but one day it will be fixed.
+     */
     Pose startPose = new Pose(107.5, 133.5, Math.toRadians(-90));
     Pose basketPosition = new Pose(124, 125, Math.toRadians(45));
     Pose basketPullout = new Pose(128.12825651302606, 128.12825651302606, Math.toRadians(45));
