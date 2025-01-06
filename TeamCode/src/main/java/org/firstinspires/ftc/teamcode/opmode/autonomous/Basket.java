@@ -185,7 +185,7 @@ public class Basket extends OpMode {
                 break;
             case SCORE_OUT_BASKET:
                 if(actionTimer.getElapsedTime() > 750) {
-                    // We've waited 500ms (half a second), so we'll raise the claw out of the bucket.
+                    // We've waited 750ms (half a second), so we'll raise the claw out of the bucket.
                     claw.up();
                 }
                 if(actionTimer.getElapsedTime() > 1200) {

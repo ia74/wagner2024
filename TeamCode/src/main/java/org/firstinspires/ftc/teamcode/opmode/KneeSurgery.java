@@ -23,6 +23,8 @@ public class KneeSurgery extends OpMode {
     Arm arm;
     Claw claw;
 
+    public void setLightColor() {}
+
     public static double shoulderLimitMax = 2442;
     @Override
     public void init() {
@@ -32,7 +34,7 @@ public class KneeSurgery extends OpMode {
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
 
-        lights.setPattern(patternToUse);
+        setLightColor();
 
         if(FConstants.currentPose != null) follower.setPose(FConstants.currentPose); // This is used to carry over from Autonomous
         follower.startTeleopDrive();
@@ -42,14 +44,14 @@ public class KneeSurgery extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
 
-        double shoulderPos = arm.getShoulderPosition();
         /* SECTION: Arm */
         arm.setSlidePower(-gamepad2.right_stick_y);
+
+        double shoulderPos = arm.getShoulderPosition();
         double shoulderPower = -gamepad2.left_stick_y;
 
         if(shoulderPos < shoulderLimitMax) arm.setShoulderPower(shoulderPower);
         else if(shoulderPower < 0.2) arm.setShoulderPower(shoulderPower);
-
         if(shoulderPos >= shoulderLimitMax) arm.setShoulderPower(0);
 
         if (gamepad2.dpad_up)
