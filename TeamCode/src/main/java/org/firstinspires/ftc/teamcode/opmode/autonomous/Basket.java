@@ -10,6 +10,8 @@ import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
+import com.pedropathing.util.DashboardPoseTracker;
+import com.pedropathing.util.Drawing;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -36,7 +38,7 @@ public class Basket extends OpMode {
     boolean ready = false; // This defines if the drivers should press Start and the autonomous shouldn't break (due to pathing failure)
     boolean closedClawToPickupFromFloor = false; // This is used in a stage where we pick the sample up from the floor.
 
-    FollowerEx follower;
+    Follower follower;
     Arm arm;
     Claw claw;
     PathChainHelper pathChainHelper;
@@ -51,16 +53,17 @@ public class Basket extends OpMode {
     /**
      * TODO: These coordinates are super incorrect (they're NOT aligned to the field properly, if you put it into a visualizer or the path generator). It works *now*, so I'm not changing it, but one day it will be fixed.
      */
-    Pose startPose = new Pose(107.5, 133.5, Math.toRadians(-90));
-    Pose basketPosition = new Pose(124, 125, Math.toRadians(45));
-    Pose basketPullout = new Pose(128.12825651302606, 128.12825651302606, Math.toRadians(45));
+    Pose startPose = new Pose(10.176185866408519, 108.31364956437561, Math.toRadians(0));
 
-    Pose grabFromFloorRight = new Pose(120, 110.5, Math.toRadians(-90));
-    Pose grabFromFloorMiddle = new Pose(128.5, 112, Math.toRadians(-90));
-    Pose grabFromFloorLeft = new Pose(133.7555110220441, 103.02204408817634, Math.toRadians(-180));
+    Pose basketPosition = new Pose(16.867376573088094, 126.99322362052276, Math.toRadians(135));
+    Pose basketPullout = new Pose(19.51597289448209, 123.78702807357213, Math.toRadians(135));
 
-    Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-180));
-    Pose end = new Pose(106.19639278557113, 74.74148296593185, Math.toRadians(180));
+    Pose grabFromFloorRight = new Pose(34.431752178121975, 121.41723136495644, Math.toRadians(0));
+    Pose grabFromFloorMiddle = new Pose(34.431752178121975, 131.31461761858662, Math.toRadians(0));
+    Pose grabFromFloorLeft = new Pose(46.28073572120039, 134.24201355275895, Math.toRadians(-90));
+
+    Pose pushIntoZone = new Pose(11.570183930300097, 134.24201355275895, Math.toRadians(-90));
+    Pose end = new Pose(61.057115198451115, 97.99806389157794, Math.toRadians(-91));
 
     PathChain runStartToBasket, runBasketToPullout, runBasketToRight, runRightToBasket, runBasketToMiddle, runMiddleToBasket,
               runBasketToLeft, runLeftToBasket, runLeftToZone, runZoneToPark;
@@ -74,21 +77,29 @@ public class Basket extends OpMode {
         pathBuildTimer.resetTimer();
         FConstants.currentPose = startPose;
         follower.setPose(startPose);
+        runStartToBasket = new PathChain(
+                new Path(new BezierCurve(
+                        new Point(10.176, 108.314, Point.CARTESIAN),
+                        new Point(22.000, 126.000, Point.CARTESIAN),
+                        new Point(16.867, 126.993, Point.CARTESIAN)
+                ))
+        );
+        runStartToBasket.getPath(0).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135));
 
-        runStartToBasket = pathChainHelper.fromTwoPoints(startPose, basketPosition, PathChainHelperType.LINEAR);
+//        runStartToBasket = pathChainHelper.fromTwoPoints(startPose, basketPosition, PathChainHelperType.LINEAR);
         runBasketToPullout = pathChainHelper.fromTwoPoints(basketPosition, basketPullout, PathChainHelperType.CONSTANT);
 
         // RIGHT -> BASKET , BASKET -> RIGHT
         runRightToBasket = pathChainHelper.fromTwoPoints(grabFromFloorRight, basketPosition, PathChainHelperType.LINEAR);
-        runBasketToRight = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorRight, PathChainHelperType.LINEAR);
+        runBasketToRight = pathChainHelper.fromTwoPoints(basketPosition, grabFromFloorRight, PathChainHelperType.LINEAR);
 
         // MIDDLE -> BASKET, BASKET ->  MIDDLE
         runMiddleToBasket = pathChainHelper.fromTwoPoints(grabFromFloorMiddle, basketPosition, PathChainHelperType.LINEAR);
-        runBasketToMiddle = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorMiddle, PathChainHelperType.LINEAR);
+        runBasketToMiddle = pathChainHelper.fromTwoPoints(basketPosition, grabFromFloorMiddle, PathChainHelperType.LINEAR);
 
         // LEFT -> BASKET, BASKET -> LEFT
         runLeftToBasket = pathChainHelper.fromTwoPoints(grabFromFloorLeft, basketPosition, PathChainHelperType.LINEAR);
-        runBasketToLeft = pathChainHelper.fromTwoPoints(basketPullout, grabFromFloorLeft, PathChainHelperType.LINEAR);
+        runBasketToLeft = pathChainHelper.fromTwoPoints(basketPosition, grabFromFloorLeft, PathChainHelperType.LINEAR);
 
         runLeftToZone = pathChainHelper.fromTwoPoints(grabFromFloorLeft, pushIntoZone, PathChainHelperType.CONSTANT);
         runZoneToPark = pathChainHelper.fromTwoPoints(pushIntoZone, end, PathChainHelperType.LINEAR);
@@ -101,11 +112,13 @@ public class Basket extends OpMode {
         ready = true;
     }
 
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new FollowerEx(hardwareMap); // FollowerEx returns a Pedro follower, but with extra methods to keep things clean in this file & for future autonomous creations.
+        follower = new Follower(hardwareMap); // FollowerEx returns a Pedro follower, but with extra methods to keep things clean in this file & for future autonomous creations.
+        follower.setPose(startPose);
         pathChainHelper = new PathChainHelper(follower);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
@@ -140,7 +153,7 @@ public class Basket extends OpMode {
         telemetry.addData("action time (s)", actionTimer.getElapsedTime());
         telemetry.addData("path time (s)", pathTimer.getElapsedTime());
         telemetry.addData("opmode time (s)", opModeTimer.getElapsedTime());
-        telemetry.update();
+//        follower.telemetryDebug(telemetry);
     }
 
     @Override
@@ -176,7 +189,7 @@ public class Basket extends OpMode {
                 }
                 break;
             case SCORE_BASKET:
-                if(follower.isInRangeOf(basketPosition)) {
+                if(isInRangeOf(basketPosition)) {
                     arm.setSlidePower(0); // Extra fallback, just in case we're still raising the arm
                     claw.open(); // Open the claw, as we're now raised high enough & lowered into the basket.
                     actionTimer.resetTimer(); // Start the action timer.
@@ -188,17 +201,15 @@ public class Basket extends OpMode {
                     // We've waited 750ms (half a second), so we'll raise the claw out of the bucket.
                     claw.up();
                 }
-                if(actionTimer.getElapsedTime() > 1200) {
-                    // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..
-                    follower.followPath(runBasketToPullout);
-                    setState(BasketAutoState.PULLOUT_BASKET);
-                }
-                break;
-            case PULLOUT_BASKET:
-                if(follower.isInRangeOf(basketPullout)) {
                     setState(BasketAutoState.LOWER_ARM_BASKET);
-                }
+//                if(actionTimer.getElapsedTime() > 1200) {
+                    // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..
+//                }
                 break;
+//            case PULLOUT_BASKET:
+//                if(isInRangeOf(basketPullout)) {
+//                }
+//                break;
             case LOWER_ARM_BASKET:
                 arm.setSlidePower(-1); // Lower the arm, we're fully out now.
                 // Let's pick where to go now. Initially, we're going to the RIGHT (pickingUpCurrentlyState = FloorSampleState.RIGHT)
@@ -238,7 +249,7 @@ public class Basket extends OpMode {
                 // Here we're waiting until we're within 3 x/y coordinates of range
                 // because this action needs to be precise.
                 // We're also gonna wait for the wrist to go all the way down.
-                if(follower.isInRangeOf(pickingUpCurrentlyPose)) {
+                if(isInRangeOf(pickingUpCurrentlyPose)) {
                     // We're here, and the wrist is down.
                     actionTimer.resetTimer();
                     setState(BasketAutoState.REAL_FLOOR_PICKUP); // Now actually pick up.
@@ -280,14 +291,14 @@ public class Basket extends OpMode {
                 setState(BasketAutoState.PUSH_PIXEL_INTO_ZONE);
                 break;
             case PUSH_PIXEL_INTO_ZONE:
-                if(follower.isInRangeOf(grabFromFloorLeft)) {
+                if(isInRangeOf(grabFromFloorLeft)) {
                     // We're at the sample, so just strafe right.
                     follower.followPath(runLeftToZone);
                     setState(BasketAutoState.PARK_GOTO);
                 }
                 break;
             case PARK_GOTO:
-                if(follower.isInRangeOf(pushIntoZone)) {
+                if(isInRangeOf(pushIntoZone)) {
                     // Now we're below the basket, and the left sample has been scored.
                     // We will now start going to the submersible.
                     follower.followPath(runZoneToPark);
@@ -302,6 +313,11 @@ public class Basket extends OpMode {
                 setState(BasketAutoState.NOOP);
                 break;
         }
+    }
+
+    public boolean isInRangeOf(Pose pose) {
+        return follower.getPose().getX() > (pose.getX() - 3) &&
+                follower.getPose().getY() > (pose.getY() - 3);
     }
 
     public void setState(BasketAutoState state) {
