@@ -22,7 +22,8 @@ import java.util.List;
 @Config
 @Autonomous(name="Miguel Antimaneuvering - Basket", group="!!! Auton")
 public class Basket extends OpMode {
-    public static int scoringBasketRaisePos = 3500;
+    public static int scoringBasketRaisePos = 3550;
+    // other is 1400
     public enum State {
         NOOP,
         INIT,
@@ -71,15 +72,16 @@ public class Basket extends OpMode {
     State state = State.INIT;
 
     Pose startPose = new Pose(107.5, 133.5, Math.toRadians(-90));
-    Pose basketPosition = new Pose(124, 125, Math.toRadians(45));
+    Pose basketPosition = new Pose(124, 125, Math.toRadians(45)); // x 125 -> 124
     Pose basketPullout = new Pose(128.12825651302606, 128.12825651302606, Math.toRadians(45));
 
-    Pose grabFromFloorRight = new Pose(120, 110.5, Math.toRadians(-90));
-    Pose grabFromFloorMiddle = new Pose(128.5, 112, Math.toRadians(-90)); //TODO: test this
+    Pose grabFromFloorRight = new Pose(119, 110.5, Math.toRadians(-90));
+    Pose grabFromFloorMiddle = new Pose(127.5, 110.5, Math.toRadians(-90)); //TODO: test this
     Pose grabFromFloorLeft = new Pose(133.7555110220441, 103.02204408817634, Math.toRadians(-180));
 
     Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-180));
-    Pose end = new Pose(106.19639278557113, 74.74148296593185, Math.toRadians(180));
+    Pose pushIntoZoneControlPoint = new Pose(135, 129, Math.toRadians(-180));
+    Pose end = new Pose(96.19639278557113, 75.74148296593185, Math.toRadians(180));
 
     PathChain runStartToBasket;
     PathChain runBasketToPullout;
@@ -123,7 +125,14 @@ public class Basket extends OpMode {
         runBasketToLeft = createPathChainForTwoPoints(basketPullout, grabFromFloorLeft);
 
         runLeftToZone = createConstantPathChainForTwoPoints(grabFromFloorLeft, pushIntoZone);
-        runZoneToPark = createPathChainForTwoPoints(pushIntoZone, end);
+        runZoneToPark = follower.pathBuilder()
+                .addPath(new Path(new BezierCurve(
+                        new Point(pushIntoZone),
+                        new Point(pushIntoZoneControlPoint),
+                        new Point(end)
+                )))
+                .setLinearHeadingInterpolation(pushIntoZone.getHeading(), end.getHeading())
+                .build();
 
 
 
@@ -181,6 +190,7 @@ public class Basket extends OpMode {
     @Override
     public void loop() {
         follower.update();
+        arm.update();
         updateAutonomousState();
 
         telemetry.addData("Floor Pickup State", pickingUpCurrentlyState);
@@ -215,9 +225,8 @@ public class Basket extends OpMode {
                 break;
             case RAISE_TO_BASKET:
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
-                arm.setSlidePower(1);
+                arm.setSlidesTargetPosition(scoringBasketRaisePos);
                 if(arm.getArmPosition() >= scoringBasketRaisePos) {
-                    arm.setSlidePower(0); // The arm is all the way up, so we can now stop giving it power.
                     actionTimer.resetTimer();
                     claw.down(); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
                     setState(State.SCORE_BASKET); // This means, after this iteration we will not go back through this.
@@ -225,7 +234,6 @@ public class Basket extends OpMode {
                 break;
             case SCORE_BASKET:
                 if(isInRangeOf(basketPosition)) {
-                    arm.setSlidePower(0); // Extra fallback, just in case we're still raising the arm
                     claw.open(); // Open the claw, as we're now raised high enough & lowered into the basket.
                     actionTimer.resetTimer(); // Start the action timer.
                     setState(State.SCORE_OUT_BASKET);
@@ -248,7 +256,7 @@ public class Basket extends OpMode {
                 }
                 break;
             case LOWER_ARM_BASKET:
-                arm.setSlidePower(-1); // Lower the arm, we're fully out now.
+                arm.setSlidesTargetPosition(10);
                 // Let's pick where to go now. Initially, we're going to the RIGHT (pickingUpCurrentlyState = FloorPickupState.RIGHT)
                 if(pickingUpCurrentlyState == FloorPickupState.RIGHT) {
                     // We're at the basket, and wanna grab the right yellow sample
@@ -274,9 +282,8 @@ public class Basket extends OpMode {
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
                 // Now, just in case, we really need to wait for this specific part.
                 // We do continue travelling to the floor sample, so we don't waste time here.
-                if(arm.getArmPosition() <= 175) {
+                if(arm.getArmPosition() <= 10) {
                     actionTimer.resetTimer();
-                    arm.setSlidePower(0);
                     claw.down();
                     // The arm has fully lowered, so we can cut power, and lower it.
                     setState(State.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
@@ -344,8 +351,8 @@ public class Basket extends OpMode {
     }
 
     public boolean isInRangeOf(Pose pose) {
-        return follower.getPose().getX() > (pose.getX() - 3) &&
-                follower.getPose().getY() > (pose.getY() - 3);
+        return follower.getPose().getX() > (pose.getX() - 2.85) &&
+                follower.getPose().getY() > (pose.getY() - 2.85);
     }
     public boolean isCloseTo(double a, double b, double range) {
         return b - range <= a && a <= b + range;

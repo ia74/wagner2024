@@ -10,15 +10,26 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 @Config
 public class Arm extends Subsystem {
-    public static double kP = 0.0325;
-    public static double kI = 0;
-    public static double kD = 0.00001;
-    public static double targetPosition = 0;
+    public static double skP = 0.005;
+    public static double skI = 0;
+    public static double skD = 0.00001;
+    public static double skF = 0.000005;
+    public static double smaxPosition = 3725;
+    public static double stargetPosition = 0;
+
+    public static double shoulderkP = 0.005;
+    public static double shoulderkI = 0;
+    public static double shoulderkD = 0;
+    public static double shoulderkF = 0;
+    public static double shoulderkmaxPosition = 2500;
+    public static double shoulderktargetPosition = 0;
+
 
     public DcMotor left;
     public DcMotor right;
     public DcMotor shoulder;
-    public SubsystemPIDController pidController;
+    public PIDFController slidesPid;
+    public PIDFController shoulderPid;
 
     public Arm(HardwareMap hardwareMap) {
         super(hardwareMap);
@@ -37,13 +48,31 @@ public class Arm extends Subsystem {
 
         Subsystem.resetMotor(left);
         Subsystem.resetMotor(right);
+        Subsystem.resetMotor(shoulder);
 
-        pidController = new SubsystemPIDController(kP, kI, kD);
+        slidesPid = new PIDFController(skP, skI, skD, skF);
+        slidesPid.setMaxPosition(smaxPosition);
+        slidesPid.setkP(skP);
+        slidesPid.setkI(skI);
+        slidesPid.setkD(skD);
+        slidesPid.setkF(skF);
+        stargetPosition = getArmPosition();
 
-        pidController.setKP(kP);
-        pidController.setKI(kI);
-        pidController.setKD(kD);
-        targetPosition = getArmPosition();
+        shoulderPid = new PIDFController(shoulderkP, shoulderkI, shoulderkD, shoulderkF);
+        shoulderPid.setMaxPosition(shoulderkmaxPosition);
+        shoulderPid.setkP(shoulderkP);
+        shoulderPid.setkI(shoulderkI);
+        shoulderPid.setkD(shoulderkD);
+        shoulderPid.setkF(shoulderkF);
+        shoulderktargetPosition = getArmPosition();
+    }
+
+    public void setShoulderTargetPosition(double spos) {
+        this.shoulderPid.setSetpoint(spos);
+    }
+
+    public void setSlidesTargetPosition(double tpos) {
+        this.slidesPid.setSetpoint(tpos);
     }
 
     public double getArmPosition() {
@@ -60,15 +89,27 @@ public class Arm extends Subsystem {
         return shoulder.getCurrentPosition();
     }
 
-    public void update() {
-        double power = pidController.calculate(targetPosition, getArmPosition());
+    public void individuallyUpdateSlides() {
+        slidesPid.setSetpoint(stargetPosition);
+        double power = slidesPid.calculate(getArmPosition());
         setSlidePower(power);
+    }
+    public void individuallyUpdateShoulder() {
+        shoulderPid.setSetpoint(shoulderktargetPosition);
+        double power2 = shoulderPid.calculate(getShoulderPosition());
+        setShoulderPower(power2);
+    }
+
+    public void update() {
+        individuallyUpdateSlides();
+        individuallyUpdateShoulder();
     }
 
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
                 "Position: " + getArmPosition() + "\n" +
+                "TargetPosition: " + stargetPosition + "\n" +
                 Subsystem.motorIfo(left, "Motor Left") + "\n" +
                 Subsystem.motorIfo(right, "Motor Right") + "\n" +
                 Subsystem.motorIfo(shoulder, "Shoulder") + "\n";
