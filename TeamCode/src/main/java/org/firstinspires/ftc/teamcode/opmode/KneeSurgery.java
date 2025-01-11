@@ -35,6 +35,8 @@ public class KneeSurgery extends OpMode {
         follower.getLeftRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        lights.off();
+        lights.green();
         setLightColor(lights);
 
         if(GlobalStorage.currentPose != null) follower.setPose(GlobalStorage.currentPose);
@@ -44,12 +46,15 @@ public class KneeSurgery extends OpMode {
     public void loop() {
         setLightColor(lights);
         Arm.stargetPosition = arm.getArmPosition();
+        Arm.shoulderktargetPosition = arm.getShoulderPosition();
 
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
 
         /* SECTION: Arm */
         double armPower = -gamepad2.right_stick_y;
+        double shoulderPower = -gamepad2.left_stick_y;
+
         if(Math.abs(armPower) > 0.1) {
             if(arm.getArmPosition() > Arm.smaxPosition - 20) {
                 if (!(armPower > 0.1)) {
@@ -64,10 +69,8 @@ public class KneeSurgery extends OpMode {
             arm.individuallyUpdateSlides();
         }
 
-        double shoulderPower = -gamepad2.left_stick_y;
-
         if(Math.abs(shoulderPower) > 0.1) {
-            if(arm.getShoulderPosition() > Arm.shoulderkmaxPosition - 20) {
+            if(arm.getShoulderPosition() > Arm.shoulderkmaxPosition - 30) {
                 if (!(shoulderPower > 0.1)) {
                     arm.setShoulderPower(shoulderPower);
                 } else {

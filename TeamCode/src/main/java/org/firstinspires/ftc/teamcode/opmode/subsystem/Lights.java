@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 @Config
 public class Lights extends Subsystem {
-    RevBlinkinLedDriver revBlinkinLedDriver;
+    public RevBlinkinLedDriver revBlinkinLedDriver;
     public static RevBlinkinLedDriver.BlinkinPattern pattern;
 
     public Lights(HardwareMap hardwareMap) {

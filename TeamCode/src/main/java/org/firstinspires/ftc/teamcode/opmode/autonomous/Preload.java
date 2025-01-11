@@ -19,23 +19,21 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-import java.util.List;
-
 @Config
-@Autonomous(name="Miguel Antimaneuvering - Basket", group="!!! Auton")
-public class Basket extends OpMode {
-    public static double scoringBasketRaisePos = Arm.smaxPosition - 20;
+@Autonomous(name="Miguel Antimaneuvering - Preloaded Only", group="!!! Auton")
+public class Preload extends OpMode {
+    public static int scoringBasketRaisePos = 3550;
     // other is 1400
     public enum State {
         NOOP,
         INIT,
         START_TO_BASKET,
+        BASKET_OBSERVE,
         RAISE_TO_BASKET,
         SCORE_BASKET,
         PULLOUT_BASKET,
         SCORE_OUT_BASKET,
         LOWER_ARM_BASKET,
-        WAIT_SLIDE_DOWN,
         RUN_TO_FLOOR_PICKUP,
         WAIT_SLIDE_DOWN_FLOOR_PICKUP,
         FLOOR_PICKUP_WAIT_DOWN_AND_GOTO,
@@ -75,17 +73,17 @@ public class Basket extends OpMode {
 
     State state = State.INIT;
 
-    Pose startPose = new Pose(8.542372881355933, 107.84745762711864, Math.toRadians(0));
-    Pose basketPosition = new Pose(14.796610169491526, 125.84745762711864, Math.toRadians(135)); // x 125 -> 124
+    Pose startPose = new Pose(107.5, 133.5, Math.toRadians(-90));
+    Pose basketPosition = new Pose(124, 124, Math.toRadians(45)); // x 125 -> 124
 
-    Pose grabFromFloorRight = new Pose(33.25423728813559, 120.35593220338984, Math.toRadians(0));
-    Pose grabFromFloorMiddle = new Pose(34.16949152542373, 131.03389830508473, Math.toRadians(0)); //TODO: test this
-    Pose grabFromFloorLeft = new Pose(47.898305084745765, 133.77966101694915, Math.toRadians(-90));
+    Pose grabFromFloorRight = new Pose(119, 111.5, Math.toRadians(-90));
+    Pose grabFromFloorMiddle = new Pose(127.5, 111.5, Math.toRadians(-90)); //TODO: test this
+    Pose grabFromFloorLeft = new Pose(133.7555110220441, 103.02204408817634, Math.toRadians(-180));
 
-    Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-90));
-    Pose end = new Pose(60.71186440677966, 96.40677966101694, Math.toRadians(-90));
-
-    Pose observeZone = new Pose(10.677966101694915, 11.7457627118644, Math.toRadians(0)); // x 125 -> 124
+    Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-180));
+    Pose pushIntoZoneControlPoint = new Pose(135, 129, Math.toRadians(-180));
+    Pose end = new Pose(96.19639278557113, 75.74148296593185, Math.toRadians(180));
+    Pose observeZone = new Pose(30, 128, Math.toRadians(-90)); // x 125 -> 124
 
     PathChain runStartToBasket;
 
@@ -133,6 +131,7 @@ public class Basket extends OpMode {
         runZoneToPark = follower.pathBuilder()
                 .addPath(new Path(new BezierCurve(
                         new Point(pushIntoZone),
+                        new Point(pushIntoZoneControlPoint),
                         new Point(end)
                 )))
                 .setLinearHeadingInterpolation(pushIntoZone.getHeading(), end.getHeading())
@@ -174,7 +173,7 @@ public class Basket extends OpMode {
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
-        follower.setMaxPower(1);
+        follower.setMaxPower(0.98);
         lights.breathRed();
         buildPaths();
     }
@@ -223,6 +222,10 @@ public class Basket extends OpMode {
         switch(state) {
             case NOOP:
                 break;
+            case BASKET_OBSERVE:
+                follower.followPath(runBasketToobserverZone);
+                setState(State.NOOP);
+                break;
             case INIT:
                 setState(State.START_TO_BASKET);
                 break;
@@ -257,114 +260,17 @@ public class Basket extends OpMode {
                 if(actionTimer.getElapsedTime() > 1200 && (claw.wrist.getPosition() == Claw.wristUpPosition || actionTimer.getElapsedTime() >2000)) {
                     // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
-                    setState(State.LOWER_ARM_BASKET);
-                }
-                break;
-            case LOWER_ARM_BASKET:
-                arm.setSlidesTargetPosition(10);
-                // Let's pick where to go now. Initially, we're going to the RIGHT (pickingUpCurrentlyState = FloorPickupState.RIGHT)
-                if(pickingUpCurrentlyState == FloorPickupState.RIGHT) {
-                    // We're at the basket, and wanna grab the right yellow sample
-                    pickingUpCurrentlyPath = runBasketToRight;
-                    pickingUpCurrentlyPose = grabFromFloorRight;
-                } else if(pickingUpCurrentlyState == FloorPickupState.MIDDLE) {
-                    // We're at the basket, and wanna grab the middle yellow sample
-                    pickingUpCurrentlyPath = runBasketToMiddle;
-                    pickingUpCurrentlyPose = grabFromFloorMiddle;
-                } else if(pickingUpCurrentlyState == FloorPickupState.LEFT) {
-                    // We're at the basket, and wanna grab the left yellow sample
-                    setState(State.PUSH_PIXEL_INTO_ZONE_GOTO);
-                    break;
-                }
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
-                setState(State.WAIT_SLIDE_DOWN);
-                // We use the BASKET -> X because we aren't at the sample yet
-                // Now we've set where we wanna go, let's go there. Dynamically adjusted from the step.
-                break;
-            case WAIT_SLIDE_DOWN:
-                follower.followPath(pickingUpCurrentlyPath);
-                setState(State.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
-                break;
-            case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
-                // Now, just in case, we really need to wait for this specific part.
-                // We do continue travelling to the floor sample, so we don't waste time here.
-                if(arm.getArmPosition() <= 10) {
-                    follower.setMaxPower(0.5);
-                    actionTimer.resetTimer();
-                    claw.down();
-                    // The arm has fully lowered, so we can cut power, and lower it.
-                    setState(State.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
-                }
-                break;
-            case FLOOR_PICKUP_WAIT_DOWN_AND_GOTO:
-                // Here we're waiting until we're within 3 x/y coordinates of range
-                // because this action needs to be precise.
-                // We're also gonna wait for the wrist to go all the way down.
-                if(isInRangeOf(pickingUpCurrentlyPose)) {
-                    // We're here, and the wrist is down.
-                    actionTimer.resetTimer();
-                    setState(State.REAL_FLOOR_PICKUP); // Now actually pick up.
-                }
-                break;
-            case REAL_FLOOR_PICKUP:
-                if(!closedClawToPickupFromFloor && actionTimer.getElapsedTime() > 600) { // 500ms, because we need
-                    follower.setMaxPower(0.1);
-                    claw.close();
-                    actionTimer.resetTimer();
-                    closedClawToPickupFromFloor = true;
-                }
-                if(closedClawToPickupFromFloor && actionTimer.getElapsedTime() > 1300) {
-                    claw.up();
-                    setState(State.RUN_TO_BASKET_FROM_FLOOR);
-                }
-                break;
-            case RUN_TO_BASKET_FROM_FLOOR:
-                closedClawToPickupFromFloor = false;
-                PathChain gotoFromFloor = runRightToBasket;
-                if(pickingUpCurrentlyState == FloorPickupState.RIGHT) {
-                    pickingUpCurrentlyState = FloorPickupState.MIDDLE;
-                } else if(pickingUpCurrentlyState == FloorPickupState.MIDDLE) {
-                    gotoFromFloor = runMiddleToBasket;
-                    pickingUpCurrentlyState = FloorPickupState.LEFT;
-                } else if(pickingUpCurrentlyState == FloorPickupState.LEFT) {
-                    gotoFromFloor = runLeftToBasket;
-                    pickingUpCurrentlyState = FloorPickupState.NONE;
-                };
-                follower.setMaxPower(0.9);
-                follower.followPath(gotoFromFloor);
-                setState(State.RAISE_TO_BASKET);
-                break;
-            case PUSH_PIXEL_INTO_ZONE_GOTO:
-                follower.setMaxPower(1);
-                follower.followPath(runBasketToLeft);
-                setState(State.PUSH_PIXEL_INTO_ZONE);
-                break;
-            case PUSH_PIXEL_INTO_ZONE:
-                if(isInRangeOf(grabFromFloorLeft)) {
-                    follower.followPath(runLeftToZone);
-                    setState(State.PARK_GOTO);
-                }
-                break;
-            case PARK_GOTO:
-                if(isInRangeOf(pushIntoZone)) {
-                    arm.setSlidesTargetPosition(1350);
-                    arm.setShoulderTargetPosition(901);
-                    follower.followPath(runZoneToPark);
-                    claw.open();
-                    claw.middle();
-                    setState(State.PARK);
-                }
-                break;
-            case PARK:
-                if(isInRangeOf(end)) {
+                    follower.setMaxPower(0.6);
+                    arm.setSlidesTargetPosition(10);
+                    setState(State.BASKET_OBSERVE);
                 }
                 break;
         }
     }
 
     public boolean isInRangeOf(Pose pose) {
-        return follower.getPose().getX() > (pose.getX() - 1) &&
-                follower.getPose().getY() > (pose.getY() - 1);
+        return follower.getPose().getX() > (pose.getX() - 2.85) &&
+                follower.getPose().getY() > (pose.getY() - 2.85);
     }
     public boolean isCloseTo(double a, double b, double range) {
         return b - range <= a && a <= b + range;

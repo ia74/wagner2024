@@ -64,14 +64,16 @@ public class Arm extends Subsystem {
         shoulderPid.setkI(shoulderkI);
         shoulderPid.setkD(shoulderkD);
         shoulderPid.setkF(shoulderkF);
-        shoulderktargetPosition = getArmPosition();
+        shoulderktargetPosition = getShoulderPosition();
     }
 
     public void setShoulderTargetPosition(double spos) {
+        Arm.shoulderktargetPosition = spos;
         this.shoulderPid.setSetpoint(spos);
     }
 
     public void setSlidesTargetPosition(double tpos) {
+        Arm.stargetPosition = tpos;
         this.slidesPid.setSetpoint(tpos);
     }
 
@@ -108,8 +110,11 @@ public class Arm extends Subsystem {
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
-                "Position: " + getArmPosition() + "\n" +
-                "TargetPosition: " + stargetPosition + "\n" +
+                "SPosition: " + getArmPosition() + "\n" +
+                "STargetPosition: " + stargetPosition + "\n\n" +
+                "KPosition: " + getShoulderPosition() + "\n" +
+                "kTargetPosition: " + shoulderktargetPosition + "\n" +
+
                 Subsystem.motorIfo(left, "Motor Left") + "\n" +
                 Subsystem.motorIfo(right, "Motor Right") + "\n" +
                 Subsystem.motorIfo(shoulder, "Shoulder") + "\n";
