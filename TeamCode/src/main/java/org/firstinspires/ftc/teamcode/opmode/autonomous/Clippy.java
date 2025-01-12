@@ -1,26 +1,316 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-public class Clippy extends LinearOpMode {
-    public static int scoringBasketRaisePos = 1020;
-    public static int s = 0;
+@Config
+@Autonomous(name="Miguel Antimaneuvering - Clipperton", group="!!! Auton")
+public class Clippy extends OpMode {
+    public static int clipBasketHeight = 1020;
+    public static int clipBasketLowerScore = 700;
+    public static int clipObservePickup = 500;
+    public static int lowerSlides = 10;
+    // other is 1400
+    public enum State {
+        NOOP,
+        INIT,
+        GOTO_FIRST_CLIP,
+        PUSH_INTO_OBSERVE,
+        AWAIT_PUSH_FINISH,
+        SCORING_CLIP_RAISE_SLIDES,
+        SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW,
+        SCORING_POST_AWAIT_TO_MOVE_NEXT,
+        GOTO_OBSERVATION,
+        SLIDES_RAISE_FOR_PICKUP,
+        CLAW_UP_POST_PICKUP,
+    }
+
+    boolean ready = false;
+
+    Timer pathTimer = new Timer();
+    Timer opModeTimer = new Timer();
+    Timer actionTimer = new Timer();
+    Timer buildTimer = new Timer();
+
+    long buildTime = 0;
+
     Follower follower;
     Arm arm;
     Claw claw;
 
+    State state = State.INIT;
+    int whichClip = 1;
+
+    Pose startPose = new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0));
+    Pose clipOne = new Pose(36.08483896307934, 65.72191673212883, Math.toRadians(0)); // x 125 -> 124
+    Pose clipTwo = new Pose(36.08483896307934, 74.31893165750196, Math.toRadians(0)); // x 125 -> 124
+
+    Pose observationZone = new Pose(10.677966101694915, 12.508474576271185, Math.toRadians(180));
+
+    PathChain runStartToClipOne;
+    PathChain runClipOneToObservationZone;
+
+    PathChain runObservationZoneToClipTwo;
+    PathChain runClipTwoToObservationZone;
+
+    PathChain pushClipsToHuman;
+
+    Pose scorePose;
+    PathChain goingToObservation;
+
+    public void buildPaths() {
+        ready = false;
+        buildTimer.resetTimer();
+        GlobalStorage.currentPose = startPose;
+        follower.setPose(startPose);
+
+        runStartToClipOne = createPathChainForTwoPoints(startPose, clipOne);
+        runClipOneToObservationZone = createConstantPathChainForTwoPoints(clipOne, observationZone);
+
+        runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipTwo);
+        runClipTwoToObservationZone = createPathChainForTwoPoints(clipTwo, observationZone);
+
+        pushClipsToHuman = follower.pathBuilder()
+                .addPath(
+                        // Line 2
+                        new BezierCurve(
+                                new Point(clipOne),
+                                new Point(22.850, 41.628, Point.CARTESIAN),
+                                new Point(60.518, 47.736, Point.CARTESIAN),
+                                new Point(59.161, 29.411, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+                .addPath(
+                        // Line 3
+                        new BezierLine(
+                                new Point(59.161, 29.411, Point.CARTESIAN),
+                                new Point(9.502, 26.809, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 4
+                        new BezierCurve(
+                                new Point(9.502, 26.809, Point.CARTESIAN),
+                                new Point(54.184, 35.293, Point.CARTESIAN),
+                                new Point(60.292, 19.456, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 5
+                        new BezierLine(
+                                new Point(60.292, 19.456, Point.CARTESIAN),
+                                new Point(10.520, 20.135, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 6
+                        new BezierCurve(
+                                new Point(10.520, 20.135, Point.CARTESIAN),
+                                new Point(54.976, 26.017, Point.CARTESIAN),
+                                new Point(60.745, 9.502, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 7
+                        new BezierLine(
+                                new Point(60.745, 9.502, Point.CARTESIAN),
+                                new Point(11.199, 8.484, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 8
+                        new BezierLine(
+                                new Point(11.199, 8.484, Point.CARTESIAN),
+                                new Point(28.506, 11.538, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(
+                        // Line 9
+                        new BezierLine(
+                                new Point(28.506, 11.538, Point.CARTESIAN),
+                                new Point(observationZone)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
+
+        buildTime = buildTimer.getElapsedTime();
+        buildTimer = null;
+        ready = true;
+    }
+
+    PathChain createPathChainForTwoPoints(Pose point1, Pose point2) {
+        return follower.pathBuilder()
+                .addPath(new Path(new BezierCurve(
+                        new Point(point1), new Point(point2)
+                )))
+                .setLinearHeadingInterpolation(point1.getHeading(), point2.getHeading())
+                .build();
+    }
+
+    PathChain createConstantPathChainForTwoPoints(Pose point1, Pose point2) {
+        return follower.pathBuilder()
+                .addPath(new Path(new BezierCurve(
+                        new Point(point1), new Point(point2)
+                )))
+                .setConstantHeadingInterpolation(point2.getHeading())
+                .build();
+    }
+
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
+        telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         follower = new Follower(hardwareMap);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
-        waitForStart();
 
-        while(opModeIsActive() && !isStopRequested()) {
+        buildPaths();
+    }
+
+    @Override
+    public void init_loop() {
+        telemetry.addLine(ready ? "Built paths in " + buildTime +"ms. Ready." : "Paths not built yet! If you see this, press Gamepad1 A to attempt to build the paths.");
+        telemetry.update();
+        if(gamepad1.a) buildPaths();
+    }
+
+    @Override
+    public void start() {
+        opModeTimer.resetTimer();
+        actionTimer.resetTimer();
+        setState(State.INIT);
+    }
+
+    @Override
+    public void loop() {
+        follower.update();
+        arm.update();
+        updateAutonomousState();
+
+        telemetry.addData("state", state);
+        telemetry.addData("current action time (s)", actionTimer.getElapsedTime());
+        telemetry.addData("path time (s)", pathTimer.getElapsedTime());
+        telemetry.addData("opmode time (s)", opModeTimer.getElapsedTime());
+        telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+        GlobalStorage.currentPose = follower.getPose();
+    }
+
+    public void updateAutonomousState() {
+        switch(state) {
+            case NOOP:
+                break;
+            case INIT:
+                claw.close();
+                claw.up();
+                setState(State.GOTO_FIRST_CLIP);
+                break;
+            case GOTO_FIRST_CLIP:
+                follower.followPath(runStartToClipOne, true);
+                scorePose = clipOne;
+                setState(State.SCORING_CLIP_RAISE_SLIDES);
+                break;
+            case SCORING_CLIP_RAISE_SLIDES:
+                // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
+                arm.setSlidesTargetPosition(clipBasketHeight);
+                if(arm.getArmPosition() >= clipBasketHeight) {
+                    actionTimer.resetTimer();
+                    claw.middle();
+                    setState(State.SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW); // This means, after this iteration we will not go back through this.
+                }
+                break;
+            case SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW:
+                if(isInRangeOf(scorePose)) {
+                    arm.setSlidesTargetPosition(clipBasketLowerScore);
+                    claw.open();
+                    actionTimer.resetTimer();
+                    setState(State.SCORING_POST_AWAIT_TO_MOVE_NEXT);
+                }
+                break;
+            case SCORING_POST_AWAIT_TO_MOVE_NEXT:
+                if(actionTimer.getElapsedTime() > 500) {
+                    if(whichClip == 0) {
+                        arm.setSlidesTargetPosition(lowerSlides);
+                        setState(State.PUSH_INTO_OBSERVE);
+                        break;
+                    } else {
+                        goingToObservation = runClipTwoToObservationZone;
+                    }
+                    whichClip++;
+                    follower.followPath(goingToObservation, true);
+                    setState(State.GOTO_OBSERVATION);
+                }
+                break;
+            case PUSH_INTO_OBSERVE:
+                if(arm.getArmPosition() <= lowerSlides) {
+                    follower.followPath(pushClipsToHuman, true);
+                    whichClip++;
+                    setState(State.GOTO_OBSERVATION);
+                }
+                break;
+            case GOTO_OBSERVATION:
+                if(isInRangeOf(observationZone)) {
+                    arm.setSlidesTargetPosition(clipObservePickup);
+                    setState(State.SLIDES_RAISE_FOR_PICKUP);
+                }
+                break;
+            case SLIDES_RAISE_FOR_PICKUP:
+                if(arm.getArmPosition() >= clipObservePickup) {
+                    claw.close();
+                    actionTimer.resetTimer();
+                    setState(State.CLAW_UP_POST_PICKUP);
+                }
+                break;
+            case CLAW_UP_POST_PICKUP:
+                if(actionTimer.getElapsedTime() > 500 || claw.claw.getPosition() == Claw.clawClosedPosition) {
+                    claw.up();
+                    arm.setSlidesTargetPosition(lowerSlides);
+                    if(whichClip == 1) {
+                        goingToObservation = runObservationZoneToClipTwo;
+                        scorePose = clipTwo;
+                        follower.followPath(goingToObservation, true);
+                        setState(State.SCORING_CLIP_RAISE_SLIDES);
+                    }
+                }
+                break;
         }
+    }
+
+    public boolean isInRangeOf(Pose pose) {
+        return follower.getPose().getX() > (pose.getX() - 1) &&
+                follower.getPose().getY() > (pose.getY() - 1);
+    }
+    public boolean isCloseTo(double a, double b, double range) {
+        return b - range <= a && a <= b + range;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+        pathTimer.resetTimer();
     }
 }
