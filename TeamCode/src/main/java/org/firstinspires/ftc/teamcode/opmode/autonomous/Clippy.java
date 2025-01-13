@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Config
 @Autonomous(name="Miguel Antimaneuvering - Clipperton", group="!!! Auton")
 public class Clippy extends OpMode {
-    public static int clipBasketHeight = 1020;
-    public static int clipBasketLowerScore = 700;
-    public static int clipObservePickup = 500;
+    public static int clipBasketHeight = 1515;
+    public static int clipBasketLowerScore = 1000;
+    public static int clipObservePickup = 0;
     public static int lowerSlides = 10;
     // other is 1400
     public enum State {
@@ -36,6 +36,7 @@ public class Clippy extends OpMode {
         SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW,
         SCORING_POST_AWAIT_TO_MOVE_NEXT,
         GOTO_OBSERVATION,
+        WAIT,
         SLIDES_RAISE_FOR_PICKUP,
         CLAW_UP_POST_PICKUP,
     }
@@ -54,7 +55,7 @@ public class Clippy extends OpMode {
     Claw claw;
 
     State state = State.INIT;
-    int whichClip = 1;
+    int whichClip = 0;
 
     Pose startPose = new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0));
     Pose clipOne = new Pose(36.08483896307934, 65.72191673212883, Math.toRadians(0)); // x 125 -> 124
@@ -90,12 +91,19 @@ public class Clippy extends OpMode {
                         // Line 2
                         new BezierCurve(
                                 new Point(clipOne),
-                                new Point(22.850, 41.628, Point.CARTESIAN),
-                                new Point(60.518, 47.736, Point.CARTESIAN),
-                                new Point(59.161, 29.411, Point.CARTESIAN)
+                                new Point(23.27976766698935, 36.38334946757018, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+
+                .addPath(
+                        new BezierCurve(
+                                new Point(23.27976766698935, 36.38334946757018, Point.CARTESIAN),
+                                new Point(62.86931268151016, 34.849951597289454, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+
                 .addPath(
                         // Line 3
                         new BezierLine(
@@ -267,8 +275,13 @@ public class Clippy extends OpMode {
                 }
                 break;
             case PUSH_INTO_OBSERVE:
-                if(arm.getArmPosition() <= lowerSlides) {
-                    follower.followPath(pushClipsToHuman, true);
+                if(arm.getArmPosition() >= lowerSlides) {
+                    follower.followPath(pushClipsToHuman);
+                    setState(State.WAIT);
+                }
+                break;
+            case WAIT:
+                if(!follower.isBusy()) {
                     whichClip++;
                     setState(State.GOTO_OBSERVATION);
                 }

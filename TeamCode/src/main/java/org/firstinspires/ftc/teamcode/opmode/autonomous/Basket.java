@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 import java.util.List;
 
-@Config
 @Autonomous(name="Miguel Antimaneuvering - Basket", group="!!! Auton")
 public class Basket extends OpMode {
     public static double scoringBasketRaisePos = Arm.smaxPosition - 20;
@@ -76,7 +75,7 @@ public class Basket extends OpMode {
     State state = State.INIT;
 
     Pose startPose = new Pose(8.542372881355933, 107.84745762711864, Math.toRadians(0));
-    Pose basketPosition = new Pose(14.796610169491526, 125.84745762711864, Math.toRadians(135)); // x 125 -> 124
+    Pose basketPosition = new Pose(17.796610169491526, 125.84745762711864, Math.toRadians(135)); // x 125 -> 124
 
     Pose grabFromFloorRight = new Pose(33.25423728813559, 120.35593220338984, Math.toRadians(0));
     Pose grabFromFloorMiddle = new Pose(34.16949152542373, 131.03389830508473, Math.toRadians(0)); //TODO: test this

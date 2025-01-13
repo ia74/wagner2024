@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 
-@Config
 @Autonomous(name = "PID / Arm Tuner")
 public class ArmPIDTuner extends OpMode {
     public static double targetPositionHigh = 2000;

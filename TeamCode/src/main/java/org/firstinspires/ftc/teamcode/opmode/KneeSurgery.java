@@ -44,7 +44,6 @@ public class KneeSurgery extends OpMode {
     }
     @Override
     public void loop() {
-        setLightColor(lights);
         Arm.stargetPosition = arm.getArmPosition();
         Arm.shoulderktargetPosition = arm.getShoulderPosition();
 
@@ -97,6 +96,8 @@ public class KneeSurgery extends OpMode {
         } else {
             follower.setMaxPower(1);
         }
+
+        lights.update();
 
         if (gamepad2.right_trigger > 0.2) claw.close();
         else claw.open();

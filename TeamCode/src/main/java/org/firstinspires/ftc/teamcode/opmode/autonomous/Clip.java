@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
+//@Autonomous(name="Miguel Antimaneuvering - Clippertodn", group="!!! Auton")
 @Disabled
-@Autonomous(name="Miguel Antimaneuvering - Clipperton", group="!!! Auton")
 public class Clip extends OpMode {
     public static int scoringBasketRaisePos = 1020;
     // other is 1400
