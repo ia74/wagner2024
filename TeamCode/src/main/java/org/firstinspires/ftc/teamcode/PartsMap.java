@@ -12,6 +12,8 @@ public enum PartsMap {
     ARM_ELBOW("elbow"),
     ARM_SHOULDER("shoulder"),
 
+    HANG_WINCH("winch"),
+    
     DRIVE_FL("leftFront"),
     DRIVE_FR("rightFront"),
     DRIVE_BL("leftBack"),

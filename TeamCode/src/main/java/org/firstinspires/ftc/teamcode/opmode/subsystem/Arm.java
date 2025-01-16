@@ -91,6 +91,25 @@ public class Arm extends Subsystem {
         return shoulder.getCurrentPosition();
     }
 
+//    public void teleopControl(double gamepadPower, boolean isSlides) {
+//        double currentPosition = isSlides ? getArmPosition() : getShoulderPosition();
+//        double maximumPosition = isSlides ? Arm.smaxPosition : shoulderkmaxPosition;
+//        if(isSlides)
+//        if(Math.abs(gamepadPower) > 0.1) {
+//            if(currentPosition > maximumPosition - 30) {
+//                if (!(shoulderPower > 0.1)) {
+//                    arm.setShoulderPower(shoulderPower);
+//                } else {
+//                    arm.individuallyUpdateShoulder();
+//                }
+//            } else {
+//                arm.setShoulderPower(shoulderPower);
+//            }
+//        } else {
+//            arm.individuallyUpdateShoulder();
+//        }
+//    }
+
     public void individuallyUpdateSlides() {
         slidesPid.setSetpoint(stargetPosition);
         double power = slidesPid.calculate(getArmPosition());

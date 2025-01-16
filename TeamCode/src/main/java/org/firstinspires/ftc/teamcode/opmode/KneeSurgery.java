@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.Toggleable;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
+import org.firstinspires.ftc.teamcode.opmode.subsystem.Hang;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
@@ -17,6 +18,7 @@ public class KneeSurgery extends OpMode {
     Arm arm;
     Lights lights;
     Claw claw;
+    Hang hang;
 
     Toggleable debugMode = new Toggleable();
 
@@ -29,6 +31,7 @@ public class KneeSurgery extends OpMode {
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
+        hang = new Hang(hardwareMap);
 
         follower.getLeftFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         follower.getRightFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,6 +84,14 @@ public class KneeSurgery extends OpMode {
         } else {
             arm.individuallyUpdateShoulder();
         }
+
+//        arm.teleopControl(-gamepad2.right_stick_y, true);
+//        arm.teleopControl(-gamepad2.left_stick_y, false);
+
+        if(gamepad2.y) hang.on();
+        else if(gamepad2.x) hang.reverse();
+        else hang.off();
+
 
         if (gamepad2.dpad_up)
             claw.up();
