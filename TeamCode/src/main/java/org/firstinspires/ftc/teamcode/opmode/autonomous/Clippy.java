@@ -230,6 +230,7 @@ public class Clippy extends OpMode {
         telemetry.addData("current action time (s)", actionTimer.getElapsedTime());
         telemetry.addData("path time (s)", pathTimer.getElapsedTime());
         telemetry.addData("opmode time (s)", opModeTimer.getElapsedTime());
+        telemetry.addData("Claw rizz pos", claw.wrist.getPosition());
         telemetry.update();
     }
 
@@ -243,6 +244,8 @@ public class Clippy extends OpMode {
             case NOOP:
                 break;
             case INIT:
+                claw.claw.setPosition(Claw.clawClosedPosition - 0.01);
+                claw.wrist.setPosition(Claw.wristUpPosition - 0.01);
                 claw.close();
                 claw.up();
                 setState(State.GOTO_FIRST_CLIP);
