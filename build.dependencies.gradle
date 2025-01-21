@@ -2,6 +2,7 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url = 'https://brott.wagnerrobotics.club/' }
+    maven { url= 'https://maven.pedropathing.com/' }
     maven {
         url "https://repo.dairy.foundation/releases"
     }
@@ -23,5 +24,7 @@ dependencies {
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
     implementation "dev.frozenmilk.sinister:Sloth:0.0.1"
+    implementation 'com.pedropathing:pedro:1.0.6'
+
 }
 

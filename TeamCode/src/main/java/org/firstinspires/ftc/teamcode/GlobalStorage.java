@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import com.pedropathing.localization.Pose;
 
 @Config
 public class GlobalStorage {

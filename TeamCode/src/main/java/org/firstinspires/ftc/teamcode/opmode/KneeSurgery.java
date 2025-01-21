@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.Toggleable;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Hang;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.subsystem.Arm;
+import org.firstinspires.ftc.teamcode.subsystem.Claw;
+import org.firstinspires.ftc.teamcode.subsystem.Hang;
+import org.firstinspires.ftc.teamcode.subsystem.Lights;
+import com.pedropathing.follower.Follower;
 
 public class KneeSurgery extends OpMode {
     private Follower follower;
