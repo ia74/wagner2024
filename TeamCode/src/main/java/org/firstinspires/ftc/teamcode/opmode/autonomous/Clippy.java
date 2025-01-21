@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Config
 @Autonomous(name="Miguel Antimaneuvering - Clipperton", group="!!! Auton")
 public class Clippy extends OpMode {
-    public static int clipBasketHeight = 1300;
-    public static int clipBasketLowerScore = 400;
+    public static int clipBasketHeight = 1100;
+    public static int clipBasketLowerScore = 200;
     public static int clipObservePickup = 500;
     public static int lowerSlides = 10;
     // other is 1400
@@ -59,11 +59,11 @@ public class Clippy extends OpMode {
     int whichClip = 0;
 
     Pose startPose = new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0));
-    Pose clipOne = new Pose(33.31655372700871, 64.51790900290416, Math.toRadians(0)); // x 125 -> 124
+    Pose clipOne = new Pose(31.25, 74.51790900290416, Math.toRadians(0)); // x 125 -> 124
     Pose clipTwo = new Pose(36.08483896307934, 74.31893165750196, Math.toRadians(0)); // x 125 -> 124
 
-    Point backupToPose = new Point(60.28751210067764, 19.794772507260404, Point.CARTESIAN);
-    double pushX = 13.589;
+    Point backupToPose = new Point(59.49700598802395, 23.85628742514971, Point.CARTESIAN);
+    double pushX = 30;
 
     Pose observationZone = new Pose(10.677966101694915, 12.508474576271185, Math.toRadians(180));
 
@@ -90,84 +90,123 @@ public class Clippy extends OpMode {
         runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipTwo);
         runClipTwoToObservationZone = createPathChainForTwoPoints(clipTwo, observationZone);
 
+//        pushClipsToHuman = follower.pathBuilder()
+//                .addPath(
+//                        // Line 0
+//                        new BezierLine(
+//                                new Point(clipOne),
+//                                new Point(29.832, 36.44, Point.CARTESIAN)
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+//                .addPath(
+//                        // Line 1
+//                        new BezierCurve(
+//                                new Point(29.832, 36.440, Point.CARTESIAN),
+//                                new Point(69.701, 40.671, Point.CARTESIAN),
+//                                backupToPose
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//
+//
+//
+//                .addPath(
+//                        // Line 4
+//                        new BezierLine(
+//                                backupToPose,
+//                                new Point(pushX, 20.486, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 5
+//                        new BezierLine(
+//                                new Point(pushX, 20.486, Point.CARTESIAN),
+//                                backupToPose
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 6
+//                        new BezierLine(
+//                                backupToPose,
+//                                new Point(pushX, 12.646706586826346, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 7
+//                        new BezierLine(
+//                                new Point(pushX, 12.646706586826346, Point.CARTESIAN),
+//                                backupToPose
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 8
+//                        new BezierLine(
+//                                new Point(pushX, 14.916, Point.CARTESIAN),
+//                                backupToPose
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 9
+//                        new BezierLine(
+//                                new Point(60.639, 15.752, Point.CARTESIAN),
+//                                new Point(61.057, 10.037, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 10
+//                        new BezierLine(
+//                                new Point(61.057, 10.037, Point.CARTESIAN),
+//                                new Point(observationZone)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
         pushClipsToHuman = follower.pathBuilder()
                 .addPath(
                         // Line 1
                         new BezierLine(
                                 new Point(clipOne),
-                                new Point(29.832, 36.244, Point.CARTESIAN)
+                                new Point(29.832, 36.440, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
                 .addPath(
                         // Line 2
-                        new BezierLine(
-                                new Point(29.832, 36.244, Point.CARTESIAN),
-                                new Point(60.639, 34.711, Point.CARTESIAN)
+                        new BezierCurve(
+                                new Point(29.832, 36.440, Point.CARTESIAN),
+                                new Point(69.701, 40.671, Point.CARTESIAN),
+                                new Point(59.066, 28.743, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(
                         // Line 3
                         new BezierLine(
-                                new Point(60.639, 34.711, Point.CARTESIAN),
-                                backupToPose
+                                new Point(59.066, 28.743, Point.CARTESIAN),
+                                new Point(20.551, 25.293, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(
                         // Line 4
-                        new BezierLine(
-                                backupToPose,
-                                new Point(pushX, 26.486, Point.CARTESIAN)
+                        new BezierCurve(
+                                new Point(20.551, 25.293, Point.CARTESIAN),
+                                new Point(69.844, 40.096, Point.CARTESIAN),
+                                new Point(59.641, 16.527, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(
                         // Line 5
                         new BezierLine(
-                                new Point(pushX, 26.486, Point.CARTESIAN),
-                                backupToPose
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 6
-                        new BezierLine(
-                                new Point(63.009, 27.462, Point.CARTESIAN),
-                                backupToPose
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 7
-                        new BezierLine(
-                                backupToPose,
-                                new Point(pushX, 14.916, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 8
-                        new BezierLine(
-                                new Point(pushX, 14.916, Point.CARTESIAN),
-                                backupToPose
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 9
-                        new BezierLine(
-                                new Point(60.639, 15.752, Point.CARTESIAN),
-                                new Point(61.057, 10.037, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 10
-                        new BezierLine(
-                                new Point(61.057, 10.037, Point.CARTESIAN),
-                                new Point(observationZone)
+                                new Point(59.641, 16.527, Point.CARTESIAN),
+                                new Point(20.263, 14.084, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
@@ -204,6 +243,7 @@ public class Clippy extends OpMode {
         claw = new Claw(hardwareMap);
 
         buildPaths();
+        claw.close();
     }
 
     @Override
@@ -227,6 +267,7 @@ public class Clippy extends OpMode {
         updateAutonomousState();
 
         telemetry.addData("state", state);
+        telemetry.addData("path", follower.getCurrentPathNumber());
         telemetry.addData("current action time (s)", actionTimer.getElapsedTime());
         telemetry.addData("path time (s)", pathTimer.getElapsedTime());
         telemetry.addData("opmode time (s)", opModeTimer.getElapsedTime());
@@ -244,8 +285,6 @@ public class Clippy extends OpMode {
             case NOOP:
                 break;
             case INIT:
-                claw.claw.setPosition(Claw.clawClosedPosition - 0.01);
-                claw.wrist.setPosition(Claw.wristUpPosition - 0.01);
                 claw.close();
                 claw.up();
                 setState(State.GOTO_FIRST_CLIP);
@@ -272,9 +311,17 @@ public class Clippy extends OpMode {
                 }
                 break;
             case SCORING_POST_AWAIT_TO_MOVE_NEXT:
-                if(arm.getArmPosition() >= clipBasketLowerScore || actionTimer.getElapsedTime() > 1200) {
-                    claw.open();
+                if(arm.getArmPosition() >= clipBasketLowerScore) {
+                    if(actionTimer.getElapsedTime() > 100) {
+                        follower.followPath(follower.pathBuilder().addPath(new Path(
+                                new BezierCurve(
+                                        new Point(scorePose),
+                                        new Point(new Pose(scorePose.getX() + 6, scorePose.getY(), scorePose.getHeading()))
+                                )
+                        )).setConstantHeadingInterpolation(scorePose.getHeading()).build());
+                    }
                 }
+                if(actionTimer.getElapsedTime() > 500) claw.open();
                 if(actionTimer.getElapsedTime() > 1500) {
                     if(whichClip == 0) {
                         arm.setSlidesTargetPosition(lowerSlides);
