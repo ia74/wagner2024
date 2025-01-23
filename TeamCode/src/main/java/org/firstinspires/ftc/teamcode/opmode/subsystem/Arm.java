@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 @Config
 public class Arm extends Subsystem {
-    public static double skP = 0.005;
+    public static double skP = 0.006 ;
     public static double skI = 0;
     public static double skD = 0.00001;
     public static double skF = 0.000005;

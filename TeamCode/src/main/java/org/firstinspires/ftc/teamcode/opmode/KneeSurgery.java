@@ -46,6 +46,10 @@ public class KneeSurgery extends OpMode {
         follower.startTeleopDrive();
     }
     @Override
+    public void start() {
+        hang.hooks.start();
+    }
+    @Override
     public void loop() {
         Arm.stargetPosition = arm.getArmPosition();
         Arm.shoulderktargetPosition = arm.getShoulderPosition();
@@ -92,6 +96,8 @@ public class KneeSurgery extends OpMode {
         else if(gamepad2.x) hang.reverse();
         else hang.off();
 
+        if(gamepad1.right_bumper) hang.hooks.deploy();
+        else if(gamepad1.left_bumper) hang.hooks.start();
 
         if (gamepad2.dpad_up)
             claw.up();

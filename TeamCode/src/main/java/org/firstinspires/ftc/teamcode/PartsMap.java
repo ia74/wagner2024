@@ -13,7 +13,9 @@ public enum PartsMap {
     ARM_SHOULDER("shoulder"),
 
     HANG_WINCH("winch"),
-    
+    HANG_DEPLOYER_LEFT("depc_l"),
+    HANG_DEPLOYER_RIGHT("depc_r"),
+
     DRIVE_FL("leftFront"),
     DRIVE_FR("rightFront"),
     DRIVE_BL("leftBack"),
@@ -24,17 +26,14 @@ public enum PartsMap {
     HANGER("hanger"),
     HANGER_HOOK("hanger");
 
-    public final String mapped;
-    private PartsMap(String mapped) {
-        this.mapped = mapped;
+    public final String hardwareMapDefinition;
+
+    PartsMap(String hardwareMapDefinition) {
+        this.hardwareMapDefinition = hardwareMapDefinition;
     }
 
-    public String getMapped() {
-        return mapped;
-    }
     @NonNull
-    public String toString() {return mapped;}
-
-    public static class PathingTunersRegistrar {
+    public String toString() {
+        return hardwareMapDefinition;
     }
 }

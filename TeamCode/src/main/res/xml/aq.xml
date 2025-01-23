@@ -17,6 +17,8 @@
             <goBILDA5202SeriesMotor name="leftBack" port="2" />
             <goBILDA5202SeriesMotor name="leftRight" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <Servo name="depc_l" port="0" />
+            <Servo name="depc_r" port="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 public class Clippy extends OpMode {
     public static int clipBasketHeight = 1100;
     public static int clipBasketLowerScore = 200;
-    public static int clipObservePickup = 2;
+    public static int clipObservePickup = 10;
     public static int lowerSlides = 10;
     // other is 1400
     public enum State {
@@ -67,7 +67,7 @@ public class Clippy extends OpMode {
     Point backupToPose = new Point(59.49700598802395, 23.85628742514971, Point.CARTESIAN);
     double pushX = 30;
 
-    Pose observationZone = new Pose(24, 11.065868263473059, Math.toRadians(180));
+    Pose observationZone = new Pose(22.41916167664671, 10.922155688622755, Math.toRadians(180));
 
     PathChain runStartToClipOne;
     PathChain runClipOneToObservationZone;
@@ -89,8 +89,8 @@ public class Clippy extends OpMode {
         runStartToClipOne = createPathChainForTwoPoints(startPose, clipOne);
         runClipOneToObservationZone = createConstantPathChainForTwoPoints(clipOne, observationZone);
 
-        runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipTwo);
-        runClipTwoToObservationZone = createPathChainForTwoPoints(clipTwo, observationZone);
+        runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipOne);
+        runClipTwoToObservationZone = createPathChainForTwoPoints(clipOne, observationZone);
 
 //        pushClipsToHuman = follower.pathBuilder()
 //                .addPath(
@@ -217,14 +217,14 @@ public class Clippy extends OpMode {
                         new BezierCurve(
                                 new Point(20.982, 14.228, Point.CARTESIAN),
                                 new Point(66.683, 27.737, Point.CARTESIAN),
-                                new Point(59.49700598802395, 8.766467065868271, Point.CARTESIAN)
+                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(
                         // Line 7
                         new BezierLine(
-                                new Point(59.49700598802395, 8.766467065868271, Point.CARTESIAN),
+                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
                                 new Point(observationZone)
                         )
                 )
@@ -388,7 +388,7 @@ public class Clippy extends OpMode {
                     if(whichClip == 0) {
                         whichClip++;
                         goingToObservation = runObservationZoneToClipTwo;
-                        scorePose = clipTwo;
+                        scorePose = clipOne;
                     }
                     follower.followPath(goingToObservation, true);
                     setState(State.SCORING_CLIP_RAISE_SLIDES);
