@@ -18,7 +18,7 @@ public class Claw extends Subsystem {
     public static double clawClosedPosition = 1;
 
     public static double wristUpPosition = 0.8;
-    public static double wristMiddlePosition = 0.4;
+    public static double wristMiddlePosition = 0.35;
     public static double wristDownPosition = 0.075;
 
     public Claw(HardwareMap hardwareMap) {
