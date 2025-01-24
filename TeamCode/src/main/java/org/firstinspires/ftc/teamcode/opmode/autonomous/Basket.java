@@ -365,9 +365,6 @@ public class Basket extends OpMode {
         return follower.getPose().getX() > (pose.getX() - 1) &&
                 follower.getPose().getY() > (pose.getY() - 1);
     }
-    public boolean isCloseTo(double a, double b, double range) {
-        return b - range <= a && a <= b + range;
-    }
 
     public void setState(State state) {
         this.state = state;

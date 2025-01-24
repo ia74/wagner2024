@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 public class Clippy extends OpMode {
     public static int clipBasketHeight = 1100;
     public static int clipBasketLowerScore = 200;
-    public static int clipObservePickup = 10;
+    public static int clipObservePickup = 935;
     public static int lowerSlides = 10;
     // other is 1400
     public enum State {
@@ -67,7 +67,10 @@ public class Clippy extends OpMode {
     Point backupToPose = new Point(59.49700598802395, 23.85628742514971, Point.CARTESIAN);
     double pushX = 30;
 
-    Pose observationZone = new Pose(22.41916167664671, 10.922155688622755, Math.toRadians(180));
+    Pose observationZone = new Pose(21.72250598802395213, 10.922155688622755, Math.toRadians(180));
+
+//    Pose observationZone = new Pose(59.641, 16.527, Math.toRadians(180));
+//                                new Point(59.641, 16.527, Point.CARTESIAN),
 
     PathChain runStartToClipOne;
     PathChain runClipOneToObservationZone;
@@ -92,83 +95,6 @@ public class Clippy extends OpMode {
         runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipOne);
         runClipTwoToObservationZone = createPathChainForTwoPoints(clipOne, observationZone);
 
-//        pushClipsToHuman = follower.pathBuilder()
-//                .addPath(
-//                        // Line 0
-//                        new BezierLine(
-//                                new Point(clipOne),
-//                                new Point(29.832, 36.44, Point.CARTESIAN)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
-//                .addPath(
-//                        // Line 1
-//                        new BezierCurve(
-//                                new Point(29.832, 36.440, Point.CARTESIAN),
-//                                new Point(69.701, 40.671, Point.CARTESIAN),
-//                                backupToPose
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//
-//
-//
-//                .addPath(
-//                        // Line 4
-//                        new BezierLine(
-//                                backupToPose,
-//                                new Point(pushX, 20.486, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 5
-//                        new BezierLine(
-//                                new Point(pushX, 20.486, Point.CARTESIAN),
-//                                backupToPose
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 6
-//                        new BezierLine(
-//                                backupToPose,
-//                                new Point(pushX, 12.646706586826346, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 7
-//                        new BezierLine(
-//                                new Point(pushX, 12.646706586826346, Point.CARTESIAN),
-//                                backupToPose
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 8
-//                        new BezierLine(
-//                                new Point(pushX, 14.916, Point.CARTESIAN),
-//                                backupToPose
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 9
-//                        new BezierLine(
-//                                new Point(60.639, 15.752, Point.CARTESIAN),
-//                                new Point(61.057, 10.037, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 10
-//                        new BezierLine(
-//                                new Point(61.057, 10.037, Point.CARTESIAN),
-//                                new Point(observationZone)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
         pushClipsToHuman = follower.pathBuilder()
                 .addPath(
                         // Line 1
@@ -208,27 +134,36 @@ public class Clippy extends OpMode {
                         // Line 5
                         new BezierLine(
                                 new Point(59.641, 16.527, Point.CARTESIAN),
-                                new Point(20.982, 14.228, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 6
-                        new BezierCurve(
-                                new Point(20.982, 14.228, Point.CARTESIAN),
-                                new Point(66.683, 27.737, Point.CARTESIAN),
-                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(
-                        // Line 7
-                        new BezierLine(
-                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
+//                                new Point(20.982, 14.228, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 5
+//                        new BezierLine(
+//                                new Point(20.982, 14.228, Point.CARTESIAN),
                                 new Point(observationZone)
                         )
                 )
-                .setConstantHeadingInterpolation(observationZone.getHeading()).build();
+                .setConstantHeadingInterpolation(observationZone.getHeading())
+//                .addPath(
+//                        // Line 6
+//                        new BezierCurve(
+//                                new Point(20.982, 14.228, Point.CARTESIAN),
+//                                new Point(66.683, 27.737, Point.CARTESIAN),
+//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 7
+//                        new BezierLine(
+//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
+//                                new Point(observationZone)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(observationZone.getHeading())
+                .build();
 
         buildTime = buildTimer.getElapsedTime();
         buildTimer = null;
@@ -312,19 +247,20 @@ public class Clippy extends OpMode {
             case GOTO_FIRST_CLIP:
                 follower.followPath(runStartToClipOne, true);
                 scorePose = clipOne;
+                actionTimer.resetTimer();
                 setState(State.SCORING_CLIP_RAISE_SLIDES);
                 break;
             case SCORING_CLIP_RAISE_SLIDES:
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
                 arm.setSlidesTargetPosition(clipBasketHeight);
-                if(arm.getArmPosition() >= clipBasketHeight) {
+                if(arm.getArmPosition() >= clipBasketHeight && actionTimer.getElapsedTime() > (whichClip == 0 ? 0 : 1000)) {
                     actionTimer.resetTimer();
                     setState(State.SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW); // This means, after this iteration we will not go back through this.
                 }
                 break;
             case SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW:
                 if(isLikeClose(scorePose)) claw.middle();
-                if(isInRangeOf(scorePose) && actionTimer.getElapsedTime() > 1000) {
+                if(isInRangeOf(scorePose) && actionTimer.getElapsedTime() > 1400) {
                     arm.setSlidesTargetPosition(clipBasketLowerScore);
                     actionTimer.resetTimer();
                     setState(State.SCORING_POST_AWAIT_TO_MOVE_NEXT);
@@ -370,13 +306,13 @@ public class Clippy extends OpMode {
                 break;
             case SLIDES_RAISE_FOR_PICKUP:
                 if(arm.getArmPosition() >= clipObservePickup) {
-                    claw.middle();
+                    claw.down();
                     actionTimer.resetTimer();
                     setState(State.SLIDES_RAISE_THEN_WAIT);
                 }
                 break;
             case SLIDES_RAISE_THEN_WAIT:
-                if(actionTimer.getElapsedTime() > 700) {
+                if(actionTimer.getElapsedTime() > 850) {
                     claw.close();
                     actionTimer.resetTimer();
                     setState(State.CLAW_UP_POST_PICKUP);
@@ -391,6 +327,7 @@ public class Clippy extends OpMode {
                         scorePose = clipOne;
                     }
                     follower.followPath(goingToObservation, true);
+                    actionTimer.resetTimer();
                     setState(State.SCORING_CLIP_RAISE_SLIDES);
                 }
                 break;
@@ -406,10 +343,6 @@ public class Clippy extends OpMode {
         return follower.getPose().getX() > (pose.getX() - 4) &&
                 follower.getPose().getY() > (pose.getY() - 4);
     }
-    public boolean isCloseTo(double a, double b, double range) {
-        return b - range <= a && a <= b + range;
-    }
-
     public void setState(State state) {
         this.state = state;
         pathTimer.resetTimer();

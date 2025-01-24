@@ -199,9 +199,6 @@ public class Clip extends OpMode {
         return follower.getPose().getX() > (pose.getX() - 2.85) &&
                 follower.getPose().getY() > (pose.getY() - 2.85);
     }
-    public boolean isCloseTo(double a, double b, double range) {
-        return b - range <= a && a <= b + range;
-    }
 
     public void setState(State state) {
         this.state = state;

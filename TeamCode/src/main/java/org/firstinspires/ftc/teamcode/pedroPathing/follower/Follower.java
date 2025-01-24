@@ -362,6 +362,12 @@ public class Follower {
         poseUpdater.resetOffset();
     }
 
+    public boolean isInRangeOf(Pose pose) {return isInRangeOf(pose, 1);}
+    public boolean isInRangeOf(Pose pose, double error) {
+        return this.getPose().getX() > (pose.getX() - error) &&
+                this.getPose().getY() > (pose.getY() - error);
+    }
+
     /**
      * This holds a Point.
      *
