@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Hang;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 
 public class KneeSurgery extends OpMode {
     private Follower follower;
@@ -42,7 +44,10 @@ public class KneeSurgery extends OpMode {
         lights.green();
         setLightColor(lights);
 
-        if(GlobalStorage.currentPose != null) follower.setPose(GlobalStorage.currentPose);
+        follower.setPose(
+//                GlobalStorage.currentPose
+                new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0))
+        );
         follower.startTeleopDrive();
     }
     @Override
@@ -125,8 +130,11 @@ public class KneeSurgery extends OpMode {
             telemetry.addLine(arm.toString());
             telemetry.addLine(claw.toString());
             telemetry.addLine(lights.toString());
+            telemetry.addLine(hang.toString());
+            Drawing.drawDebug(follower);
+            telemetry.addLine(follower.getPose().toString());
         } else {
-            telemetry.addLine("Gamepad 1 - Options : Debug Mode");
+            telemetry.addLine("Gamepad 2 - Options : Debug Mode");
         }
         telemetry.update();
     }

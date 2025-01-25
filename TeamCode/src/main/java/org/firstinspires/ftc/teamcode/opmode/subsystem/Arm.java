@@ -131,11 +131,20 @@ public class Arm extends Subsystem {
         return "-- [Mechanism: Arm] --\n" +
                 "SPosition: " + getArmPosition() + "\n" +
                 "STargetPosition: " + stargetPosition + "\n\n" +
+                "S P/I/D/F: " + fmt(Arm.skP, Arm.skI, Arm.skD, Arm.skF) + "\n" +
                 "KPosition: " + getShoulderPosition() + "\n" +
                 "kTargetPosition: " + shoulderktargetPosition + "\n" +
-
+                "K P/I/D/F: " + fmt(Arm.shoulderkP, Arm.shoulderkI, Arm.shoulderkD, Arm.shoulderkF) + "\n" +
                 Subsystem.motorIfo(left, "Motor Left") + "\n" +
                 Subsystem.motorIfo(right, "Motor Right") + "\n" +
                 Subsystem.motorIfo(shoulder, "Shoulder") + "\n";
+    }
+
+    public String fmt(double... parts) {
+        StringBuilder out = new StringBuilder();
+        for (double part: parts) {
+            out.append(part).append("/");
+        }
+        return out.toString();
     }
 }

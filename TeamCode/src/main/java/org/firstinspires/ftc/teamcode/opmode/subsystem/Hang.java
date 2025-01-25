@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.subsystem;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,5 +34,13 @@ public class Hang extends Subsystem{
 
     public void off() {
         hang.setPower(0);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "-- [Mechanism: Hang] --\n" +
+                "Hooks:\n" + (hooks.toString()) + "\n" +
+                Subsystem.motorIfo(hang, "Motor Left") + "\n";
     }
 }
