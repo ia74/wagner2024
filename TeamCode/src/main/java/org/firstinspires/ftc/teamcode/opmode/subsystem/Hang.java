@@ -16,24 +16,20 @@ public class Hang extends Subsystem{
     public Hang(HardwareMap hardwareMap) {
         super(hardwareMap);
 
-        hang = hardwareMap.get(DcMotor.class, PartsMap.HANG_WINCH.toString());
-        hang.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        Subsystem.resetMotor(hang);
+//        Subsystem.resetMotor(hang);
 
         hooks = new DeployHooks(hardwareMap);
     }
 
     public void on() {
-        hang.setPower(1);
+
     }
 
     public void reverse() {
-        hang.setPower(-1);
     }
 
     public void off() {
-        hang.setPower(0);
     }
 
     @NonNull

@@ -16,8 +16,8 @@ public class DeployHooks extends Subsystem{
     Servo deployerRight;
 
     public static double currentPosition = 0.0;
-    public static double startPosition = 0.0;
-    public static double deployPosition = 1.0;
+    public static double startPosition = 0.7;
+    public static double deployPosition = 0.0;
 
     public DeployHooks(HardwareMap hardwareMap) {
         super(hardwareMap);

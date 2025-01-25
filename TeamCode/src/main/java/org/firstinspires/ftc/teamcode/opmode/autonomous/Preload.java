@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
@@ -20,7 +21,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name="Miguel Antimaneuvering - Preloaded Only", group="!!! Auton")
+@Disabled
+@Autonomous(name="0+1 Basket Preload Only / Miguel Antimaneuvering", group="!!! Auton")
 public class Preload extends OpMode {
     public static int scoringBasketRaisePos = 3550;
     // other is 1400

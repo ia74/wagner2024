@@ -18,17 +18,16 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name="2+0 Specimen / Miguel Antimaneuvering", group="!!! Auton")
-public class Clippy extends OpMode {
+@Autonomous(name="3+0 Specimen EXPERIMENTAL / Miguel Antimaneuvering", group="!!! Auton")
+public class ClippyThree extends OpMode {
     public static int clipBasketHeight = 1100;
-    public static int clipBasketLowerScore = 200;
+    public static int clipBasketLowerScore = 500;
     public static int clipObservePickup = 0;
     public static int lowerSlides = 10;
-    // other is 1400`Z
+    // other is 1400
     public enum State {
         NOOP,
         INIT,
@@ -65,23 +64,12 @@ public class Clippy extends OpMode {
 
     Pose startPose = new Pose(10.220338983050848, 63.37724550898203, Math.toRadians(0));
     Pose clipOne = new Pose(33, 74.51790900290416, Math.toRadians(0)); // x 125 -> 124
-    Pose clipTwo = new Pose(36.08483896307934, 74.31893165750196, Math.toRadians(0)); // x 125 -> 124
 
-    Point backupToPose = new Point(59.49700598802395, 23.85628742514971, Point.CARTESIAN);
-    double pushX = 30;
-
-//    Pose observationZone = new Pose(25.447125748502993, 10.922155688622755, Math.toRadians(180));
     Pose observationZone = new Pose(19.83233532934132, 10.922155688622755, Math.toRadians(180));
-//     Pose observationZone = new Pose(25.437125748502993, 10.922155688622755, Math.toRadians(180)); // THIS FOR LESS BATYERY
-
-//    Pose observationZone = new Pose(59.641, 16.527, Math.toRadians(180));
-//                                new Point(59.641, 16.527, Point.CARTESIAN),
 
     PathChain runStartToClipOne;
     PathChain runClipOneToObservationZone;
-
-    PathChain runObservationZoneToClipTwo;
-    PathChain runClipTwoToObservationZone;
+    PathChain runObservationZoneToClipOne;
 
     PathChain pushClipsToHuman;
 
@@ -95,10 +83,8 @@ public class Clippy extends OpMode {
         follower.setPose(startPose);
 
         runStartToClipOne = createPathChainForTwoPoints(startPose, clipOne);
-        runClipOneToObservationZone = createConstantPathChainForTwoPoints(clipOne, observationZone);
-
-        runObservationZoneToClipTwo = createPathChainForTwoPoints(observationZone, clipOne);
-        runClipTwoToObservationZone = createPathChainForTwoPoints(clipOne, observationZone);
+        runClipOneToObservationZone = createPathChainForTwoPoints(clipOne, observationZone);
+        runObservationZoneToClipOne = createPathChainForTwoPoints(observationZone, clipOne);
 
         pushClipsToHuman = follower.pathBuilder()
                 .addPath(
@@ -139,35 +125,10 @@ public class Clippy extends OpMode {
                         // Line 5
                         new BezierLine(
                                 new Point(59.641, 16.527, Point.CARTESIAN),
-//                                new Point(20.982, 14.228, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 5
-//                        new BezierLine(
-//                                new Point(20.982, 14.228, Point.CARTESIAN),
                                 new Point(observationZone)
                         )
                 )
                 .setConstantHeadingInterpolation(observationZone.getHeading())
-//                .addPath(
-//                        // Line 6
-//                        new BezierCurve(
-//                                new Point(20.982, 14.228, Point.CARTESIAN),
-//                                new Point(66.683, 27.737, Point.CARTESIAN),
-//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 7
-//                        new BezierLine(
-//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
-//                                new Point(observationZone)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(observationZone.getHeading())
                 .build();
 
         buildTime = buildTimer.getElapsedTime();
@@ -183,16 +144,6 @@ public class Clippy extends OpMode {
                 .setLinearHeadingInterpolation(point1.getHeading(), point2.getHeading())
                 .build();
     }
-
-    PathChain createConstantPathChainForTwoPoints(Pose point1, Pose point2) {
-        return follower.pathBuilder()
-                .addPath(new Path(new BezierCurve(
-                        new Point(point1), new Point(point2)
-                )))
-                .setConstantHeadingInterpolation(point2.getHeading())
-                .build();
-    }
-
 
     @Override
     public void init() {
@@ -276,21 +227,18 @@ public class Clippy extends OpMode {
                 break;
             case SCORING_POST_AWAIT_TO_MOVE_NEXT:
                 if(arm.getArmPosition() <= clipBasketLowerScore) {
-                    claw.open();
                     if(actionTimer.getElapsedTime() > 1) {
-                    claw.open();
+                        claw.open();
                         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     }
                     if(actionTimer.getElapsedTime() > 970) {
-                    claw.open();
                         if(whichClip == 0) {
-                    claw.open();
                             arm.setSlidesTargetPosition(lowerSlides);
                             setState(State.PUSH_INTO_OBSERVE);
                             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
                             break;
                         } else {
-                            goingToObservation = runClipTwoToObservationZone;
+                            goingToObservation = runClipOneToObservationZone;
                         }
                         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
                         whichClip++;
@@ -337,11 +285,11 @@ public class Clippy extends OpMode {
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
                     if(whichClip == 0) {
                         whichClip++;
-                        goingToObservation = runObservationZoneToClipTwo;
+                        goingToObservation = runObservationZoneToClipOne;
                         scorePose = clipOne;
                     }
                 }
-                if(actionTimer.getElapsedTime() > 1000 && arm.getArmPosition() >= clipObservePickup + 20) {
+                if(actionTimer.getElapsedTime() > 800 && arm.getArmPosition() >= clipObservePickup + 20) {
                     follower.followPath(goingToObservation, true);
                     actionTimer.resetTimer();
                     setState(State.SCORING_CLIP_RAISE_SLIDES);

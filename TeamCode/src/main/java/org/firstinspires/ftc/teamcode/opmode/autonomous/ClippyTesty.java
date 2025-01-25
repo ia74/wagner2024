@@ -18,14 +18,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name="2+0 Specimen / Miguel Antimaneuvering", group="!!! Auton")
-public class Clippy extends OpMode {
+@Autonomous(name="2+0 Specimen EXPERIMENTAL / Miguel Antimaneuvering", group="!!! Auton")
+public class ClippyTesty extends OpMode {
     public static int clipBasketHeight = 1100;
-    public static int clipBasketLowerScore = 200;
+    public static int clipBasketLowerScore = 500;
     public static int clipObservePickup = 0;
     public static int lowerSlides = 10;
     // other is 1400`Z
@@ -139,35 +138,10 @@ public class Clippy extends OpMode {
                         // Line 5
                         new BezierLine(
                                 new Point(59.641, 16.527, Point.CARTESIAN),
-//                                new Point(20.982, 14.228, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 5
-//                        new BezierLine(
-//                                new Point(20.982, 14.228, Point.CARTESIAN),
                                 new Point(observationZone)
                         )
                 )
                 .setConstantHeadingInterpolation(observationZone.getHeading())
-//                .addPath(
-//                        // Line 6
-//                        new BezierCurve(
-//                                new Point(20.982, 14.228, Point.CARTESIAN),
-//                                new Point(66.683, 27.737, Point.CARTESIAN),
-//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .addPath(
-//                        // Line 7
-//                        new BezierLine(
-//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
-//                                new Point(observationZone)
-//                        )
-//                )
-//                .setConstantHeadingInterpolation(observationZone.getHeading())
                 .build();
 
         buildTime = buildTimer.getElapsedTime();
@@ -276,15 +250,12 @@ public class Clippy extends OpMode {
                 break;
             case SCORING_POST_AWAIT_TO_MOVE_NEXT:
                 if(arm.getArmPosition() <= clipBasketLowerScore) {
-                    claw.open();
                     if(actionTimer.getElapsedTime() > 1) {
-                    claw.open();
+                        claw.open();
                         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     }
                     if(actionTimer.getElapsedTime() > 970) {
-                    claw.open();
                         if(whichClip == 0) {
-                    claw.open();
                             arm.setSlidesTargetPosition(lowerSlides);
                             setState(State.PUSH_INTO_OBSERVE);
                             lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
@@ -310,6 +281,8 @@ public class Clippy extends OpMode {
             case GOTO_OBSERVATION:
                 if(!follower.isBusy()) {
                     arm.setSlidesTargetPosition(clipObservePickup);
+                    claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
+                    lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                     setState(State.SLIDES_RAISE_FOR_PICKUP);
                 }
                 break;
@@ -320,11 +293,7 @@ public class Clippy extends OpMode {
                 }
                 break;
             case SLIDES_RAISE_THEN_WAIT:
-                if(actionTimer.getElapsedTime() > 250) {
-                    claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
-                    lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                }
-                if(actionTimer.getElapsedTime() > 850) {
+                if(actionTimer.getElapsedTime() > 500) {
                     claw.close();
                     actionTimer.resetTimer();
                     setState(State.CLAW_UP_POST_PICKUP);
@@ -341,7 +310,7 @@ public class Clippy extends OpMode {
                         scorePose = clipOne;
                     }
                 }
-                if(actionTimer.getElapsedTime() > 1000 && arm.getArmPosition() >= clipObservePickup + 20) {
+                if(actionTimer.getElapsedTime() > 800 && arm.getArmPosition() >= clipObservePickup + 20) {
                     follower.followPath(goingToObservation, true);
                     actionTimer.resetTimer();
                     setState(State.SCORING_CLIP_RAISE_SLIDES);

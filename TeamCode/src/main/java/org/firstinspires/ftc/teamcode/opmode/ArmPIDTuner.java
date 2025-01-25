@@ -4,12 +4,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 
+@Disabled
 @Config
-@Autonomous(name = "PID / Arm Tuner")
+//@Autonomous(name = "PID / Arm Tuner")
 public class ArmPIDTuner extends OpMode {
     public static double targetPositionHigh = 2000;
     public static double targetPositionLow = 300;

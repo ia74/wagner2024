@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 import java.util.List;
 
-@Autonomous(name="Miguel Antimaneuvering - Basket", group="!!! Auton")
+@Autonomous(name="0+3 Basket / Miguel Antimaneuvering", group="!!! Auton")
 public class Basket extends OpMode {
     public static double scoringBasketRaisePos = Arm.smaxPosition - 20;
     // other is 1400
@@ -226,7 +227,7 @@ public class Basket extends OpMode {
                 setState(State.START_TO_BASKET);
                 break;
             case START_TO_BASKET:
-                follower.followPath(runStartToBasket);
+                follower.followPath(runStartToBasket, true);
                 pickingUpCurrentlyState = FloorPickupState.RIGHT;
                 setState(State.RAISE_TO_BASKET);
                 break;
@@ -281,7 +282,7 @@ public class Basket extends OpMode {
                 // Now we've set where we wanna go, let's go there. Dynamically adjusted from the step.
                 break;
             case WAIT_SLIDE_DOWN:
-                follower.followPath(pickingUpCurrentlyPath);
+                follower.followPath(pickingUpCurrentlyPath, true);
                 setState(State.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
                 break;
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
@@ -330,17 +331,17 @@ public class Basket extends OpMode {
                     pickingUpCurrentlyState = FloorPickupState.NONE;
                 };
                 follower.setMaxPower(0.9);
-                follower.followPath(gotoFromFloor);
+                follower.followPath(gotoFromFloor, true);
                 setState(State.RAISE_TO_BASKET);
                 break;
             case PUSH_PIXEL_INTO_ZONE_GOTO:
                 follower.setMaxPower(1);
-                follower.followPath(runBasketToLeft);
+                follower.followPath(runBasketToLeft, true);
                 setState(State.PUSH_PIXEL_INTO_ZONE);
                 break;
             case PUSH_PIXEL_INTO_ZONE:
                 if(isInRangeOf(grabFromFloorLeft)) {
-                    follower.followPath(runLeftToZone);
+                    follower.followPath(runLeftToZone,true);
                     setState(State.PARK_GOTO);
                 }
                 break;
@@ -348,7 +349,7 @@ public class Basket extends OpMode {
                 if(isInRangeOf(pushIntoZone)) {
                     arm.setSlidesTargetPosition(1350);
                     arm.setShoulderTargetPosition(901);
-                    follower.followPath(runZoneToPark);
+                    follower.followPath(runZoneToPark, true);
                     claw.open();
                     claw.middle();
                     setState(State.PARK);

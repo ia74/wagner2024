@@ -39,9 +39,9 @@ public class Arm extends Subsystem {
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
         shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);

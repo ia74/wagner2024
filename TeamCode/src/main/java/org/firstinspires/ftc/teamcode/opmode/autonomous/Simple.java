@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name="Miguel Antimaneuvering - Simple", group="!!! Auton")
+@Autonomous(name="0+0 SIMPLE AUTO / Miguel Antimaneuvering", group="!!! Auton")
 public class Simple extends OpMode {
 
     // other is 1400
