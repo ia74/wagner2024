@@ -189,8 +189,8 @@ public class Preload extends OpMode {
 
     @Override
     public void start() {
-        claw.close();
-        claw.up();
+        claw.setClawState(Claw.ClawState.CLOSED);
+        claw.setWristState(Claw.WristState.UP);
         opModeTimer.resetTimer();
         actionTimer.resetTimer();
         setState(State.INIT);
@@ -242,14 +242,14 @@ public class Preload extends OpMode {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
                 if(arm.getArmPosition() >= scoringBasketRaisePos) {
                     actionTimer.resetTimer();
-                    claw.down(); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
+                    claw.setWristState(Claw.WristState.DOWN); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
                     setState(State.SCORE_BASKET); // This means, after this iteration we will not go back through this.
                 }
                 break;
             case SCORE_BASKET:
                 if(isInRangeOf(basketPosition)) {
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                    claw.open(); // Open the claw, as we're now raised high enough & lowered into the basket.
+                    claw.setClawState(Claw.ClawState.OPEN); // Open the claw, as we're now raised high enough & lowered into the basket.
                     actionTimer.resetTimer(); // Start the action timer.
                     setState(State.SCORE_OUT_BASKET);
                 }
@@ -257,7 +257,7 @@ public class Preload extends OpMode {
             case SCORE_OUT_BASKET:
                 if(actionTimer.getElapsedTime() > 750) {
                     // We've waited 500ms (half a second), so we'll raise the claw out of the bucket.
-                    claw.up();
+                    claw.setWristState(Claw.WristState.UP);
                 }
                 if(actionTimer.getElapsedTime() > 1200 && (claw.wrist.getPosition() == Claw.wristUpPosition || actionTimer.getElapsedTime() >2000)) {
                     // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..

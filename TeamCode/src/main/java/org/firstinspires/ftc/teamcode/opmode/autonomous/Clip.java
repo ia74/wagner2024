@@ -152,8 +152,8 @@ public class Clip extends OpMode {
             case NOOP:
                 break;
             case INIT:
-                claw.close();
-                claw.up();
+                claw.setClawState(Claw.ClawState.CLOSED);
+                claw.setWristState(Claw.WristState.UP);
                 setState(State.GOTO_FIRST_CLIP);
                 break;
             case GOTO_FIRST_CLIP:
@@ -166,14 +166,14 @@ public class Clip extends OpMode {
                 arm.setSlidesTargetPosition(scoringBasketRaisePos);
                 if(arm.getArmPosition() >= scoringBasketRaisePos) {
                     actionTimer.resetTimer();
-                    claw.middle();
+                    claw.setWristState(Claw.WristState.MIDDLE);
                     setState(State.CLIP_LOWER); // This means, after this iteration we will not go back through this.
                 }
                 break;
             case CLIP_LOWER:
                 if(isInRangeOf(scorePose)) {
                     arm.setShoulderTargetPosition(10);
-                    claw.open();
+                    claw.setClawState(Claw.ClawState.OPEN);
                     if(whichClip == 0) {
                         goingToObservation = runClipOneToObservationZone;
                     } else {
@@ -186,7 +186,7 @@ public class Clip extends OpMode {
                 break;
             case GOTO_OBSERVATION:
                 if(isInRangeOf(observationZone)) {
-                    claw.close();
+                    claw.setClawState(Claw.ClawState.CLOSED);
                     if(whichClip == 1) {
                         follower.followPath(runObservationZoneToClipTwo);
                     }

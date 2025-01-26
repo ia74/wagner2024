@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
 
 public class KneeSurgery extends OpMode {
-    private Follower follower;
+    Follower follower;
     Arm arm;
     Lights lights;
     Claw claw;
@@ -24,7 +24,6 @@ public class KneeSurgery extends OpMode {
 
     public void setLightColor(Lights e){};
 
-    public static double shoulderLimitMax = 2442;
     @Override
     public void init() {
         follower = new Follower(hardwareMap);
@@ -42,24 +41,25 @@ public class KneeSurgery extends OpMode {
         setLightColor(lights);
 
         follower.setPose(
-//                GlobalStorage.currentPose
-                new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0))
+                GlobalStorage.currentPose != null ? GlobalStorage.currentPose : new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0))
         );
         follower.startTeleopDrive();
     }
 
+    double currentDrivePower = 1.0;
+
     @Override
     public void loop() {
+        double newDrivePower;
+
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+
         double currentArmPosition = arm.getArmPosition();
         double currentShoulderPosition = arm.getShoulderPosition();
 
         Arm.slidesTargetPosition = currentArmPosition;
         Arm.shoulderTargetPosition = currentShoulderPosition;
 
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-        follower.update();
-
-        /* SECTION: Arm */
         double armPower = -gamepad2.right_stick_y;
         double shoulderPower = -gamepad2.left_stick_y;
 
@@ -93,33 +93,40 @@ public class KneeSurgery extends OpMode {
 
 
         if (gamepad2.dpad_up)
-            claw.up();
+            claw.setWristState(Claw.WristState.UP);
         else if (gamepad2.dpad_down)
-            claw.down();
+            claw.setWristState(Claw.WristState.DOWN);
         else if (gamepad2.dpad_right)
-            claw.middle();
+            claw.setWristState(Claw.WristState.MIDDLE);
+
+        if (gamepad2.right_trigger > 0.2) claw.setClawState(Claw.ClawState.CLOSED);
+        else claw.setClawState(Claw.ClawState.OPEN);
+
 
         if(gamepad1.left_bumper) {
-            follower.setMaxPower(0.6);
+            newDrivePower = 0.6;
         } else if(gamepad1.right_bumper) {
-            follower.setMaxPower(0.3);
+            newDrivePower = 0.3;
         } else {
-            follower.setMaxPower(1);
+            newDrivePower = 1.0;
         }
 
-        lights.update();
-
-        if (gamepad2.right_trigger > 0.2) claw.close();
-        else claw.open();
+        if(newDrivePower != currentDrivePower) {
+            follower.setMaxPower(newDrivePower);
+            currentDrivePower = newDrivePower;
+        }
 
         debugMode.update(gamepad2.share);
+
+        follower.update();
+        lights.update();
 
         if(debugMode.state) {
             telemetry.addLine(arm.toString());
             telemetry.addLine(claw.toString());
             telemetry.addLine(lights.toString());
-            Drawing.drawDebug(follower);
             telemetry.addLine(follower.getPose().toString());
+            Drawing.drawDebug(follower);
         } else {
             telemetry.addLine("Gamepad 2 - Options : Debug Mode");
         }

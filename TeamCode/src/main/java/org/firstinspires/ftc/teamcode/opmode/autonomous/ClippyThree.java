@@ -154,7 +154,7 @@ public class ClippyThree extends OpMode {
         lights = new Lights(hardwareMap);
 
         buildPaths();
-        claw.close();
+        claw.setClawState(Claw.ClawState.CLOSED);
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
     }
 
@@ -198,8 +198,8 @@ public class ClippyThree extends OpMode {
             case NOOP:
                 break;
             case INIT:
-                claw.close();
-                claw.up();
+                claw.setClawState(Claw.ClawState.CLOSED);
+                claw.setWristState(Claw.WristState.UP);
                 setState(State.GOTO_FIRST_CLIP);
                 break;
             case GOTO_FIRST_CLIP:
@@ -218,7 +218,7 @@ public class ClippyThree extends OpMode {
                 break;
             case SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW:
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
-                if(isLikeClose(scorePose)) claw.middle();
+                if(isLikeClose(scorePose)) claw.setWristState(Claw.WristState.MIDDLE);
                 if(isInRangeOf(scorePose) && actionTimer.getElapsedTime() > 1400) {
                     arm.setSlidesTargetPosition(clipBasketLowerScore);
                     actionTimer.resetTimer();
@@ -228,7 +228,7 @@ public class ClippyThree extends OpMode {
             case SCORING_POST_AWAIT_TO_MOVE_NEXT:
                 if(arm.getArmPosition() <= clipBasketLowerScore) {
                     if(actionTimer.getElapsedTime() > 1) {
-                        claw.open();
+                        claw.setClawState(Claw.ClawState.OPEN);
                         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                     }
                     if(actionTimer.getElapsedTime() > 970) {
@@ -249,8 +249,8 @@ public class ClippyThree extends OpMode {
                 break;
             case PUSH_INTO_OBSERVE:
                 if(arm.getArmPosition() >= lowerSlides) {
-                    claw.open();
-                    claw.up();
+                    claw.setClawState(Claw.ClawState.OPEN);
+                    claw.setWristState(Claw.WristState.UP);
                     follower.followPath(pushClipsToHuman, true);
                     setState(State.GOTO_OBSERVATION);
                 }
@@ -273,7 +273,7 @@ public class ClippyThree extends OpMode {
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 }
                 if(actionTimer.getElapsedTime() > 850) {
-                    claw.close();
+                    claw.setClawState(Claw.ClawState.CLOSED);
                     actionTimer.resetTimer();
                     setState(State.CLAW_UP_POST_PICKUP);
                 }
@@ -281,7 +281,7 @@ public class ClippyThree extends OpMode {
             case CLAW_UP_POST_PICKUP:
                 if(actionTimer.getElapsedTime() > 700) {
                     arm.setSlidesTargetPosition(clipObservePickup + 120);
-                    claw.up();
+                    claw.setWristState(Claw.WristState.UP);
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
                     if(whichClip == 0) {
                         whichClip++;
