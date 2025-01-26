@@ -36,7 +36,6 @@ public class KneeSurgery extends OpMode {
         follower.getLeftRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lights.off();
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         setLightColor(lights);
 
@@ -119,7 +118,6 @@ public class KneeSurgery extends OpMode {
         debugMode.update(gamepad2.share);
 
         follower.update();
-        lights.update();
 
         if(debugMode.state) {
             telemetry.addLine(arm.toString());

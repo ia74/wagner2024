@@ -19,10 +19,6 @@ public class Lights extends Subsystem {
         revBlinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, PartsMap.LIGHT_BLINKIN.toString());
     }
 
-    public void update() {
-        setPattern(Lights.pattern);
-    }
-
     public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
         if(Lights.pattern != pattern) {
             revBlinkinLedDriver.setPattern(pattern);
