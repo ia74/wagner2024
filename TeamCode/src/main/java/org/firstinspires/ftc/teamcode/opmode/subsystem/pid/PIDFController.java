@@ -16,15 +16,16 @@ public class PIDFController {
         this.previousError = 0;
         this.targetPosition = 0;
     }
-    public PIDFController(PIDFCoefficients coefficients) {
+    public PIDFController(PIDFCoefficients coefficients, double maxPosition) {
         this.coefficients = coefficients;
+        this.maxPosition = maxPosition;
         this.integral = 0;
         this.previousError = 0;
         this.targetPosition = 0;
     }
 
     public void setTargetPosition(double targetPosition) {
-        this.targetPosition = targetPosition;
+        this.targetPosition = Math.min(targetPosition, maxPosition);
     }
 
     public void setMaxPosition(double maxPosition) {
@@ -37,9 +38,10 @@ public class PIDFController {
 
     public double calculate(double currentPosition) {
         this.lastPosition = currentPosition;
-        if(targetPosition > maxPosition) targetPosition = maxPosition;
         double error = targetPosition - currentPosition;
-        integral += error;
+
+        integral = Math.max(Math.min(integral + error, 1000), -1000);
+
         double derivative = error - previousError;
 
         double output = (coefficients.kP * error) +

@@ -48,14 +48,11 @@ public class Arm extends Subsystem {
 
         Subsystem.initializeMotors(left, right, shoulder); // Reset, run with encoder, and set ZPB to FLOAT
 
-        slidesPid = new PIDFController(slidesCoefficients);
+        slidesPid = new PIDFController(slidesCoefficients, slidesMaximumPositionLimit);
         slidesPid.setMaxPosition(slidesMaximumPositionLimit);
-        slidesPid.setCoefficients(slidesCoefficients);
         slidesPid.setTargetPosition(getArmPosition());
 
-        shoulderPid = new PIDFController(shoulderCoefficients);
-        shoulderPid.setMaxPosition(shoulderMaximumPositionLimit);
-        shoulderPid.setCoefficients(shoulderCoefficients);
+        shoulderPid = new PIDFController(shoulderCoefficients, shoulderMaximumPositionLimit);
         shoulderPid.setTargetPosition(getShoulderPosition());
     }
 
