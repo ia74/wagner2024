@@ -282,7 +282,7 @@ public class ClippyTesty extends OpMode {
                 if(!follower.isBusy()) {
                     arm.setSlidesTargetPosition(clipObservePickup);
                     claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
-                    lights.setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                    lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                     setState(State.SLIDES_RAISE_FOR_PICKUP);
                 }
                 break;

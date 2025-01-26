@@ -23,26 +23,11 @@ public class Lights extends Subsystem {
         setPattern(Lights.pattern);
     }
 
-    public void setPatternIfNot(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        if(Lights.pattern == pattern) return;
-        revBlinkinLedDriver.setPattern(pattern);
-        Lights.pattern = pattern;
-    }
     public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        revBlinkinLedDriver.setPattern(pattern);
-        Lights.pattern = pattern;
-    }
-
-    public void breathRed() {
-        setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
-    }
-
-    public void breathBlue() {
-        setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
-    }
-
-    public void green() {
-        setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        if(Lights.pattern != pattern) {
+            revBlinkinLedDriver.setPattern(pattern);
+            Lights.pattern = pattern;
+        }
     }
 
     public void off() {

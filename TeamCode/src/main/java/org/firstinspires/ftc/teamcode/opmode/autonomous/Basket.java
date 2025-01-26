@@ -175,7 +175,7 @@ public class Basket extends OpMode {
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
         follower.setMaxPower(1);
-        lights.breathRed();
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
         buildPaths();
     }
 

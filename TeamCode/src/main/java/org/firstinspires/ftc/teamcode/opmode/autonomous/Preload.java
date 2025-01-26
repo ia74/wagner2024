@@ -176,7 +176,7 @@ public class Preload extends OpMode {
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
         follower.setMaxPower(0.98);
-        lights.breathRed();
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
         buildPaths();
     }
 

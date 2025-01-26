@@ -37,7 +37,7 @@ public class KneeSurgery extends OpMode {
         follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lights.off();
-        lights.green();
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         setLightColor(lights);
 
         follower.setPose(
