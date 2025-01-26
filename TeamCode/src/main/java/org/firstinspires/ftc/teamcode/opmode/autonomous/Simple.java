@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
-import static org.firstinspires.ftc.teamcode.opmode.autonomous.Clip.State.GOTO_FIRST_CLIP;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -9,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
-import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -89,7 +86,7 @@ public class Simple extends OpMode {
     public void start() {
         opModeTimer.resetTimer();
         actionTimer.resetTimer();
-        follower.followPath(runStartToClipOne);
+        follower.followPath(runStartToClipOne, true);
     }
 
     @Override
