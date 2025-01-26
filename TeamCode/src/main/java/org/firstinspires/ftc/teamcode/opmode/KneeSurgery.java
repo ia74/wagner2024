@@ -50,9 +50,6 @@ public class KneeSurgery extends OpMode {
     @Override
     public void loop() {
         double newDrivePower;
-
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-
         double currentArmPosition = arm.getArmPosition();
         double currentShoulderPosition = arm.getShoulderPosition();
 
@@ -117,6 +114,7 @@ public class KneeSurgery extends OpMode {
 
         debugMode.update(gamepad2.share);
 
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
 
         if(debugMode.state) {
