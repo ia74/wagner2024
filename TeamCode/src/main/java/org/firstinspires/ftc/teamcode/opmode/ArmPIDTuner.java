@@ -6,17 +6,18 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.MathUtil;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 
-@Disabled
+//@Disabled
 @Config
-//@Autonomous(name = "PID / Arm Tuner")
+@TeleOp(name = "PID / Arm Tuner")
 public class ArmPIDTuner extends OpMode {
-    public static double targetPositionHigh = 2000;
-    public static double targetPositionLow = 300;
-    double targetPosition = targetPositionLow;
-    double lastPosition;
+    public static MathUtil.Position slidesPositioning = new MathUtil.Position(300, 2000);
+    public static MathUtil.Position shoulderPositioning = new MathUtil.Position(300, 2000);
+    public static boolean tuningSlides = true;
 
     Arm arm;
 
@@ -26,43 +27,28 @@ public class ArmPIDTuner extends OpMode {
         arm = new Arm(hardwareMap);
     }
 
-    int numberToChange = 0; // P I D F
     @Override
     public void loop() {
-        if(gamepad1.y) Arm.stargetPosition = targetPositionHigh;
-        if(gamepad1.a) Arm.stargetPosition = targetPositionLow;
-        if(gamepad1.dpad_right && numberToChange < 3) numberToChange++;
-        if(gamepad1.dpad_left && numberToChange > 0) numberToChange--;
-        if(gamepad1.dpad_up) {
-            if(numberToChange == 0) Arm.skP += 0.00001;
-            if(numberToChange == 1) Arm.skI += 0.00001;
-            if(numberToChange == 2) Arm.skD += 0.00001;
-            if(numberToChange == 3) Arm.skF += 0.00001;
+        if(gamepad1.y) {
+            if(tuningSlides) arm.setSlidesTargetPosition(slidesPositioning.high);
+            else arm.setShoulderTargetPosition(shoulderPositioning.high);
         }
-        double stickInput = -gamepad1.right_stick_y;
-        if(Math.abs(stickInput) > 0.1) {
-            double newPos = stickInput * Arm.smaxPosition;
-            if(newPos > lastPosition) {
-                Arm.stargetPosition = newPos;
-                if(Arm.stargetPosition > Arm.smaxPosition) Arm.stargetPosition = Arm.smaxPosition;
-                lastPosition = newPos;
-
-            }
+        else if(gamepad1.a) {
+            if(tuningSlides) arm.setSlidesTargetPosition(slidesPositioning.low);
+            else arm.setShoulderTargetPosition(shoulderPositioning.low);
         }
 
-        arm.slidesPid.setSetpoint(Arm.stargetPosition);
-        arm.slidesPid.setkP(Arm.skP);
-        arm.slidesPid.setkI(Arm.skI);
-        arm.slidesPid.setkD(Arm.skD);
-        arm.slidesPid.setkF(Arm.skF);
+        if(tuningSlides) arm.slidesPid.setCoefficients(Arm.slidesCoefficients);
+        else arm.shoulderPid.setCoefficients(Arm.shoulderCoefficients);
+
         arm.update();
-        telemetry.addData("Currently chaning", numberToChange == 0 ? "P" : numberToChange == 1 ? "I" : numberToChange == 2 ? "D" : numberToChange == 3 ? "F" : numberToChange );
-        telemetry.addData("Target Position", Arm.stargetPosition);
-        telemetry.addData("Current Position", arm.getArmPosition());
-        telemetry.addData("kP", Arm.skP);
-        telemetry.addData("kI", Arm.skI);
-        telemetry.addData("kD", Arm.skD);
-        telemetry.addData("kF", Arm.skF);
+
+        telemetry.addData("Tuning", tuningSlides ? "Slides" : "Shoulder");
+        telemetry.addData("Gamepad 1 Y/Triangle", "Up");
+        telemetry.addData("Gamepad 1 A/Cross", "Down");
+        telemetry.addData("Target Position", tuningSlides ? Arm.slidesTargetPosition : Arm.shoulderCoefficients);
+        telemetry.addData("Current Position", tuningSlides? arm.getArmPosition() : arm.getShoulderPosition());
+        telemetry.addLine(tuningSlides ? arm.slidesPid.toString() : arm.shoulderPid.toString());
         telemetry.update();
     }
 }

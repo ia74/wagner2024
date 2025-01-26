@@ -47,13 +47,14 @@ public class KneeSurgery extends OpMode {
         );
         follower.startTeleopDrive();
     }
-    @Override
-    public void start() {
-    }
+
     @Override
     public void loop() {
-        Arm.stargetPosition = arm.getArmPosition();
-        Arm.shoulderktargetPosition = arm.getShoulderPosition();
+        double currentArmPosition = arm.getArmPosition();
+        double currentShoulderPosition = arm.getShoulderPosition();
+
+        Arm.slidesTargetPosition = currentArmPosition;
+        Arm.shoulderTargetPosition = currentShoulderPosition;
 
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
@@ -63,7 +64,7 @@ public class KneeSurgery extends OpMode {
         double shoulderPower = -gamepad2.left_stick_y;
 
         if(Math.abs(armPower) > 0.1) {
-            if(arm.getArmPosition() > Arm.smaxPosition - 20) {
+            if(currentArmPosition > Arm.slidesMaximumPositionLimit - 20) {
                 if (!(armPower > 0.1)) {
                     arm.setSlidePower(armPower);
                 } else {
@@ -77,7 +78,7 @@ public class KneeSurgery extends OpMode {
         }
 
         if(Math.abs(shoulderPower) > 0.1) {
-            if(arm.getShoulderPosition() > Arm.shoulderkmaxPosition - 30) {
+            if(currentShoulderPosition > Arm.shoulderMaximumPositionLimit - 30) {
                 if (!(shoulderPower > 0.1)) {
                     arm.setShoulderPower(shoulderPower);
                 } else {

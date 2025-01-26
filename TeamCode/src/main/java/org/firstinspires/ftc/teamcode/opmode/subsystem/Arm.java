@@ -7,23 +7,28 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.PartsMap;
+import org.firstinspires.ftc.teamcode.opmode.subsystem.pid.PIDFCoefficients;
+import org.firstinspires.ftc.teamcode.opmode.subsystem.pid.PIDFController;
 
 @Config
 public class Arm extends Subsystem {
-    public static double skP = 0.006 ;
-    public static double skI = 0;
-    public static double skD = 0.00001;
-    public static double skF = 0.000005;
-    public static double smaxPosition = 3725;
-    public static double stargetPosition = 0;
+    public static PIDFCoefficients slidesCoefficients = new PIDFCoefficients(
+            0.006,
+            0,
+            0.00001,
+            0.000005
+    );
+    public static double slidesMaximumPositionLimit = 3725;
+    public static double slidesTargetPosition = 0;
 
-    public static double shoulderkP = 0.005;
-    public static double shoulderkI = 0;
-    public static double shoulderkD = 0;
-    public static double shoulderkF = 0;
-    public static double shoulderkmaxPosition = 2500;
-    public static double shoulderktargetPosition = 0;
-
+    public static PIDFCoefficients shoulderCoefficients = new PIDFCoefficients(
+            0.005,
+            0,
+            0,
+            0
+    );
+    public static double shoulderMaximumPositionLimit = 2500;
+    public static double shoulderTargetPosition = 0;
 
     public DcMotor left;
     public DcMotor right;
@@ -35,46 +40,31 @@ public class Arm extends Subsystem {
         super(hardwareMap);
         left = hardwareMap.get(DcMotor.class, PartsMap.ARM_LEFT.toString());
         right = hardwareMap.get(DcMotor.class, PartsMap.ARM_RIGHT.toString());
-
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
+
         shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shoulder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
         left.setDirection(DcMotorSimple.Direction.REVERSE);
         right.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        Subsystem.resetMotor(left);
-        Subsystem.resetMotor(right);
-        Subsystem.resetMotor(shoulder);
+        Subsystem.initializeMotors(left, right, shoulder); // Reset, run with encoder, and set ZPB to FLOAT
 
-        slidesPid = new PIDFController(skP, skI, skD, skF);
-        slidesPid.setMaxPosition(smaxPosition);
-        slidesPid.setkP(skP);
-        slidesPid.setkI(skI);
-        slidesPid.setkD(skD);
-        slidesPid.setkF(skF);
-        stargetPosition = getArmPosition();
+        slidesPid = new PIDFController(slidesCoefficients);
+        slidesPid.setMaxPosition(slidesMaximumPositionLimit);
+        slidesPid.setCoefficients(slidesCoefficients);
+        slidesPid.setTargetPosition(getArmPosition());
 
-        shoulderPid = new PIDFController(shoulderkP, shoulderkI, shoulderkD, shoulderkF);
-        shoulderPid.setMaxPosition(shoulderkmaxPosition);
-        shoulderPid.setkP(shoulderkP);
-        shoulderPid.setkI(shoulderkI);
-        shoulderPid.setkD(shoulderkD);
-        shoulderPid.setkF(shoulderkF);
-        shoulderktargetPosition = getShoulderPosition();
+        shoulderPid = new PIDFController(shoulderCoefficients);
+        shoulderPid.setMaxPosition(shoulderMaximumPositionLimit);
+        shoulderPid.setCoefficients(shoulderCoefficients);
+        shoulderPid.setTargetPosition(getShoulderPosition());
     }
 
     public void setShoulderTargetPosition(double spos) {
-        Arm.shoulderktargetPosition = spos;
-        this.shoulderPid.setSetpoint(spos);
+        Arm.shoulderTargetPosition = spos;
     }
 
     public void setSlidesTargetPosition(double tpos) {
-        Arm.stargetPosition = tpos;
-        this.slidesPid.setSetpoint(tpos);
+        Arm.slidesTargetPosition = tpos;
     }
 
     public double getArmPosition() {
@@ -91,32 +81,13 @@ public class Arm extends Subsystem {
         return shoulder.getCurrentPosition();
     }
 
-//    public void teleopControl(double gamepadPower, boolean isSlides) {
-//        double currentPosition = isSlides ? getArmPosition() : getShoulderPosition();
-//        double maximumPosition = isSlides ? Arm.smaxPosition : shoulderkmaxPosition;
-//        if(isSlides)
-//        if(Math.abs(gamepadPower) > 0.1) {
-//            if(currentPosition > maximumPosition - 30) {
-//                if (!(shoulderPower > 0.1)) {
-//                    arm.setShoulderPower(shoulderPower);
-//                } else {
-//                    arm.individuallyUpdateShoulder();
-//                }
-//            } else {
-//                arm.setShoulderPower(shoulderPower);
-//            }
-//        } else {
-//            arm.individuallyUpdateShoulder();
-//        }
-//    }
-
     public void individuallyUpdateSlides() {
-        slidesPid.setSetpoint(stargetPosition);
+        slidesPid.setTargetPosition(slidesTargetPosition);
         double power = slidesPid.calculate(getArmPosition());
         setSlidePower(power);
     }
     public void individuallyUpdateShoulder() {
-        shoulderPid.setSetpoint(shoulderktargetPosition);
+        shoulderPid.setTargetPosition(shoulderTargetPosition);
         double power2 = shoulderPid.calculate(getShoulderPosition());
         setShoulderPower(power2);
     }
@@ -129,12 +100,8 @@ public class Arm extends Subsystem {
     @NonNull
     public String toString() {
         return "-- [Mechanism: Arm] --\n" +
-                "SPosition: " + getArmPosition() + "\n" +
-                "STargetPosition: " + stargetPosition + "\n\n" +
-                "S P/I/D/F: " + fmt(Arm.skP, Arm.skI, Arm.skD, Arm.skF) + "\n" +
-                "KPosition: " + getShoulderPosition() + "\n" +
-                "kTargetPosition: " + shoulderktargetPosition + "\n" +
-                "K P/I/D/F: " + fmt(Arm.shoulderkP, Arm.shoulderkI, Arm.shoulderkD, Arm.shoulderkF) + "\n" +
+                Subsystem.pidControllerIfo(slidesPid, "Slides", fmt(left.getPower(), right.getPower())) + "\n" +
+                Subsystem.pidControllerIfo(shoulderPid, "Shoulder", String.valueOf(shoulder.getPower())) + "\n" +
                 Subsystem.motorIfo(left, "Motor Left") + "\n" +
                 Subsystem.motorIfo(right, "Motor Right") + "\n" +
                 Subsystem.motorIfo(shoulder, "Shoulder") + "\n";

@@ -24,7 +24,7 @@ import java.util.List;
 
 @Autonomous(name="0+3 Basket / Miguel Antimaneuvering", group="!!! Auton")
 public class Basket extends OpMode {
-    public static double scoringBasketRaisePos = Arm.smaxPosition - 20;
+    public static double scoringBasketRaisePos = Arm.slidesMaximumPositionLimit - 20;
     // other is 1400
     public enum State {
         NOOP,

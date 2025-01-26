@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.PartsMap;
+import org.firstinspires.ftc.teamcode.opmode.subsystem.pid.PIDFController;
 
 public class Subsystem {
     HardwareMap hardwareMap;
@@ -19,6 +20,12 @@ public class Subsystem {
         motor.setPower(0);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    static void initializeMotors(DcMotor... motors) {
+        for(DcMotor i : motors) {
+            Subsystem.resetMotor(i);
+            i.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
     }
     static String motorIfo(DcMotor motor, String title) {
         return title + ":\n" +
@@ -38,5 +45,17 @@ public class Subsystem {
         return title + ":\n" +
                 "\tName: " + motor.getDeviceName() + "\n" +
                 "\tPower: " + motor.getPower() + "\n";
+    }
+
+    static String pidControllerIfo(PIDFController pidfController, String title, String powers) {
+        return title + ":\n" +
+                pidfController.toString() + "\n" +
+                "\tPower: " + powers;
+    }
+
+    static PIDFController pidfController(double kP, double kI, double kD, double kF) {
+        return new PIDFController(
+                kP, kI, kD, kF
+        );
     }
 }
