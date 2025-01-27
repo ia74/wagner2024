@@ -13,20 +13,19 @@ public class Subsystem {
     public Subsystem(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
-    public <T> T getHardware(Class<? extends T> classOrInterface, PartsMap deviceName) {
-        return hardwareMap.get(classOrInterface, deviceName.toString());
-    }
     static void resetMotor(DcMotor motor) {
         motor.setPower(0);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     static void initializeMotors(DcMotor... motors) {
         for(DcMotor i : motors) {
             Subsystem.resetMotor(i);
             i.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
     }
+
     static String motorIfo(DcMotor motor, String title) {
         return title + ":\n" +
                 "\tName: " + motor.getDeviceName() + "\n" +
@@ -35,12 +34,14 @@ public class Subsystem {
                 "\tPower: " + motor.getPower() + "\n" +
                 "\tBusy: " + motor.isBusy() + "\n";
     }
+
     static String servoIfo(Servo motor, String title) {
         return title + ":\n" +
                 "\tName: " + motor.getDeviceName() + "\n" +
                 "\tCPosition: " + motor.getPosition() + "\n" +
                 "\tDirection: " + motor.getDirection() + "\n";
     }
+
     static String servoIfo(CRServo motor, String title) {
         return title + ":\n" +
                 "\tName: " + motor.getDeviceName() + "\n" +
@@ -51,11 +52,5 @@ public class Subsystem {
         return title + ":\n" +
                 pidfController.toString() + "\n" +
                 "\tPower: " + powers;
-    }
-
-    static PIDFController pidfController(double kP, double kI, double kD, double kF) {
-        return new PIDFController(
-                kP, kI, kD, kF
-        );
     }
 }

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Toggleable;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
+import org.firstinspires.ftc.teamcode.opmode.subsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
@@ -86,7 +87,6 @@ public class KneeSurgery extends OpMode {
         } else {
             arm.individuallyUpdateShoulder();
         }
-
 
         if (gamepad2.dpad_up)
             claw.setWristState(Claw.WristState.UP);
