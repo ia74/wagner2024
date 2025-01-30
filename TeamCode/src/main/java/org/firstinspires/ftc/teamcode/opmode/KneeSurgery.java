@@ -25,6 +25,9 @@ public class KneeSurgery extends OpMode {
 
     public void setLightColor(Lights e){};
 
+    public void externalFunctionLoop(){};
+    public void externalFunctionInit(){};
+
     @Override
     public void init() {
         follower = new Follower(hardwareMap);
@@ -39,6 +42,8 @@ public class KneeSurgery extends OpMode {
 
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         setLightColor(lights);
+
+        externalFunctionInit();
 
         follower.setPose(
                 GlobalStorage.currentPose != null ? GlobalStorage.currentPose : new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0))
@@ -117,6 +122,8 @@ public class KneeSurgery extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
 
+        externalFunctionLoop();
+
         if(debugMode.state) {
             telemetry.addLine(arm.toString());
             telemetry.addLine(claw.toString());
@@ -126,6 +133,7 @@ public class KneeSurgery extends OpMode {
         } else {
             telemetry.addLine("Gamepad 2 - Options : Debug Mode");
         }
+
         telemetry.update();
     }
 }

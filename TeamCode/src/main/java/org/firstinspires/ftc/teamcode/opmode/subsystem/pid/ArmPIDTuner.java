@@ -46,6 +46,7 @@ public class ArmPIDTuner extends OpMode {
         telemetry.addData("Gamepad 1 A/Cross", "Down");
         telemetry.addData("Target Position", tuningSlides ? Arm.slidesTargetPosition : Arm.shoulderCoefficients);
         telemetry.addData("Current Position", tuningSlides? arm.getArmPosition() : arm.getShoulderPosition());
+        telemetry.addData("Current Power", tuningSlides? arm.left.getPower() : arm.shoulder.getPower());
         telemetry.addLine(tuningSlides ? arm.slidesPid.toString() : arm.shoulderPid.toString());
         telemetry.update();
     }

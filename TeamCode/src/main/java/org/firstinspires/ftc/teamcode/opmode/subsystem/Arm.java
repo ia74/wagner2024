@@ -18,7 +18,7 @@ public class Arm extends Subsystem {
             0.00001,
             0.000005
     );
-    public static double slidesMaximumPositionLimit = 3725;
+    public static double slidesMaximumPositionLimit = 2560;
     public static double slidesTargetPosition = 0;
 
     public static PIDFCoefficients shoulderCoefficients = new PIDFCoefficients(

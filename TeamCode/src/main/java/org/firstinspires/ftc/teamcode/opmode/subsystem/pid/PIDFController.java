@@ -25,6 +25,8 @@ public class PIDFController {
     }
 
     public void setTargetPosition(double targetPosition) {
+        if(targetPosition > maxPosition) targetPosition = maxPosition;
+
         this.targetPosition = Math.min(targetPosition, maxPosition);
     }
 
@@ -38,6 +40,7 @@ public class PIDFController {
 
     public double calculate(double currentPosition) {
         this.lastPosition = currentPosition;
+        if(targetPosition > maxPosition) targetPosition = maxPosition;
         double error = targetPosition - currentPosition;
 
         integral = Math.max(Math.min(integral + error, 1000), -1000);

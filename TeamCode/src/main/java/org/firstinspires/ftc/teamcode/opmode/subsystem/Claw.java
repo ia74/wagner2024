@@ -39,6 +39,8 @@ public class Claw extends Subsystem {
         claw = hardwareMap.get(Servo.class, PartsMap.CLAW.toString());
         wrist = hardwareMap.get(Servo.class, PartsMap.WRIST.toString());
         claw.setDirection(Servo.Direction.REVERSE);
+        wristState = WristState.UNKNOWN;
+        clawState = ClawState.UNKNOWN;
     }
 
     public void setWristState(WristState state) {
