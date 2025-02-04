@@ -5,8 +5,9 @@
             <goBILDA5202SeriesMotor name="armLeft" port="0" />
             <goBILDA5202SeriesMotor name="armRight" port="1" />
             <goBILDA5202SeriesMotor name="shoulder" port="2" />
+            <RevRoboticsCoreHexMotor name="wrist" port="3" />
 
-            <Servo name="wrist" port="0" />
+<!--            <Servo name="wrist" port="0" />-->
             <Servo name="claw" port="1" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
