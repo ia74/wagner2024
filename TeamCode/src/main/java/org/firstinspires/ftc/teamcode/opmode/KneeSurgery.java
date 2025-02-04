@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,9 +12,12 @@ import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Subsystem;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.util.Drawing;
 
 public class KneeSurgery extends OpMode {
     Follower follower;
@@ -30,15 +34,11 @@ public class KneeSurgery extends OpMode {
 
     @Override
     public void init() {
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
-
-        follower.getLeftFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getRightFront().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getLeftRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.getRightRear().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         setLightColor(lights);
