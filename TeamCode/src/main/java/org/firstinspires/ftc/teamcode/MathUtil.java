@@ -10,7 +10,18 @@ public class MathUtil {
             this.high = high;
         }
     }
-    public static boolean isInRange(double a, double b, double range) {
-        return b - range <= a && a <= b + range;
+    public enum RangeState {
+        BELOW_MINIMUM,
+        WITHIN_RANGE,
+        ABOVE_MAXIMUM
+    }
+    public static RangeState isInRange(double current, double minimum, double maximum) {
+        if (current < minimum) {
+            return RangeState.BELOW_MINIMUM;
+        } else if (current > maximum) {
+            return RangeState.ABOVE_MAXIMUM;
+        } else {
+            return RangeState.WITHIN_RANGE;
+        }
     }
 }
