@@ -7,9 +7,12 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 
 public class LConstants {
     static {
-        ThreeWheelConstants.forwardTicksToInches = 0.0029561460323358517;
-        ThreeWheelConstants.strafeTicksToInches = -0.0030611992603021814;
-        ThreeWheelConstants.turnTicksToInches = 0.003042425003170012;
+
+        ThreeWheelConstants.forwardTicksToInches = 0.002926201225896202;
+//        ThreeWheelConstants.forwardTicksToInches = 0.0029561460323358517;
+        ThreeWheelConstants.strafeTicksToInches = -0.002975973601404039;
+//        ThreeWheelConstants.strafeTicksToInches = -0.0030611992603021814;
+        ThreeWheelConstants.turnTicksToInches = 0.003013518132939856;
         ThreeWheelConstants.leftY = 7.9;
         ThreeWheelConstants.rightY = -7.9;
         ThreeWheelConstants.strafeX = 6;

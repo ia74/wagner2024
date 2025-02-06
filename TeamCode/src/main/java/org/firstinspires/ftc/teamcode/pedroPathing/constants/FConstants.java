@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.constants;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Localizers;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.util.CustomFilteredPIDFCoefficients;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.PartsMap;
 
+@Config
 public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.THREE_WHEEL;
@@ -22,16 +24,16 @@ public class FConstants {
         FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.FORWARD;
         FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.FORWARD;
 
-        FollowerConstants.mass = 13.608;
+        FollowerConstants.mass = 16.7;
 
-        FollowerConstants.xMovement = 51.4966;
-        FollowerConstants.yMovement = 51.4966;
+        FollowerConstants.xMovement = 55.678203239043;
+        FollowerConstants.yMovement = 40.608821307914;
 
-        FollowerConstants.forwardZeroPowerAcceleration = -41.94002244243403;
-        FollowerConstants.lateralZeroPowerAcceleration = -82.94;
+        FollowerConstants.forwardZeroPowerAcceleration = -40.770043606209;
+        FollowerConstants.lateralZeroPowerAcceleration = -99.4558788;
 
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(
-                0.17,
+                0.2,
                 0,
                 0,
                 0);
@@ -58,11 +60,11 @@ public class FConstants {
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1,0,0,0.6,0); // Not being used, @see useSecondaryDrivePID
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 5;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 4;
         FollowerConstants.centripetalScaling = 0.00059;
 
-        FollowerConstants.pathEndTimeoutConstraint = 500;
-        FollowerConstants.pathEndTValueConstraint = 0.995;
+        FollowerConstants.pathEndTimeoutConstraint = 50;
+        FollowerConstants.pathEndTValueConstraint = 0.985;
         FollowerConstants.pathEndVelocityConstraint = 0.1;
         FollowerConstants.pathEndTranslationalConstraint = 0.1;
         FollowerConstants.pathEndHeadingConstraint = 0.007;
