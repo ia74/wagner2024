@@ -3,6 +3,15 @@ package org.firstinspires.ftc.teamcode.opmode.autonomous;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
+import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,23 +20,14 @@ import org.firstinspires.ftc.teamcode.GlobalStorage;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Arm;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Claw;
 import org.firstinspires.ftc.teamcode.opmode.subsystem.Lights;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Drawing;
-import com.pedropathing.util.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
-import com.pedropathing.util.Timer;
 
 @Config
-@Autonomous(name="2+0 Specimen / Miguel Antimaneuvering", group="!!! Auton")
-public class Clippy extends OpMode {
+@Autonomous(name="2+0 Specimen Jorkin It", group="!!! Auton")
+public class ClippyJorkingIt extends OpMode {
     public static int clipBasketHeight = 1100;
+    public static int clipBasketHorizontalExtend = (int) Arm.shoulderMaximumPositionLimit;
     public static int clipBasketLowerScore = 700;
     public static int clipObservePickup = 0;
     public static int lowerSlides = 10;
@@ -37,12 +37,13 @@ public class Clippy extends OpMode {
         INIT,
         GOTO_FIRST_CLIP,
         PUSH_INTO_OBSERVE,
-        CLIPPING_RAISE_SLIDES,
-        CLIPPING_MOVE_TO_SCORE_AND_SET_WRIST,
-        CLIPPING_SCORE,
-        CLIPPING_OPEN_CLAW,
-        CLIPPING_GOTO_OBSERVATION,
+        AWAIT_PUSH_FINISH,
+        SCORING_CLIP_RAISE_SLIDES,
+        SCORING_POST_AWAIT_CLAW_OPEN,
+        SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW,
+        SCORING_POST_AWAIT_TO_MOVE_NEXT,
         GOTO_OBSERVATION,
+        WAIT,
         SLIDES_RAISE_FOR_PICKUP,
         SLIDES_RAISE_THEN_WAIT,
         CLAW_UP_POST_PICKUP,
@@ -66,9 +67,18 @@ public class Clippy extends OpMode {
     int whichClip = 0;
 
     Pose startPose = new Pose(10.220338983050848, 63.37724550898203, Math.toRadians(0));
-    Pose clipOne = new Pose(33.5, 74.51790900290416, Math.toRadians(0)); // x 125 -> 124
+    Pose clipOne = new Pose(21.41317365269461, 75.01796407185628, Math.toRadians(0)); // x 125 -> 124
+    Pose clipTwo = new Pose(36.08483896307934, 74.31893165750196, Math.toRadians(0)); // x 125 -> 124
 
-    Pose observationZone = new Pose(17.5, 11.065868263473059, Math.toRadians(180));
+    Point backupToPose = new Point(59.49700598802395, 23.85628742514971, Point.CARTESIAN);
+    double pushX = 30;
+
+//    Pose observationZone = new Pose(25.447125748502993, 10.922155688622755, Math.toRadians(180));
+    Pose observationZone = new Pose(19.83233532934132, 10.922155688622755, Math.toRadians(180));
+//     Pose observationZone = new Pose(25.437125748502993, 10.922155688622755, Math.toRadians(180)); // THIS FOR LESS BATYERY
+
+//    Pose observationZone = new Pose(59.641, 16.527, Math.toRadians(180));
+//                                new Point(59.641, 16.527, Point.CARTESIAN),
 
     PathChain runStartToClipOne;
     PathChain runClipOneToObservationZone;
@@ -132,10 +142,35 @@ public class Clippy extends OpMode {
                         // Line 5
                         new BezierLine(
                                 new Point(59.641, 16.527, Point.CARTESIAN),
+//                                new Point(20.982, 14.228, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 5
+//                        new BezierLine(
+//                                new Point(20.982, 14.228, Point.CARTESIAN),
                                 new Point(observationZone)
                         )
                 )
                 .setConstantHeadingInterpolation(observationZone.getHeading())
+//                .addPath(
+//                        // Line 6
+//                        new BezierCurve(
+//                                new Point(20.982, 14.228, Point.CARTESIAN),
+//                                new Point(66.683, 27.737, Point.CARTESIAN),
+//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .addPath(
+//                        // Line 7
+//                        new BezierLine(
+//                                new Point(59.92814371257485, 10.491017964071862, Point.CARTESIAN),
+//                                new Point(observationZone)
+//                        )
+//                )
+//                .setConstantHeadingInterpolation(observationZone.getHeading())
                 .build();
 
         buildTime = buildTimer.getElapsedTime();
@@ -145,7 +180,7 @@ public class Clippy extends OpMode {
 
     PathChain createPathChainForTwoPoints(Pose point1, Pose point2) {
         return follower.pathBuilder()
-                .addPath(new Path(new BezierLine(
+                .addPath(new Path(new BezierCurve(
                         new Point(point1), new Point(point2)
                 )))
                 .setLinearHeadingInterpolation(point1.getHeading(), point2.getHeading())
@@ -154,7 +189,7 @@ public class Clippy extends OpMode {
 
     PathChain createConstantPathChainForTwoPoints(Pose point1, Pose point2) {
         return follower.pathBuilder()
-                .addPath(new Path(new BezierLine(
+                .addPath(new Path(new BezierCurve(
                         new Point(point1), new Point(point2)
                 )))
                 .setConstantHeadingInterpolation(point2.getHeading())
@@ -166,7 +201,7 @@ public class Clippy extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+follower = new Follower(hardwareMap);
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         lights = new Lights(hardwareMap);
@@ -190,6 +225,7 @@ public class Clippy extends OpMode {
         opModeTimer.resetTimer();
         actionTimer.resetTimer();
         setState(State.INIT);
+        claw.setWristState(Claw.WristState.MIDDLE);
     }
 
     @Override
@@ -225,63 +261,61 @@ public class Clippy extends OpMode {
                 follower.followPath(runStartToClipOne, true);
                 scorePose = clipOne;
                 actionTimer.resetTimer();
-                setState(State.CLIPPING_RAISE_SLIDES);
+                setState(State.SCORING_CLIP_RAISE_SLIDES);
                 break;
-            case CLIPPING_RAISE_SLIDES:
+            case SCORING_CLIP_RAISE_SLIDES:
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
                 arm.setSlidesTargetPosition(clipBasketHeight);
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipBasketHeight)
-                        && actionTimer.getElapsedTime() > (whichClip == 0 ? 500 : 2000)) {
+                arm.setShoulderTargetPosition(clipBasketHorizontalExtend);
+                if(arm.getArmPosition() >= clipBasketHeight && actionTimer.getElapsedTime() > (whichClip == 0 ? 500 : 2000)) {
                     actionTimer.resetTimer();
-                    setState(State.CLIPPING_MOVE_TO_SCORE_AND_SET_WRIST); // This means, after this iteration we will not go back through this.
+                    claw.setWristState(Claw.WristState.MIDDLE);
+                    setState(State.SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW); // This means, after this iteration we will not go back through this.
                 }
                 break;
-            case CLIPPING_MOVE_TO_SCORE_AND_SET_WRIST:
+            case SCORING_CLIP_LOWER_SLIDES_AND_OPEN_CLAW:
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
-                if(isLikeClose(scorePose)) claw.setWristState(Claw.WristState.MIDDLE);
+//                if(isLikeClose(scorePose)) claw.setWristState(Claw.WristState.MIDDLE);
                 if(!follower.isBusy()) {
                     actionTimer.resetTimer();
-                    lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
-                    setState(State.CLIPPING_SCORE);
+                    setState(State.SCORING_POST_AWAIT_TO_MOVE_NEXT);
                 }
                 break;
-            case CLIPPING_SCORE:
-                if(actionTimer.getElapsedTime() > 750) {
-                    arm.setSlidesTargetPosition(clipBasketLowerScore);
+            case SCORING_POST_AWAIT_TO_MOVE_NEXT:
+                if(!follower.isBusy()) {
+                    if(actionTimer.getElapsedTime() > 750) {
+                        arm.setSlidesTargetPosition(clipBasketLowerScore);
+                    }
+                    if(actionTimer.getElapsedTime() > 1) {
+                        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                    }
+                    if(actionTimer.getElapsedTime() > 800) {
+                        claw.setClawState(Claw.ClawState.OPEN);
+                        claw.claw.setPosition(Claw.clawOpenPosition);
+                        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                    }
+                    if(actionTimer.getElapsedTime() > 970 && claw.claw.getPosition() >= Claw.clawOpenPosition) {
+                        if(whichClip == 0) {
+                            setState(State.PUSH_INTO_OBSERVE);
+                            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE);
+                            break;
+                        } else {
+                            goingToObservation = runClipTwoToObservationZone;
+                        }
+                        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+                        whichClip++;
+                        follower.followPath(goingToObservation, true);
+                        setState(State.GOTO_OBSERVATION);
+                    }
                 }
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipBasketLowerScore)) {
-                    actionTimer.resetTimer();
-                    setState(State.CLIPPING_OPEN_CLAW);
-                }
-                break;
-            case CLIPPING_OPEN_CLAW:
-                claw.setClawState(Claw.ClawState.OPEN);
-                claw.claw.setPosition(Claw.clawOpenPosition);
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                if(actionTimer.getElapsedTime() > 1000) {
-                    actionTimer.resetTimer();
-                    setState(State.CLIPPING_GOTO_OBSERVATION);
-                }
-                break;
-            case CLIPPING_GOTO_OBSERVATION:
-                if(whichClip == 0) {
-                    setState(State.PUSH_INTO_OBSERVE);
-                    lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE);
-                    break;
-                } else {
-                    goingToObservation = runClipTwoToObservationZone;
-                }
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
-                whichClip++;
-                follower.followPath(goingToObservation, true);
-                actionTimer.resetTimer();
-                setState(State.GOTO_OBSERVATION);
                 break;
             case PUSH_INTO_OBSERVE:
-                claw.setClawState(Claw.ClawState.OPEN);
-                claw.setWristState(Claw.WristState.UP);
-                follower.followPath(pushClipsToHuman, true);
-                setState(State.GOTO_OBSERVATION);
+                if(arm.getArmPosition() >= lowerSlides) {
+                    claw.setClawState(Claw.ClawState.OPEN);
+                    claw.setWristState(Claw.WristState.UP);
+                    follower.followPath(pushClipsToHuman, true);
+                    setState(State.GOTO_OBSERVATION);
+                }
                 break;
             case GOTO_OBSERVATION:
                 if(!follower.isBusy()) {
@@ -290,33 +324,40 @@ public class Clippy extends OpMode {
                 }
                 break;
             case SLIDES_RAISE_FOR_PICKUP:
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipObservePickup)) {
-                    claw.setWristState(Claw.WristState.MIDDLE);
-                    claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
+                if(arm.getArmPosition() >= clipObservePickup) {
                     actionTimer.resetTimer();
                     setState(State.SLIDES_RAISE_THEN_WAIT);
                 }
                 break;
             case SLIDES_RAISE_THEN_WAIT:
-                if(actionTimer.getElapsedTime() > 300) {
+                if(actionTimer.getElapsedTime() > 250) {
+                    claw.setWristState(Claw.WristState.MIDDLE);
+                    claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
                     claw.setClawState(Claw.ClawState.CLOSED);
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
+                }
+                if(actionTimer.getElapsedTime() > 850) {
                     actionTimer.resetTimer();
                     setState(State.CLAW_UP_POST_PICKUP);
                 }
                 break;
             case CLAW_UP_POST_PICKUP:
-                if(actionTimer.getElapsedTime() > 1400) {
+                if(actionTimer.getElapsedTime() > 700) {
+                    arm.setSlidesTargetPosition(clipObservePickup + 120);
+                    claw.setWristState(Claw.WristState.UP);
+                    claw.wrist.setPosition(Claw.wristUpPosition);
+                    claw.setWristState(Claw.WristState.UP);
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE);
                     if(whichClip == 0) {
                         whichClip++;
                         goingToObservation = runObservationZoneToClipTwo;
                         scorePose = clipOne;
                     }
-                    arm.setSlidesTargetPosition(clipObservePickup + 200);
+                }
+                if(actionTimer.getElapsedTime() > 1000 && arm.getArmPosition() >= clipObservePickup + 20) {
                     follower.followPath(goingToObservation, true);
                     actionTimer.resetTimer();
-                    setState(State.CLIPPING_RAISE_SLIDES);
+                    setState(State.SCORING_CLIP_RAISE_SLIDES);
                 }
                 break;
         }

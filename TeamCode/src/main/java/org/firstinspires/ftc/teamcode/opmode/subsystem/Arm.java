@@ -42,9 +42,9 @@ public class Arm extends Subsystem {
         right = hardwareMap.get(DcMotor.class, PartsMap.ARM_RIGHT.toString());
         shoulder = hardwareMap.get(DcMotor.class, PartsMap.ARM_SHOULDER.toString());
 
-        shoulder.setDirection(DcMotorSimple.Direction.REVERSE);
-        left.setDirection(DcMotorSimple.Direction.REVERSE);
-        right.setDirection(DcMotorSimple.Direction.FORWARD);
+        shoulder.setDirection(DcMotorSimple.Direction.FORWARD);
+        left.setDirection(DcMotorSimple.Direction.FORWARD);
+        right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Subsystem.initializeMotors(left, right, shoulder); // Reset, run with encoder, and set ZPB to FLOAT
 
@@ -87,6 +87,10 @@ public class Arm extends Subsystem {
         shoulderPid.setTargetPosition(shoulderTargetPosition);
         double power2 = shoulderPid.calculate(getShoulderPosition());
         setShoulderPower(power2);
+    }
+
+    public boolean areSlidesBusy(double currentPosition, double tolerance, double pos) {
+        return Math.abs(pos - currentPosition) <= tolerance;
     }
 
     public void update() {
