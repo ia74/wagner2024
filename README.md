@@ -1,3 +1,7 @@
+# 12820 Wagner TRILOBYTES - Into The Deep
+
+This repository contains all of the code & it's history/evolution, which carried us from league meet 1 all the way to Semi-Area.
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.

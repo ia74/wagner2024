@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.pedropathing.util.Constants;
+import com.qualcomm.hardware.lynx.LynxController;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Drawing;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 public class KneeSurgery extends OpMode {
     Follower follower;
@@ -49,12 +52,20 @@ public class KneeSurgery extends OpMode {
                 GlobalStorage.currentPose != null ? GlobalStorage.currentPose : new Pose(10.220338983050848, 60.40677966101695, Math.toRadians(0))
         );
         follower.startTeleopDrive();
+
+
+        for(LynxModule c : hardwareMap.getAll(LynxModule.class)) {
+            c.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
     }
 
     double currentDrivePower = 1.0;
 
     @Override
     public void loop() {
+        for(LynxModule c : hardwareMap.getAll(LynxModule.class)) c.clearBulkCache();
+
         double newDrivePower;
         double currentArmPosition = arm.getArmPosition();
         double currentShoulderPosition = arm.getShoulderPosition();
@@ -95,6 +106,8 @@ public class KneeSurgery extends OpMode {
 
         if (gamepad2.dpad_up)
             claw.setWristState(Claw.WristState.UP);
+        else if (gamepad2.dpad_left)
+            claw.setWristState(Claw.WristState.BUCKET);
         else if (gamepad2.dpad_down)
             claw.setWristState(Claw.WristState.DOWN);
         else if (gamepad2.dpad_right)
@@ -133,7 +146,6 @@ public class KneeSurgery extends OpMode {
         } else {
             telemetry.addLine("Gamepad 2 - Options : Debug Mode");
         }
-
         telemetry.update();
     }
 }

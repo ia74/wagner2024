@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.PartsMap;
 
@@ -12,19 +13,23 @@ import org.firstinspires.ftc.teamcode.PartsMap;
 public class Claw extends Subsystem {
     public Servo claw;
     public Servo wrist;
-    public static double clawOpenPosition = -1;
-    public static double clawClosedPosition = 1;
+    public static double clawOpenPosition = 0.05;
+    public static double clawClosedPosition = 0.25;
     private ClawState clawState = ClawState.UNKNOWN;
 
     public static double wristUpPosition = 0.8;
+    public static double wristBucketPosition = 0.5;
     public static double wristMiddlePosition = 0.35;
     public static double wristDownPosition = 0.05;
+    public static double wristStraightUp = 0.7;
     private WristState wristState = WristState.UNKNOWN;
 
     public enum WristState {
         UP,
-        DOWN,
+        STRAIGHT_UP,
+        BUCKET,
         MIDDLE,
+        DOWN,
         UNKNOWN
     }
 
@@ -36,7 +41,7 @@ public class Claw extends Subsystem {
 
     public Claw(HardwareMap hardwareMap) {
         super(hardwareMap);
-        claw = hardwareMap.get(Servo.class, PartsMap.CLAW.toString());
+        claw = hardwareMap.get(ServoImplEx.class, PartsMap.CLAW.toString());
         wrist = hardwareMap.get(Servo.class, PartsMap.WRIST.toString());
         claw.setDirection(Servo.Direction.REVERSE);
         wristState = WristState.UNKNOWN;
@@ -47,7 +52,9 @@ public class Claw extends Subsystem {
         if(wristState != state) {
             switch(state) {
                 case UP: wrist.setPosition(Claw.wristUpPosition); break;
+                case STRAIGHT_UP: wrist.setPosition(Claw.wristStraightUp); break;
                 case MIDDLE: wrist.setPosition(Claw.wristMiddlePosition); break;
+                case BUCKET: wrist.setPosition(Claw.wristBucketPosition); break;
                 case DOWN: wrist.setPosition(Claw.wristDownPosition); break;
             }
             wristState = state;

@@ -79,16 +79,16 @@ public class Basket extends OpMode {
     State state = State.INIT;
 
     Pose startPose = new Pose(8.542372881355933, 107.84745762711864, Math.toRadians(0));
-    Pose basketPosition = new Pose(17.796610169491526, 125.84745762711864, Math.toRadians(135)); // x 125 -> 124
+    Pose basketPosition = new Pose(14.083832335329342, 125.60479041916167, Math.toRadians(135)); // x 125 -> 124
 
-    Pose grabFromFloorRight = new Pose(33.25423728813559, 120.35593220338984, Math.toRadians(0));
-    Pose grabFromFloorMiddle = new Pose(34.16949152542373, 131.03389830508473, Math.toRadians(0)); //TODO: test this
-    Pose grabFromFloorLeft = new Pose(47.898305084745765, 133.77966101694915, Math.toRadians(-90));
+    Pose grabFromFloorRight = new Pose(30.898203592814372, 120.14371257485031, Math.toRadians(0));
+    Pose grabFromFloorMiddle = new Pose(30.898203592814372, 129.34131736526945, Math.toRadians(0)); //TODO: test this
+    Pose grabFromFloorLeft = new Pose(46.99401197604791, 128.47904191616766, Math.toRadians(-90));
 
-    Pose pushIntoZone = new Pose(133.03406813627254, 128.9939879759519, Math.toRadians(-90));
+    Pose pushIntoZone = new Pose(10.634730538922154, 128.9939879759519, Math.toRadians(-90));
     Pose end = new Pose(60.71186440677966, 96.40677966101694, Math.toRadians(-90));
-
     Pose observeZone = new Pose(10.677966101694915, 11.7457627118644, Math.toRadians(0)); // x 125 -> 124
+
 
     PathChain runStartToBasket;
 
@@ -117,7 +117,14 @@ public class Basket extends OpMode {
         GlobalStorage.currentPose = startPose;
         follower.setPose(startPose);
 
-        runStartToBasket = createPathChainForTwoPoints(startPose, basketPosition);
+        runStartToBasket = follower.pathBuilder().addPath(new Path(
+                new BezierCurve(
+                        new Point(startPose),
+                        new Point(23.137724550898202, 117.55688622754491),
+                        new Point(basketPosition)
+                )
+        ))
+                .build();
         runBasketToobserverZone = createPathChainForTwoPoints(basketPosition, observeZone);
 
         // RIGHT -> BASKET , BASKET -> RIGHT
@@ -180,6 +187,8 @@ follower = new Follower(hardwareMap);
         lights = new Lights(hardwareMap);
         follower.setMaxPower(1);
         lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+        claw.setWristState(Claw.WristState.STRAIGHT_UP);
+        claw.setClawState(Claw.ClawState.CLOSED);
         buildPaths();
     }
 
@@ -193,7 +202,8 @@ follower = new Follower(hardwareMap);
     @Override
     public void start() {
         claw.setClawState(Claw.ClawState.CLOSED);
-        claw.setWristState(Claw.WristState.UP);
+        claw.setWristState(Claw.WristState.STRAIGHT_UP);
+//        arm.setShoulderTargetPosition(0);
         opModeTimer.resetTimer();
         actionTimer.resetTimer();
         setState(State.INIT);
@@ -201,17 +211,18 @@ follower = new Follower(hardwareMap);
 
     @Override
     public void loop() {
-        follower.update();
-        arm.individuallyUpdateSlides();
-        arm.individuallyUpdateShoulder();
         updateAutonomousState();
+        follower.update();
+        arm.update();
 
-        telemetry.addLine(arm.toString());
         telemetry.addData("Floor Pickup State", pickingUpCurrentlyState);
-        telemetry.addData("Auto State", state);
-        telemetry.addLine();
+        telemetry.addData("shoulder position", arm.getArmPosition());
+        telemetry.addData("shoulder position away", Arm.shoulderTargetPosition - arm.getShoulderPosition());
         telemetry.addData("arm position", arm.getArmPosition());
-        telemetry.addData("arm ticks away from basket score", scoringBasketRaisePos - arm.getArmPosition());
+        telemetry.addData("arm ticks away from target", Arm.slidesTargetPosition - arm.getArmPosition());
+        telemetry.addData("Auto State", state);
+        telemetry.addLine(arm.toString());
+        telemetry.addLine();
         telemetry.addData("action time (s)", actionTimer.getElapsedTime());
         telemetry.addData("path time (s)", pathTimer.getElapsedTime());
         telemetry.addData("opmode time (s)", opModeTimer.getElapsedTime());
@@ -239,24 +250,26 @@ follower = new Follower(hardwareMap);
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
                 arm.setSlidesTargetPosition(scoringBasketRaisePos);
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
-                if(arm.getArmPosition() >= scoringBasketRaisePos) {
+                if(!arm.areSlidesBusy(arm.getArmPosition(), 10, scoringBasketRaisePos)) {
                     actionTimer.resetTimer();
-                    claw.setWristState(Claw.WristState.DOWN); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
                     setState(State.SCORE_BASKET); // This means, after this iteration we will not go back through this.
                 }
                 break;
             case SCORE_BASKET:
-                if(isInRangeOf(basketPosition)) {
+                if(!follower.isBusy() && isInRangeOf(basketPosition)) {
                     lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                    claw.setClawState(Claw.ClawState.OPEN); // Open the claw, as we're now raised high enough & lowered into the basket.
+                    claw.setWristState(Claw.WristState.BUCKET); // Since we're all the way up, we *should, in 99.9% cases* be able to lower the claw.
                     actionTimer.resetTimer(); // Start the action timer.
                     setState(State.SCORE_OUT_BASKET);
                 }
                 break;
             case SCORE_OUT_BASKET:
-                if(actionTimer.getElapsedTime() > 750) {
+
+                if(actionTimer.getElapsedTime() > 1000) {
                     // We've waited 500ms (half a second), so we'll raise the claw out of the bucket.
                     claw.setWristState(Claw.WristState.UP);
+                } else if(actionTimer.getElapsedTime() > 750) {
+                    claw.setClawState(Claw.ClawState.OPEN); // Open the claw, as we're now raised high enough & lowered into the basket.
                 }
                 if(actionTimer.getElapsedTime() > 1200 && (claw.wrist.getPosition() == Claw.wristUpPosition || actionTimer.getElapsedTime() >2000)) {
                     // Extra wait time, so we don't grab onto the bucket & risk damaging claw/slides/etc..
@@ -286,39 +299,43 @@ follower = new Follower(hardwareMap);
                 // Now we've set where we wanna go, let's go there. Dynamically adjusted from the step.
                 break;
             case WAIT_SLIDE_DOWN:
+                follower.setMaxPower(0.7);
                 follower.followPath(pickingUpCurrentlyPath, true);
                 setState(State.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
                 break;
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
                 // Now, just in case, we really need to wait for this specific part.
                 // We do continue travelling to the floor sample, so we don't waste time here.
-                if(arm.getArmPosition() <= 10) {
+                if(!arm.areSlidesBusy(arm.getArmPosition(), 30, 10)) {
                     follower.setMaxPower(0.5);
                     actionTimer.resetTimer();
-                    claw.setWristState(Claw.WristState.DOWN);
                     // The arm has fully lowered, so we can cut power, and lower it.
                     setState(State.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
+                } else {
+                    arm.setShoulderTargetPosition(500);
                 }
                 break;
             case FLOOR_PICKUP_WAIT_DOWN_AND_GOTO:
                 // Here we're waiting until we're within 3 x/y coordinates of range
                 // because this action needs to be precise.
                 // We're also gonna wait for the wrist to go all the way down.
-                if(isInRangeOf(pickingUpCurrentlyPose)) {
+                if(!follower.isBusy()) {
                     // We're here, and the wrist is down.
                     actionTimer.resetTimer();
                     setState(State.REAL_FLOOR_PICKUP); // Now actually pick up.
                 }
                 break;
             case REAL_FLOOR_PICKUP:
-                if(!closedClawToPickupFromFloor && actionTimer.getElapsedTime() > 600) { // 500ms, because we need
+                claw.setWristState(Claw.WristState.DOWN);
+                if(!closedClawToPickupFromFloor && arm.areSlidesBusy(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 750) { // 500ms, because we need
                     follower.setMaxPower(0.1);
                     claw.setClawState(Claw.ClawState.CLOSED);
                     actionTimer.resetTimer();
                     closedClawToPickupFromFloor = true;
                 }
-                if(closedClawToPickupFromFloor && actionTimer.getElapsedTime() > 1300) {
-                    claw.setWristState(Claw.WristState.UP);
+                if(closedClawToPickupFromFloor &&  arm.areSlidesBusy(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 1000) {
+                    claw.setWristState(Claw.WristState.STRAIGHT_UP);
+                    arm.setShoulderTargetPosition(1);
                     setState(State.RUN_TO_BASKET_FROM_FLOOR);
                 }
                 break;
@@ -334,7 +351,7 @@ follower = new Follower(hardwareMap);
                     gotoFromFloor = runLeftToBasket;
                     pickingUpCurrentlyState = FloorPickupState.NONE;
                 };
-                follower.setMaxPower(0.9);
+                follower.setMaxPower(1);
                 follower.followPath(gotoFromFloor, true);
                 setState(State.RAISE_TO_BASKET);
                 break;
@@ -344,23 +361,24 @@ follower = new Follower(hardwareMap);
                 setState(State.PUSH_PIXEL_INTO_ZONE);
                 break;
             case PUSH_PIXEL_INTO_ZONE:
-                if(isInRangeOf(grabFromFloorLeft)) {
+                if(!follower.isBusy()) {
                     follower.followPath(runLeftToZone,true);
                     setState(State.PARK_GOTO);
                 }
                 break;
             case PARK_GOTO:
-                if(isInRangeOf(pushIntoZone)) {
+                if(!follower.isBusy()) {
                     arm.setSlidesTargetPosition(1350);
                     arm.setShoulderTargetPosition(901);
                     follower.followPath(runZoneToPark, true);
                     claw.setClawState(Claw.ClawState.OPEN);
-                    claw.setWristState(Claw.WristState.MIDDLE);
+                    claw.setWristState(Claw.WristState.STRAIGHT_UP);
                     setState(State.PARK);
                 }
                 break;
             case PARK:
-                if(isInRangeOf(end)) {
+                if(!follower.isBusy()) {
+                    claw.setWristState(Claw.WristState.MIDDLE);
                 }
                 break;
         }
