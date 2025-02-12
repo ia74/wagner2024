@@ -18,7 +18,6 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Drawing;
 import com.pedropathing.util.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
@@ -230,7 +229,7 @@ public class Clippy extends OpMode {
             case CLIPPING_RAISE_SLIDES:
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
                 arm.setSlidesTargetPosition(clipBasketHeight);
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipBasketHeight)
+                if(arm.isPositionWithinTolerance(arm.getArmPosition(), 20, clipBasketHeight)
                         && actionTimer.getElapsedTime() > (whichClip == 0 ? 500 : 2000)) {
                     actionTimer.resetTimer();
                     setState(State.CLIPPING_MOVE_TO_SCORE_AND_SET_WRIST); // This means, after this iteration we will not go back through this.
@@ -249,7 +248,7 @@ public class Clippy extends OpMode {
                 if(actionTimer.getElapsedTime() > 750) {
                     arm.setSlidesTargetPosition(clipBasketLowerScore);
                 }
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipBasketLowerScore)) {
+                if(arm.isPositionWithinTolerance(arm.getArmPosition(), 20, clipBasketLowerScore)) {
                     actionTimer.resetTimer();
                     setState(State.CLIPPING_OPEN_CLAW);
                 }
@@ -290,7 +289,7 @@ public class Clippy extends OpMode {
                 }
                 break;
             case SLIDES_RAISE_FOR_PICKUP:
-                if(arm.areSlidesBusy(arm.getArmPosition(), 20, clipObservePickup)) {
+                if(arm.isPositionWithinTolerance(arm.getArmPosition(), 20, clipObservePickup)) {
                     claw.setWristState(Claw.WristState.MIDDLE);
                     claw.wrist.setPosition(Claw.wristMiddlePosition - 0.04);
                     actionTimer.resetTimer();

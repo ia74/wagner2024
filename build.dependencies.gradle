@@ -27,6 +27,6 @@ dependencies {
     implementation 'com.rowanmcalpin.nextftc:core:0.5.6-beta'
     implementation 'com.rowanmcalpin.nextftc:ftc:0.5.6-beta'
     implementation 'com.rowanmcalpin.nextftc:pedro:0.5.6-beta'
-    implementation 'com.pedropathing:beta:1.0.8-beta2'
+    implementation 'com.pedropathing:beta:1.0.8-beta3'
 }
 

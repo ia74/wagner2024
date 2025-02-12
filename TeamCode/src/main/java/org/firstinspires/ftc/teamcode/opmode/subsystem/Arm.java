@@ -89,7 +89,7 @@ public class Arm extends Subsystem {
         setShoulderPower(power2);
     }
 
-    public boolean areSlidesBusy(double currentPosition, double tolerance, double pos) {
+    public boolean isPositionWithinTolerance(double currentPosition, double tolerance, double pos) {
         return Math.abs(pos - currentPosition) <= tolerance;
     }
 

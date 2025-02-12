@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.GlobalStorage;
@@ -22,8 +20,6 @@ import com.pedropathing.util.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import com.pedropathing.util.Timer;
-
-import java.util.List;
 
 @Autonomous(name="0+3 Basket / Miguel Antimaneuvering", group="!!! Auton")
 public class Basket extends OpMode {
@@ -250,7 +246,7 @@ follower = new Follower(hardwareMap);
                 // Raise the arm, this can happen while we're moving to the path to save time (~3 sec.)
                 arm.setSlidesTargetPosition(scoringBasketRaisePos);
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
-                if(!arm.areSlidesBusy(arm.getArmPosition(), 10, scoringBasketRaisePos)) {
+                if(!arm.isPositionWithinTolerance(arm.getArmPosition(), 10, scoringBasketRaisePos)) {
                     actionTimer.resetTimer();
                     setState(State.SCORE_BASKET); // This means, after this iteration we will not go back through this.
                 }
@@ -306,7 +302,7 @@ follower = new Follower(hardwareMap);
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
                 // Now, just in case, we really need to wait for this specific part.
                 // We do continue travelling to the floor sample, so we don't waste time here.
-                if(!arm.areSlidesBusy(arm.getArmPosition(), 30, 10)) {
+                if(!arm.isPositionWithinTolerance(arm.getArmPosition(), 30, 10)) {
                     follower.setMaxPower(0.5);
                     actionTimer.resetTimer();
                     // The arm has fully lowered, so we can cut power, and lower it.
@@ -327,13 +323,13 @@ follower = new Follower(hardwareMap);
                 break;
             case REAL_FLOOR_PICKUP:
                 claw.setWristState(Claw.WristState.DOWN);
-                if(!closedClawToPickupFromFloor && arm.areSlidesBusy(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 750) { // 500ms, because we need
+                if(!closedClawToPickupFromFloor && arm.isPositionWithinTolerance(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 750) { // 500ms, because we need
                     follower.setMaxPower(0.1);
                     claw.setClawState(Claw.ClawState.CLOSED);
                     actionTimer.resetTimer();
                     closedClawToPickupFromFloor = true;
                 }
-                if(closedClawToPickupFromFloor &&  arm.areSlidesBusy(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 1000) {
+                if(closedClawToPickupFromFloor &&  arm.isPositionWithinTolerance(arm.getShoulderPosition(), 20, 500) && actionTimer.getElapsedTime() > 1000) {
                     claw.setWristState(Claw.WristState.STRAIGHT_UP);
                     arm.setShoulderTargetPosition(1);
                     setState(State.RUN_TO_BASKET_FROM_FLOOR);
