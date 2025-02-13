@@ -26,7 +26,7 @@ public class AutonomousOperations {
     public static Pose observationZone = new Pose(17.5, 11.065868263473059, Math.toRadians(180));
     public static Pose clipping = new Pose(33.5, 74.51790900290416, Math.toRadians(0));
 
-    private AutoOpState state;
+    private AutoOpState state = AutoOpState.IDLE;
     private final Follower follower;
     private final Arm arm;
     private final Claw claw;

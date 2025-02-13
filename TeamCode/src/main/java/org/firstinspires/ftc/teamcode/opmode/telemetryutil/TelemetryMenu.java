@@ -12,7 +12,7 @@ public class TelemetryMenu {
     private final Telemetry t;
     private final List<MenuItem> menuItems;
     private int selectedIndex = 0;
-    private Gamepad lastGamepad;
+    private final Gamepad lastGamepad = new Gamepad();
     public TelemetryMenu(Telemetry t, String title) {
         this.t = t;
         this.title = title;
@@ -34,8 +34,8 @@ public class TelemetryMenu {
 
 
     public void update(Gamepad gamepad) {
-        if(gamepad.dpad_up && !lastGamepad.dpad_up) selectedIndex++;
-        if(gamepad.dpad_down && !lastGamepad.dpad_down) selectedIndex--;
+        if(gamepad.dpad_up && !lastGamepad.dpad_up) selectedIndex--;
+        if(gamepad.dpad_down && !lastGamepad.dpad_down) selectedIndex++;
 
         checkIndexOutsideOfBounds();
 
@@ -48,11 +48,11 @@ public class TelemetryMenu {
             if(i == selectedIndex) {
                 finalOutput = ">";
                 item.runOnSelected();
-                if(gamepad.a && !lastGamepad.a) {
+                if(gamepad.a) {
                     finalOutput = "#";
-                } else if(!gamepad.a && lastGamepad.a) {
-                    finalOutput = "*";
                     item.runOnClick();
+                } else if(!gamepad.a && lastGamepad.cross) {
+                    finalOutput = "*";
                 }
                 finalOutput += " ";
             }
@@ -63,6 +63,6 @@ public class TelemetryMenu {
         t.addLine("DPad UP/DOWN - Change Selection");
         t.addLine("A - Select");
 
-        lastGamepad = gamepad;
+        lastGamepad.copy(gamepad);
     }
 }

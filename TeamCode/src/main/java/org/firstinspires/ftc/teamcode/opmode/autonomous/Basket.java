@@ -297,18 +297,17 @@ follower = new Follower(hardwareMap);
             case WAIT_SLIDE_DOWN:
                 follower.setMaxPower(0.7);
                 follower.followPath(pickingUpCurrentlyPath, true);
+                    arm.setShoulderTargetPosition(500);
                 setState(State.WAIT_SLIDE_DOWN_FLOOR_PICKUP);
                 break;
             case WAIT_SLIDE_DOWN_FLOOR_PICKUP:
                 // Now, just in case, we really need to wait for this specific part.
                 // We do continue travelling to the floor sample, so we don't waste time here.
-                if(!arm.isPositionWithinTolerance(arm.getArmPosition(), 30, 10)) {
-                    follower.setMaxPower(0.5);
+                if(arm.isPositionWithinTolerance(arm.getArmPosition(), 40, 10)) {
+                    follower.setMaxPower(0.9);
                     actionTimer.resetTimer();
                     // The arm has fully lowered, so we can cut power, and lower it.
                     setState(State.FLOOR_PICKUP_WAIT_DOWN_AND_GOTO);
-                } else {
-                    arm.setShoulderTargetPosition(500);
                 }
                 break;
             case FLOOR_PICKUP_WAIT_DOWN_AND_GOTO:

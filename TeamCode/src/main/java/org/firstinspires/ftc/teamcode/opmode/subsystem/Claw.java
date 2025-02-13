@@ -17,11 +17,11 @@ public class Claw extends Subsystem {
     public static double clawClosedPosition = 0.25;
     private ClawState clawState = ClawState.UNKNOWN;
 
-    public static double wristUpPosition = 0.8;
-    public static double wristBucketPosition = 0.5;
-    public static double wristMiddlePosition = 0.35;
-    public static double wristDownPosition = 0.05;
-    public static double wristStraightUp = 0.7;
+    public static double wristUpPosition = 0.1;
+    public static double wristBucketPosition = 0.45;
+    public static double wristMiddlePosition = 0.6;
+    public static double wristDownPosition = 0.8;
+    public static double wristStraightUp = 0.325;
     private WristState wristState = WristState.UNKNOWN;
 
     public enum WristState {
